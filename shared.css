@@ -1,0 +1,124 @@
+/* ============================================================
+   AhiaGlobal — Shared Styles
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  --primary: #ea580c;
+  --primary-light: #fff7ed;
+  --neutral-900: #0f172a;
+  --neutral-50: #f8fafc;
+  --shadow-card: 0 4px 14px -3px rgba(15,23,42,.09);
+  --shadow-hover: 0 12px 30px -5px rgba(15,23,42,.16);
+  --shadow-modal: 0 24px 60px -8px rgba(15,23,42,.28);
+  --radius-card: 0.875rem;
+  --radius-pill: 9999px;
+}
+
+html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+body { font-family: 'Inter', sans-serif; background: #fafaf9; color: #0f172a; }
+.font-heading { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+/* ---- scrollbar hide ---- */
+.no-sb::-webkit-scrollbar { display: none; }
+.no-sb { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ---- animations ---- */
+@keyframes fadeUp   { from { opacity:0; transform:translateY(16px) } to { opacity:1; transform:translateY(0) } }
+@keyframes scaleIn  { from { opacity:0; transform:scale(.94) } to { opacity:1; transform:scale(1) } }
+@keyframes toastSlideIn  { from { opacity:0; transform:translateX(100%) } to { opacity:1; transform:translateX(0) } }
+@keyframes toastSlideOut { from { opacity:1; transform:translateX(0) } to { opacity:0; transform:translateX(100%) } }
+@keyframes checkDraw  { from { stroke-dashoffset:100 } to { stroke-dashoffset:0 } }
+@keyframes circleDraw { from { stroke-dashoffset:300 } to { stroke-dashoffset:0 } }
+@keyframes pulseRing  { 0%{transform:scale(1);opacity:.6} 100%{transform:scale(1.6);opacity:0} }
+@keyframes spin       { to { transform:rotate(360deg) } }
+@keyframes cartPop    { 0%{transform:scale(1)} 50%{transform:scale(1.4)} 100%{transform:scale(1)} }
+
+.anim-fade-up   { animation: fadeUp .5s ease forwards; }
+.anim-scale-in  { animation: scaleIn .4s ease forwards; }
+.spin           { animation: spin 1s linear infinite; }
+.check-circle   { stroke-dasharray:300; stroke-dashoffset:300; animation: circleDraw .8s ease .2s forwards; }
+.check-path     { stroke-dasharray:100; stroke-dashoffset:100; animation: checkDraw .5s ease .9s forwards; }
+.pulse-ring     { position:absolute; inset:0; border-radius:50%; border:3px solid #22c55e; animation: pulseRing 1.5s ease-out infinite; }
+.cart-badge.pop { animation: cartPop .3s ease; }
+
+/* ---- mobile drawer ---- */
+#mobile-menu    { transform:translateX(-100%); transition:transform .3s cubic-bezier(.4,0,.2,1); }
+#mobile-menu.open { transform:translateX(0); }
+#menu-overlay   { opacity:0; pointer-events:none; transition:opacity .3s; }
+#menu-overlay.open { opacity:1; pointer-events:auto; }
+
+/* ---- auth modal ---- */
+#auth-modal     { opacity:0; pointer-events:none; transition:opacity .25s; }
+#auth-modal.open { opacity:1; pointer-events:auto; }
+#auth-box       { transform:translateY(14px) scale(.96); transition:transform .28s cubic-bezier(.34,1.56,.64,1),opacity .25s; opacity:0; }
+#auth-modal.open #auth-box { transform:translateY(0) scale(1); opacity:1; }
+
+/* ---- form fields ---- */
+.field:focus-within label { color: var(--primary); }
+.field:focus-within input,
+.field:focus-within select,
+.field:focus-within textarea {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(234,88,12,.12);
+  outline: none;
+}
+
+/* ---- product card ---- */
+.prod-card { transition: box-shadow .25s, transform .25s; }
+.prod-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+.prod-card .add-btn { transform:translateY(100%); transition:transform .3s; }
+.prod-card:hover .add-btn { transform:translateY(0); }
+.prod-card .wish-btn { opacity:0; transition:opacity .2s; }
+.prod-card:hover .wish-btn { opacity:1; }
+.wish-btn.wished svg { fill:currentColor; }
+.wish-btn.wished { color:#ef4444; }
+
+/* ---- tabs ---- */
+.tab-btn { padding-bottom:.875rem; font-size:.9375rem; font-weight:500; border-bottom:2px solid transparent; color:#64748b; transition:all .2s; white-space:nowrap; cursor:pointer; background:none; border-left:none; border-right:none; border-top:none; }
+.tab-btn:hover { color: var(--primary); }
+.tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+/* ---- FAQ accordion ---- */
+.faq-answer { max-height:0; overflow:hidden; transition:max-height .4s cubic-bezier(.4,0,.2,1); }
+.faq-answer.open { max-height:700px; }
+.faq-icon { transition:transform .3s ease; }
+.faq-item.open .faq-icon { transform:rotate(45deg); }
+.faq-item.open { border-color: var(--primary); }
+.cat-tab.active { background:var(--primary); color:#fff; border-color:var(--primary); }
+
+/* ---- step tracker ---- */
+.step-done   { background:#22c55e; border-color:#22c55e; color:#fff; }
+.step-active { background:var(--primary); border-color:var(--primary); color:#fff; }
+.step-pending{ background:#fff; border-color:#d1d5db; color:#9ca3af; }
+
+/* ---- horizontal scroll section ---- */
+.h-scroll { display:flex; gap:1rem; overflow-x:auto; padding-bottom:1rem; }
+.h-scroll-card { flex-shrink:0; width:220px; }
+@media(min-width:640px)  { .h-scroll-card { width:240px; } }
+@media(min-width:1024px) { .h-scroll-card { width:260px; } }
+
+/* ---- notification panel ---- */
+#notif-panel { transform:translateY(-8px); opacity:0; pointer-events:none; transition:all .2s; }
+#notif-panel.open { transform:translateY(0); opacity:1; pointer-events:auto; }
+
+/* ---- search dropdown ---- */
+#search-dropdown { display:none; }
+#search-dropdown.open { display:block; }
+
+/* ---- sticky header shadow ---- */
+.header-scrolled { box-shadow: 0 2px 20px -4px rgba(15,23,42,.12); }
+
+/* ---- toast stack ---- */
+#toast-stack { position:fixed; top:5rem; right:.75rem; z-index:9999; display:flex; flex-direction:column; gap:.5rem; width:22rem; max-width:calc(100vw - 1.5rem); pointer-events:none; }
+
+/* ---- responsive utilities ---- */
+@media(max-width:767px) {
+  .hide-mob { display:none !important; }
+  .mob-full { width:100% !important; }
+  h1.hero-title { font-size:2rem; line-height:1.2; }
+}
+@media(min-width:768px) { .show-mob-only { display:none !important; } }

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sell on AhiaGlobal — Reach Millions of Shoppers</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="shared.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-serif'],body:['Inter','sans-serif']},colors:{primary:{50:'#fff7ed',100:'#ffedd5',200:'#fed7aa',300:'#fdba74',400:'#fb923c',500:'#f97316',600:'#ea580c',700:'#c2410c',800:'#9a3412',900:'#7c2d12'},neutral:{50:'#f8fafc',100:'#f1f5f9',200:'#e2e8f0',300:'#cbd5e1',400:'#94a3b8',500:'#64748b',600:'#475569',700:'#334155',800:'#1e293b',900:'#0f172a'}},boxShadow:{card:'0 4px 14px -3px rgba(15,23,42,.09)',hover:'0 12px 30px -5px rgba(15,23,42,.16)',modal:'0 24px 60px -8px rgba(15,23,42,.28)'},borderRadius:{xl2:'0.875rem',xl3:'1.25rem'}}}}</script>
+<style>
+#auth-modal{opacity:0;pointer-events:none;transition:opacity .25s}
+#auth-modal.open{opacity:1;pointer-events:auto}
+#auth-box{transform:translateY(14px) scale(.96);transition:transform .28s cubic-bezier(.34,1.56,.64,1),opacity .25s;opacity:0}
+#auth-modal.open #auth-box{transform:translateY(0) scale(1);opacity:1}
+.field:focus-within label{color:#ea580c}
+.field:focus-within input,.field:focus-within select,.field:focus-within textarea{border-color:#ea580c;box-shadow:0 0 0 3px rgba(234,88,12,.12);outline:none}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes toastIn{from{opacity:0;transform:translateX(110%)}to{opacity:1;transform:translateX(0)}}
+@keyframes toastOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(110%)}}
+.anim-1{animation:fadeUp .55s ease .1s both}.anim-2{animation:fadeUp .55s ease .25s both}.anim-3{animation:fadeUp .55s ease .4s both}.anim-4{animation:fadeUp .55s ease .55s both}
+.plan-card{transition:all .3s}.plan-card:hover,.plan-card.popular{box-shadow:0 12px 30px -5px rgba(15,23,42,.16);transform:translateY(-3px)}
+.plan-card.popular{border-color:#ea580c;background:linear-gradient(135deg,#fff7ed,#fff)}
+.step-num{width:2rem;height:2rem;border-radius:50%;background:#ea580c;color:#fff;font-weight:700;font-size:.875rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.scrolled{box-shadow:0 2px 20px -4px rgba(15,23,42,.12)}
+</style>
+</head>
+<body class="font-body bg-neutral-50 text-neutral-900">
+
+<div id="toast-stack" class="fixed top-20 right-3 z-[9999] flex flex-col gap-2 w-80 max-w-[calc(100vw-1.5rem)] pointer-events-none"></div>
+
+<!-- AUTH MODAL -->
+<div id="auth-modal" class="fixed inset-0 z-[500] flex items-center justify-center p-4" style="background:rgba(15,23,42,.6);backdrop-filter:blur(6px)">
+  <div id="auth-box" class="bg-white rounded-xl3 shadow-modal w-full max-w-[420px] relative overflow-hidden max-h-[90vh] overflow-y-auto">
+    <button onclick="closeAuth()" class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center"><i data-lucide="x" class="w-4 h-4 text-neutral-600"></i></button>
+    <div class="flex border-b border-neutral-100"><button id="tab-login" onclick="switchAuth('login')" class="flex-1 py-4 text-sm font-semibold text-primary-600 border-b-2 border-primary-600">Sign In</button><button id="tab-signup" onclick="switchAuth('signup')" class="flex-1 py-4 text-sm font-semibold text-neutral-400 border-b-2 border-transparent hover:text-neutral-700">Create Account</button></div>
+    <div id="panel-login" class="p-6"><div class="text-center mb-5"><div class="w-11 h-11 bg-primary-600 rounded-xl flex items-center justify-center text-white font-heading font-bold text-lg mx-auto mb-2">A</div><h2 class="font-heading text-xl font-bold">Welcome back</h2></div><div class="space-y-3"><div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Email</label><input id="login-email" type="email" placeholder="you@example.com" class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"></div><div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Password</label><div class="relative"><input id="login-pw" type="password" placeholder="••••••••" class="w-full px-4 py-2.5 pr-10 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"><button type="button" onclick="togglePw('login-pw',this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"><i data-lucide="eye" class="w-4 h-4"></i></button></div></div><button onclick="handleLogin()" class="w-full bg-primary-600 hover:bg-primary-700 text-white py-3 rounded-full font-semibold text-sm flex items-center justify-center gap-2">Sign In <i data-lucide="arrow-right" class="w-4 h-4"></i></button></div><p class="text-center text-sm text-neutral-500 mt-4">No account? <button onclick="switchAuth('signup')" class="text-primary-600 font-semibold hover:underline">Create one</button></p></div>
+    <div id="panel-signup" class="p-6 hidden"><div class="text-center mb-5"><div class="w-11 h-11 bg-primary-600 rounded-xl flex items-center justify-center text-white font-heading font-bold text-lg mx-auto mb-2">A</div><h2 class="font-heading text-xl font-bold">Create seller account</h2></div><div class="space-y-3"><div class="grid grid-cols-2 gap-3"><div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">First</label><input id="signup-firstname" type="text" placeholder="John" class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50"></div><div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Last</label><input id="signup-lastname" type="text" placeholder="Doe" class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50"></div></div><div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Email</label><input id="signup-email" type="email" placeholder="you@example.com" class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50"></div><div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Password</label><div class="relative"><input id="signup-pw" type="password" placeholder="Min. 8 characters" class="w-full px-4 py-2.5 pr-10 border border-neutral-200 rounded-lg text-sm bg-neutral-50"><button type="button" onclick="togglePw('signup-pw',this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400"><i data-lucide="eye" class="w-4 h-4"></i></button></div></div><label class="flex items-start gap-2 cursor-pointer"><input id="signup-agree" type="checkbox" class="w-4 h-4 mt-0.5 accent-orange-600 rounded flex-shrink-0"><span class="text-xs text-neutral-500">I agree to <a href="#" class="text-primary-600">Terms</a> &amp; <a href="#" class="text-primary-600">Privacy</a></span></label><button onclick="handleSignup()" class="w-full bg-primary-600 hover:bg-primary-700 text-white py-3 rounded-full font-semibold text-sm flex items-center justify-center gap-2">Create Seller Account <i data-lucide="arrow-right" class="w-4 h-4"></i></button></div><p class="text-center text-sm text-neutral-500 mt-4">Have account? <button onclick="switchAuth('login')" class="text-primary-600 font-semibold hover:underline">Sign in</button></p></div>
+  </div>
+</div>
+
+<!-- TOP BAR -->
+<div class="bg-neutral-900 text-neutral-50 py-1.5 px-4 text-xs hidden md:block"><div class="max-w-7xl mx-auto flex justify-between items-center"><div class="flex items-center gap-5"><a href="tel:+2348001234567" class="flex items-center gap-1.5 hover:text-primary-300"><i data-lucide="phone" class="w-3 h-3"></i>+234 800 AHIA GLOBAL</a><a href="mailto:sellers@ahiaglobal.com" class="flex items-center gap-1.5 hover:text-primary-300"><i data-lucide="mail" class="w-3 h-3"></i>sellers@ahiaglobal.com</a></div><div class="flex items-center gap-4"><a href="index.html" class="hover:text-primary-300">Back to Shop</a><div class="h-3 w-px bg-neutral-700"></div><a href="faq.html" class="hover:text-primary-300">Seller FAQ</a></div></div></div>
+
+<!-- HEADER -->
+<header id="main-header" class="sticky top-0 z-[200] bg-white border-b border-neutral-200 transition-shadow">
+  <div class="max-w-7xl mx-auto px-5 py-4 flex items-center justify-between gap-4">
+    <a href="index.html" class="flex items-center gap-2"><div class="w-9 h-9 bg-primary-600 rounded-lg flex items-center justify-center text-white font-heading font-bold text-lg">A</div><span class="font-heading font-bold text-lg md:text-2xl text-neutral-900 tracking-tight">Ahia<span class="text-primary-600">Global</span> <span class="text-sm font-medium text-neutral-500 hidden sm:inline">Seller Hub</span></span></a>
+    <div class="flex items-center gap-3">
+      <a href="index.html" class="hidden md:flex items-center gap-1.5 text-sm text-neutral-600 hover:text-primary-600"><i data-lucide="shopping-bag" class="w-4 h-4"></i>Shop</a>
+      <button onclick="openAuth('login')" id="header-auth-btn" class="hidden md:flex items-center gap-2 px-4 py-2 rounded-full border border-neutral-200 hover:border-primary-300 hover:bg-orange-50 text-sm font-medium text-neutral-700"><i data-lucide="user" class="w-4 h-4"></i><span id="header-auth-label">Sign In</span></button>
+      <button onclick="document.getElementById('apply-form').scrollIntoView({behavior:'smooth'})" class="flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all">Start Selling <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 text-white py-16 md:py-24 relative overflow-hidden">
+  <div class="absolute inset-0 opacity-[0.06]" style="background-image:radial-gradient(circle at 20% 50%,#ea580c,transparent 55%),radial-gradient(circle at 80% 50%,#f97316,transparent 55%)"></div>
+  <div class="max-w-6xl mx-auto px-5 relative z-10">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div>
+        <span class="inline-flex items-center gap-2 px-4 py-1.5 bg-primary-600/20 border border-primary-500/30 text-primary-400 text-xs font-bold rounded-full mb-5 uppercase tracking-wider"><i data-lucide="store" class="w-3.5 h-3.5"></i>Seller Programme</span>
+        <h1 class="font-heading text-4xl md:text-5xl lg:text-6xl font-bold mb-5 leading-tight anim-1">Sell to Millions.<br><span class="text-primary-500">Grow Your Brand.</span></h1>
+        <p class="text-neutral-300 text-base md:text-lg mb-8 leading-relaxed max-w-lg anim-2">Join thousands of African sellers reaching customers across 50+ countries. Zero setup fees. Start selling in under 24 hours.</p>
+        <div class="flex flex-wrap gap-3 anim-3">
+          <button onclick="document.getElementById('apply-form').scrollIntoView({behavior:'smooth'})" class="flex items-center gap-2 px-8 py-3.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-full transition-all shadow-lg">Apply to Sell <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+          <button onclick="document.getElementById('how-it-works').scrollIntoView({behavior:'smooth'})" class="px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full border border-white/20 transition-all">How It Works</button>
+        </div>
+        <div class="flex flex-wrap gap-6 mt-10 anim-4">
+          <div><p class="font-heading text-2xl font-bold text-white">50K+</p><p class="text-xs text-neutral-400">Active Buyers</p></div>
+          <div class="w-px bg-white/10"></div>
+          <div><p class="font-heading text-2xl font-bold text-white">500+</p><p class="text-xs text-neutral-400">Verified Sellers</p></div>
+          <div class="w-px bg-white/10"></div>
+          <div><p class="font-heading text-2xl font-bold text-primary-400">₦0</p><p class="text-xs text-neutral-400">Setup Fee</p></div>
+          <div class="w-px bg-white/10"></div>
+          <div><p class="font-heading text-2xl font-bold text-white">24h</p><p class="text-xs text-neutral-400">To Go Live</p></div>
+        </div>
+      </div>
+      <!-- trust logos / illustration -->
+      <div class="hidden lg:block">
+        <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl3 p-6 space-y-4">
+          <h3 class="font-heading text-lg font-bold text-white mb-4">Trusted by Sellers Across Africa</h3>
+          <div class="flex items-center gap-4 p-3.5 bg-white/5 rounded-xl border border-white/10"><div class="w-10 h-10 bg-primary-600 rounded-full flex items-center justify-center font-bold text-white text-sm flex-shrink-0">TH</div><div><p class="text-sm font-semibold text-white">TechHub Lagos</p><p class="text-xs text-neutral-400">Electronics · ₦2.4M monthly sales</p></div><span class="ml-auto text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full font-medium">Verified</span></div>
+          <div class="flex items-center gap-4 p-3.5 bg-white/5 rounded-xl border border-white/10"><div class="w-10 h-10 bg-orange-600 rounded-full flex items-center justify-center font-bold text-white text-sm flex-shrink-0">AF</div><div><p class="text-sm font-semibold text-white">Ankara Fashion Co.</p><p class="text-xs text-neutral-400">Fashion · 1,200+ products listed</p></div><span class="ml-auto text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full font-medium">Verified</span></div>
+          <div class="flex items-center gap-4 p-3.5 bg-white/5 rounded-xl border border-white/10"><div class="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center font-bold text-white text-sm flex-shrink-0">BB</div><div><p class="text-sm font-semibold text-white">BeautyBox Ghana</p><p class="text-xs text-neutral-400">Beauty · Ships to 15 countries</p></div><span class="ml-auto text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full font-medium">Verified</span></div>
+          <div class="mt-4 p-4 bg-primary-600/15 border border-primary-500/30 rounded-xl text-center"><p class="text-sm text-primary-300 font-medium">🎉 New sellers get <strong class="text-white">3 months free</strong> on the Pro plan</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how-it-works" class="py-14 md:py-20 bg-white">
+  <div class="max-w-5xl mx-auto px-5">
+    <div class="text-center mb-12"><h2 class="font-heading text-3xl md:text-4xl font-bold text-neutral-900 mb-3">Start Selling in 4 Simple Steps</h2><p class="text-neutral-500">From registration to first sale in as little as 24 hours.</p></div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 relative">
+      <div class="hidden md:block absolute top-6 left-1/4 right-1/4 h-0.5 bg-neutral-100"></div>
+      <div class="flex flex-col items-center text-center gap-4">
+        <div class="step-num">1</div>
+        <div class="w-14 h-14 bg-primary-50 rounded-xl2 flex items-center justify-center"><i data-lucide="user-plus" class="w-7 h-7 text-primary-600"></i></div>
+        <h3 class="font-heading font-bold text-neutral-900">Register</h3>
+        <p class="text-sm text-neutral-500 leading-relaxed">Create your free seller account with your business details.</p>
+      </div>
+      <div class="flex flex-col items-center text-center gap-4">
+        <div class="step-num">2</div>
+        <div class="w-14 h-14 bg-blue-50 rounded-xl2 flex items-center justify-center"><i data-lucide="file-check" class="w-7 h-7 text-blue-600"></i></div>
+        <h3 class="font-heading font-bold text-neutral-900">Get Verified</h3>
+        <p class="text-sm text-neutral-500 leading-relaxed">Submit your business docs. Approval within 24 hours.</p>
+      </div>
+      <div class="flex flex-col items-center text-center gap-4">
+        <div class="step-num">3</div>
+        <div class="w-14 h-14 bg-green-50 rounded-xl2 flex items-center justify-center"><i data-lucide="package-plus" class="w-7 h-7 text-green-600"></i></div>
+        <h3 class="font-heading font-bold text-neutral-900">List Products</h3>
+        <p class="text-sm text-neutral-500 leading-relaxed">Upload products with photos, pricing and descriptions.</p>
+      </div>
+      <div class="flex flex-col items-center text-center gap-4">
+        <div class="step-num">4</div>
+        <div class="w-14 h-14 bg-amber-50 rounded-xl2 flex items-center justify-center"><i data-lucide="banknote" class="w-7 h-7 text-amber-600"></i></div>
+        <h3 class="font-heading font-bold text-neutral-900">Get Paid</h3>
+        <p class="text-sm text-neutral-500 leading-relaxed">Receive payments directly to your bank or mobile money.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section class="py-14 bg-neutral-50">
+  <div class="max-w-5xl mx-auto px-5">
+    <div class="text-center mb-10"><h2 class="font-heading text-3xl font-bold text-neutral-900 mb-3">Why Sell on AhiaGlobal?</h2><p class="text-neutral-500">Everything you need to grow your business online.</p></div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+      <div class="bg-white rounded-xl2 shadow-card border border-neutral-100 p-5 hover:shadow-hover hover:-translate-y-1 transition-all"><div class="w-11 h-11 bg-primary-50 rounded-xl flex items-center justify-center mb-4"><i data-lucide="globe" class="w-5 h-5 text-primary-600"></i></div><h3 class="font-heading font-bold text-neutral-900 mb-2">Global Reach</h3><p class="text-sm text-neutral-500 leading-relaxed">Sell to customers in 50+ countries with built-in logistics and currency conversion.</p></div>
+      <div class="bg-white rounded-xl2 shadow-card border border-neutral-100 p-5 hover:shadow-hover hover:-translate-y-1 transition-all"><div class="w-11 h-11 bg-green-50 rounded-xl flex items-center justify-center mb-4"><i data-lucide="trending-up" class="w-5 h-5 text-green-600"></i></div><h3 class="font-heading font-bold text-neutral-900 mb-2">Analytics Dashboard</h3><p class="text-sm text-neutral-500 leading-relaxed">Real-time insights on sales, revenue, traffic, and customer behaviour.</p></div>
+      <div class="bg-white rounded-xl2 shadow-card border border-neutral-100 p-5 hover:shadow-hover hover:-translate-y-1 transition-all"><div class="w-11 h-11 bg-blue-50 rounded-xl flex items-center justify-center mb-4"><i data-lucide="truck" class="w-5 h-5 text-blue-600"></i></div><h3 class="font-heading font-bold text-neutral-900 mb-2">Fulfilment Support</h3><p class="text-sm text-neutral-500 leading-relaxed">Optional warehousing and fulfilment — we pick, pack and ship for you.</p></div>
+      <div class="bg-white rounded-xl2 shadow-card border border-neutral-100 p-5 hover:shadow-hover hover:-translate-y-1 transition-all"><div class="w-11 h-11 bg-purple-50 rounded-xl flex items-center justify-center mb-4"><i data-lucide="credit-card" class="w-5 h-5 text-purple-600"></i></div><h3 class="font-heading font-bold text-neutral-900 mb-2">Fast Payouts</h3><p class="text-sm text-neutral-500 leading-relaxed">Weekly payouts to your bank or mobile money. No waiting 30+ days.</p></div>
+      <div class="bg-white rounded-xl2 shadow-card border border-neutral-100 p-5 hover:shadow-hover hover:-translate-y-1 transition-all"><div class="w-11 h-11 bg-amber-50 rounded-xl flex items-center justify-center mb-4"><i data-lucide="headphones" class="w-5 h-5 text-amber-600"></i></div><h3 class="font-heading font-bold text-neutral-900 mb-2">Seller Support</h3><p class="text-sm text-neutral-500 leading-relaxed">Dedicated seller success manager and 24/7 priority support.</p></div>
+      <div class="bg-white rounded-xl2 shadow-card border border-neutral-100 p-5 hover:shadow-hover hover:-translate-y-1 transition-all"><div class="w-11 h-11 bg-red-50 rounded-xl flex items-center justify-center mb-4"><i data-lucide="megaphone" class="w-5 h-5 text-red-500"></i></div><h3 class="font-heading font-bold text-neutral-900 mb-2">Marketing Tools</h3><p class="text-sm text-neutral-500 leading-relaxed">Flash sales, sponsored listings, vouchers and seasonal promotions.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING PLANS -->
+<section class="py-14 bg-white">
+  <div class="max-w-5xl mx-auto px-5">
+    <div class="text-center mb-10"><h2 class="font-heading text-3xl font-bold text-neutral-900 mb-3">Simple, Transparent Pricing</h2><p class="text-neutral-500">No hidden fees. Only pay when you make a sale.</p></div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Starter -->
+      <div class="plan-card bg-white rounded-xl3 border border-neutral-200 p-6 flex flex-col">
+        <div class="mb-5"><p class="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1">Starter</p><p class="font-heading text-3xl font-bold text-neutral-900">Free</p><p class="text-sm text-neutral-500 mt-1">Perfect to test the waters</p></div>
+        <ul class="space-y-3 mb-6 flex-1 text-sm text-neutral-600">
+          <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500 flex-shrink-0"></i>Up to 50 product listings</li>
+          <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500 flex-shrink-0"></i>8% commission per sale</li>
+          <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500 flex-shrink-0"></i>Basic analytics dashboard</li>
+          <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500 flex-shrink-0"></i>Standard support</li>
+          <li class="flex items-center gap-2 opacity-40"><i data-lucide="x" class="w-4 h-4 flex-shrink-0"></i>No sponsored listings</li>
+          <li class="flex items-center gap-2 opacity-40"><i data-lucide="x" class="w-4 h-4 flex-shrink-0"></i>No fulfilment support</li>
+        </ul>
+        <button onclick="document.getElementById('apply-form').scrollIntoView({behavior:'smooth'})" class="w-full py-3 border border-neutral-300 text-neutral-700 rounded-full font-semibold text-sm hover:bg-neutral-50 transition-colors">Get Started Free</button>
+      </div>
+      <!-- Pro (popular) -->
+      <div class="plan-card popular rounded-xl3 border-2 p-6 flex flex-col relative">
+        <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary-600 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">Most Popular</div>
+        <div class="mb-5"><p class="text-xs font-bold text-primary-600 uppercase tracking-wider mb-1">Pro</p><div class="flex items-end gap-1"><p class="font-heading text-3xl font-bold text-neutral-900">₦15,000</p><p class="text-sm text-neutral-500 mb-1">/month</p></div><p class="text-sm text-neutral-500 mt-1">For growing businesses</p></div>
+        <ul class="space-y-3 mb-6 flex-1 text-sm text-neutral-600">
+          <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500 flex-shrink-0"></i>Unlimited product listings</li>
+          <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500 flex-shrink-0"></i>5% commission per sale</li>
+          <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500 flex-shrink-0"></i>Advanced analytics</li>
+          <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500 flex-shrink-0"></i>Priority support 24/7</li>
+          <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500 flex-shrink-0"></i>3 sponsored listing slots</li>
+          <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500 flex-shrink-0"></i>Flash sale participation</li>
+        </ul>
+        <button onclick="document.getElementById('apply-form').scrollIntoView({behavior:'smooth'})" class="w-full py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-full font-semibold text-sm transition-colors">Start Pro — 3 Months Free</button>
+      </div>
+      <!-- Enterprise -->
+      <div class="plan-card bg-white rounded-xl3 border border-neutral-200 p-6 flex flex-col">
+        <div class="mb-5"><p class="text-xs font-bold text-neutral-500 uppercase tracking-wider mb-1">Enterprise</p><p class="font-heading text-3xl font-bold text-neutral-900">Custom</p><p class="text-sm text-neutral-500 mt-1">For large scale sellers</p></div>
+        <ul class="space-y-3 mb-6 flex-1 text-sm text-neutral-600">
+          <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500 flex-shrink-0"></i>Everything in Pro</li>
+          <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500 flex-shrink-0"></i>Negotiated commission rate</li>
+          <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500 flex-shrink-0"></i>Dedicated account manager</li>
+          <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500 flex-shrink-0"></i>Custom integrations & API</li>
+          <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500 flex-shrink-0"></i>Fulfilment centre access</li>
+          <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-green-500 flex-shrink-0"></i>Co-marketing campaigns</li>
+        </ul>
+        <button onclick="showToast('info','Enterprise Enquiry','Our team will contact you within 24 hours.')" class="w-full py-3 border border-neutral-300 text-neutral-700 rounded-full font-semibold text-sm hover:bg-neutral-50 transition-colors">Contact Sales</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APPLICATION FORM (Lead Capture) -->
+<section id="apply-form" class="py-14 bg-neutral-50">
+  <div class="max-w-2xl mx-auto px-5">
+    <div class="text-center mb-8"><h2 class="font-heading text-3xl font-bold text-neutral-900 mb-3">Apply to Become a Seller</h2><p class="text-neutral-500">Fill in the form below and our team will review your application within 24 hours.</p></div>
+    <div id="seller-form-wrap" class="bg-white rounded-xl3 shadow-card border border-neutral-100 p-6 md:p-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1.5">Full Name <span class="text-red-500">*</span></label><input id="sf-name" type="text" placeholder="John Adeyemi" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"></div>
+        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1.5">Email Address <span class="text-red-500">*</span></label><input id="sf-email" type="email" placeholder="you@business.com" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"></div>
+        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1.5">Business Name <span class="text-red-500">*</span></label><input id="sf-business" type="text" placeholder="Your Store Name" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"></div>
+        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1.5">Phone Number <span class="text-red-500">*</span></label><input id="sf-phone" type="tel" placeholder="+234 800 000 0000" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"></div>
+        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1.5">Product Category <span class="text-red-500">*</span></label>
+          <div class="relative"><select id="sf-category" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 appearance-none transition-all"><option value="">Select category</option><option>Fashion &amp; Clothing</option><option>Electronics &amp; Gadgets</option><option>Beauty &amp; Skincare</option><option>Food &amp; Grocery</option><option>Home &amp; Decor</option><option>Sports &amp; Fitness</option><option>Artisan &amp; Crafts</option><option>Books &amp; Stationery</option><option>Other</option></select><i data-lucide="chevron-down" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none"></i></div>
+        </div>
+        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1.5">Estimated Monthly Products</label>
+          <div class="relative"><select id="sf-volume" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 appearance-none"><option>1–20 products</option><option>21–100 products</option><option>101–500 products</option><option>500+ products</option></select><i data-lucide="chevron-down" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none"></i></div>
+        </div>
+        <div class="sm:col-span-2 field"><label class="block text-sm font-medium text-neutral-700 mb-1.5">Tell us about your business</label><textarea id="sf-about" rows="3" placeholder="Briefly describe what you sell and your target customers…" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 resize-none transition-all"></textarea></div>
+        <div class="sm:col-span-2"><label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="w-4 h-4 mt-0.5 accent-orange-600 rounded flex-shrink-0"><span class="text-xs text-neutral-500">I agree to AhiaGlobal's <a href="#" class="text-primary-600 hover:underline">Seller Terms of Service</a> and understand that my application will be reviewed before activation.</span></label></div>
+      </div>
+      <button onclick="submitSellerForm()" class="w-full bg-primary-600 hover:bg-primary-700 text-white py-4 rounded-full font-bold text-base transition-all shadow-card hover:shadow-hover flex items-center justify-center gap-2"><i data-lucide="send" class="w-5 h-5"></i>Submit Application</button>
+    </div>
+    <!-- Thank you state (PRD 3.8) -->
+    <div id="seller-thanks" class="hidden bg-white rounded-xl3 shadow-card border border-neutral-100 p-10 text-center">
+      <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5"><i data-lucide="check-circle" class="w-8 h-8 text-green-600"></i></div>
+      <h2 class="font-heading text-2xl font-bold text-neutral-900 mb-3">Application Received! 🎉</h2>
+      <p class="text-neutral-500 mb-2">Thank you for applying to sell on AhiaGlobal.</p>
+      <p class="text-neutral-500 mb-6">Our seller verification team will review your application and contact you at <strong id="thanks-email" class="text-neutral-900">your email</strong> within <strong>24 hours</strong>.</p>
+      <div class="flex flex-col sm:flex-row justify-center gap-3">
+        <a href="index.html" class="flex items-center justify-center gap-2 px-7 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-full transition-all text-sm"><i data-lucide="shopping-bag" class="w-4 h-4"></i>Explore the Shop</a>
+        <a href="faq.html" class="flex items-center justify-center gap-2 px-7 py-3 border border-neutral-300 text-neutral-700 font-semibold rounded-full hover:bg-neutral-50 transition-all text-sm"><i data-lucide="help-circle" class="w-4 h-4"></i>Seller FAQ</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="bg-neutral-900 text-neutral-400 py-10">
+  <div class="max-w-6xl mx-auto px-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-2"><div class="w-7 h-7 bg-primary-600 rounded-md flex items-center justify-center text-white font-bold text-sm">A</div><span class="font-heading font-bold text-white">Ahia<span class="text-primary-600">Global</span> <span class="text-neutral-400 font-normal text-sm">Seller Hub</span></span></div>
+    <p class="text-xs">© 2024 AhiaGlobal. All rights reserved.</p>
+    <div class="flex gap-4 text-xs"><a href="index.html" class="hover:text-primary-400">Buyer Shop</a><a href="faq.html" class="hover:text-primary-400">FAQ</a><a href="mailto:sellers@ahiaglobal.com" class="hover:text-primary-400">Contact</a></div>
+  </div>
+</footer>
+
+<script src="shared.js"></script>
+<script>
+function submitSellerForm() {
+  const name = document.getElementById('sf-name')?.value?.trim();
+  const email = document.getElementById('sf-email')?.value?.trim();
+  const business = document.getElementById('sf-business')?.value?.trim();
+  const phone = document.getElementById('sf-phone')?.value?.trim();
+  const category = document.getElementById('sf-category')?.value;
+  if (!name) { showToast('error','Required','Please enter your full name.'); return; }
+  if (!email || !/\S+@\S+\.\S+/.test(email)) { showToast('error','Invalid email','Please enter a valid email.'); return; }
+  if (!business) { showToast('error','Required','Please enter your business name.'); return; }
+  if (!phone) { showToast('error','Required','Please enter your phone number.'); return; }
+  if (!category) { showToast('error','Required','Please select a product category.'); return; }
+  document.getElementById('seller-form-wrap').classList.add('hidden');
+  document.getElementById('seller-thanks').classList.remove('hidden');
+  document.getElementById('thanks-email').textContent = email;
+  lucide.createIcons();
+}
+window.addEventListener('scroll', () => document.getElementById('main-header')?.classList.toggle('scrolled', window.scrollY > 10));
+document.addEventListener('DOMContentLoaded', () => lucide.createIcons());
+</script>
+</body>
+</html>

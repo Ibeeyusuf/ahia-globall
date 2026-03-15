@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premium Wireless Headphones — AhiaGlobal</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="shared.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-serif'],body:['Inter','sans-serif']},colors:{primary:{50:'#fff7ed',100:'#ffedd5',200:'#fed7aa',300:'#fdba74',400:'#fb923c',500:'#f97316',600:'#ea580c',700:'#c2410c',800:'#9a3412',900:'#7c2d12'},neutral:{50:'#f8fafc',100:'#f1f5f9',200:'#e2e8f0',300:'#cbd5e1',400:'#94a3b8',500:'#64748b',600:'#475569',700:'#334155',800:'#1e293b',900:'#0f172a'}},boxShadow:{card:'0 4px 14px -3px rgba(15,23,42,.09)',hover:'0 12px 30px -5px rgba(15,23,42,.16)',modal:'0 24px 60px -8px rgba(15,23,42,.28)'},borderRadius:{xl2:'0.875rem',xl3:'1.25rem'}}}}
+</script>
+<style>
+#mobile-menu{transform:translateX(-100%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
+#mobile-menu.open{transform:translateX(0)}
+#menu-overlay{opacity:0;pointer-events:none;transition:opacity .3s}
+#menu-overlay.open{opacity:1;pointer-events:auto}
+#auth-modal{opacity:0;pointer-events:none;transition:opacity .25s}
+#auth-modal.open{opacity:1;pointer-events:auto}
+#auth-box{transform:translateY(14px) scale(.96);transition:transform .28s cubic-bezier(.34,1.56,.64,1),opacity .25s;opacity:0}
+#auth-modal.open #auth-box{transform:translateY(0) scale(1);opacity:1}
+.field:focus-within label{color:#ea580c}
+.field:focus-within input{border-color:#ea580c;box-shadow:0 0 0 3px rgba(234,88,12,.12);outline:none}
+#main-img{transition:opacity .22s}
+.thumb-btn{transition:border-color .2s}
+.pscroll{display:flex;gap:.875rem;overflow-x:auto;padding-bottom:.75rem;scroll-snap-type:x mandatory}
+.pscroll::-webkit-scrollbar{height:4px}
+.pscroll::-webkit-scrollbar-track{background:#f1f5f9;border-radius:2px}
+.pscroll::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:2px}
+.rpcard{flex-shrink:0;width:190px;scroll-snap-align:start}
+@media(min-width:640px){.rpcard{width:210px}}
+@keyframes toastIn{from{opacity:0;transform:translateX(110%)}to{opacity:1;transform:translateX(0)}}
+@keyframes toastOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(110%)}}
+@keyframes cartPop{0%{transform:scale(1)}50%{transform:scale(1.5)}100%{transform:scale(1)}}
+.cart-badge.pop{animation:cartPop .3s ease}
+.scrolled{box-shadow:0 2px 20px -4px rgba(15,23,42,.12)}
+/* sticky add-to-cart bar on mobile */
+#sticky-bar{transform:translateY(100%);transition:transform .3s ease}
+#sticky-bar.visible{transform:translateY(0)}
+/* zoom overlay */
+#zoom-modal{opacity:0;pointer-events:none;transition:opacity .25s}
+#zoom-modal.open{opacity:1;pointer-events:auto}
+
+.scroll-wrap{position:relative}
+.scroll-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:10;width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid #e2e8f0;box-shadow:0 2px 8px rgba(15,23,42,.12);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:#334155}
+.scroll-arrow:hover{background:#0f172a;color:#fff;border-color:#0f172a;box-shadow:0 4px 14px rgba(15,23,42,.2)}
+.scroll-arrow.left{left:-14px}
+.scroll-arrow.right{right:-14px}
+@media(max-width:640px){.scroll-arrow{display:none}}
+</style>
+</head>
+<body class="font-body bg-neutral-50 text-neutral-900">
+
+<div id="toast-stack" class="fixed top-20 right-3 z-[9999] flex flex-col gap-2 w-80 max-w-[calc(100vw-1.5rem)] pointer-events-none"></div>
+
+<!-- AUTH MODAL -->
+<div id="auth-modal" class="fixed inset-0 z-[500] flex items-center justify-center p-4" style="background:rgba(15,23,42,.6);backdrop-filter:blur(6px)">
+  <div id="auth-box" class="bg-white rounded-xl3 shadow-modal w-full max-w-[420px] relative overflow-hidden max-h-[90vh] overflow-y-auto">
+    <button onclick="closeAuth()" class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center"><i data-lucide="x" class="w-4 h-4 text-neutral-600"></i></button>
+    <div class="flex border-b border-neutral-100">
+      <button id="tab-login" onclick="switchAuth('login')" class="flex-1 py-4 text-sm font-semibold text-primary-600 border-b-2 border-primary-600">Sign In</button>
+      <button id="tab-signup" onclick="switchAuth('signup')" class="flex-1 py-4 text-sm font-semibold text-neutral-400 border-b-2 border-transparent hover:text-neutral-700">Create Account</button>
+    </div>
+    <div id="panel-login" class="p-6">
+      <div class="text-center mb-5"><div class="w-11 h-11 bg-primary-600 rounded-xl flex items-center justify-center text-white font-heading font-bold text-lg mx-auto mb-2">A</div><h2 class="font-heading text-xl font-bold">Welcome back</h2><p class="text-sm text-neutral-500 mt-0.5">Sign in to your AhiaGlobal account</p></div>
+      <div class="grid grid-cols-2 gap-2 mb-4">
+        <button onclick="handleSocialAuth('Google')" class="flex items-center justify-center gap-2 px-3 py-2.5 border border-neutral-200 rounded-lg text-sm font-medium text-neutral-700 hover:bg-neutral-50"><svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>Google</button>
+        <button onclick="handleSocialAuth('Facebook')" class="flex items-center justify-center gap-2 px-3 py-2.5 border border-neutral-200 rounded-lg text-sm font-medium text-neutral-700 hover:bg-neutral-50"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>Facebook</button>
+      </div>
+      <div class="flex items-center gap-3 mb-4"><div class="flex-1 h-px bg-neutral-100"></div><span class="text-xs text-neutral-400">OR</span><div class="flex-1 h-px bg-neutral-100"></div></div>
+      <div class="space-y-3">
+        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Email</label><input id="login-email" type="email" placeholder="you@example.com" class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"></div>
+        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Password</label><div class="relative"><input id="login-pw" type="password" placeholder="••••••••" class="w-full px-4 py-2.5 pr-10 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"><button type="button" onclick="togglePw('login-pw',this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"><i data-lucide="eye" class="w-4 h-4"></i></button></div></div>
+        <div class="flex items-center justify-between text-sm"><label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="w-4 h-4 accent-orange-600 rounded"><span class="text-neutral-600">Remember me</span></label><button class="text-primary-600 font-medium hover:underline">Forgot password?</button></div>
+        <button onclick="handleLogin()" class="w-full bg-primary-600 hover:bg-primary-700 text-white py-3 rounded-full font-semibold text-sm flex items-center justify-center gap-2">Sign In <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+      </div>
+      <p class="text-center text-sm text-neutral-500 mt-4">No account? <button onclick="switchAuth('signup')" class="text-primary-600 font-semibold hover:underline">Create one free</button></p>
+    </div>
+    <div id="panel-signup" class="p-6 hidden">
+      <div class="text-center mb-5"><div class="w-11 h-11 bg-primary-600 rounded-xl flex items-center justify-center text-white font-heading font-bold text-lg mx-auto mb-2">A</div><h2 class="font-heading text-xl font-bold">Create account</h2><p class="text-sm text-neutral-500 mt-0.5">Join millions on AhiaGlobal</p></div>
+      <div class="space-y-3">
+        <div class="grid grid-cols-2 gap-3">
+          <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">First name</label><input id="signup-firstname" type="text" placeholder="John" class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"></div>
+          <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Last name</label><input id="signup-lastname" type="text" placeholder="Doe" class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"></div>
+        </div>
+        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Email</label><input id="signup-email" type="email" placeholder="you@example.com" class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"></div>
+        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Password</label><div class="relative"><input id="signup-pw" type="password" placeholder="Min. 8 characters" class="w-full px-4 py-2.5 pr-10 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"><button type="button" onclick="togglePw('signup-pw',this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"><i data-lucide="eye" class="w-4 h-4"></i></button></div></div>
+        <label class="flex items-start gap-2 cursor-pointer"><input id="signup-agree" type="checkbox" class="w-4 h-4 mt-0.5 accent-orange-600 rounded flex-shrink-0"><span class="text-xs text-neutral-500">I agree to AhiaGlobal's <a href="#" class="text-primary-600 hover:underline">Terms</a> &amp; <a href="#" class="text-primary-600 hover:underline">Privacy Policy</a></span></label>
+        <button onclick="handleSignup()" class="w-full bg-primary-600 hover:bg-primary-700 text-white py-3 rounded-full font-semibold text-sm flex items-center justify-center gap-2">Create Account <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+      </div>
+      <p class="text-center text-sm text-neutral-500 mt-4">Have an account? <button onclick="switchAuth('login')" class="text-primary-600 font-semibold hover:underline">Sign in</button></p>
+    </div>
+  </div>
+</div>
+
+<!-- MOBILE OVERLAY -->
+<div id="menu-overlay" onclick="closeMobileMenu()" class="fixed inset-0 z-[300]" style="background:rgba(15,23,42,.5);backdrop-filter:blur(3px)"></div>
+
+<!-- MOBILE DRAWER -->
+<div id="mobile-menu" class="fixed top-0 left-0 h-full w-72 max-w-[85vw] bg-white z-[400] flex flex-col shadow-modal overflow-y-auto">
+  <div class="flex items-center justify-between p-4 border-b border-neutral-100">
+    <div class="flex items-center gap-2"><div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center text-white font-heading font-bold text-sm">A</div><span class="font-heading font-bold text-lg">Ahia<span class="text-primary-600">Global</span></span></div>
+    <button onclick="closeMobileMenu()" class="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center"><i data-lucide="x" class="w-4 h-4 text-neutral-600"></i></button>
+  </div>
+  <div class="p-4 border-b border-neutral-100 bg-neutral-50">
+    <div id="mob-guest"><p class="text-xs text-neutral-500 mb-2.5">Sign in for best deals.</p>
+      <div class="flex gap-2"><button onclick="closeMobileMenu();openAuth('login')" class="flex-1 py-2 bg-primary-600 text-white text-sm font-semibold rounded-full hover:bg-primary-700">Sign In</button><button onclick="closeMobileMenu();openAuth('signup')" class="flex-1 py-2 border border-neutral-300 text-neutral-700 text-sm font-semibold rounded-full hover:bg-neutral-100">Register</button></div>
+    </div>
+    <div id="mob-loggedin" class="hidden items-center gap-3"><div class="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center font-bold text-primary-700 text-sm" id="mob-avatar">JD</div><div><p class="text-sm font-semibold" id="mob-name">John Doe</p><p class="text-xs text-neutral-500">View profile →</p></div></div>
+  </div>
+  <nav class="flex-1 p-3 space-y-0.5">
+    <a href="index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:text-primary-600"><i data-lucide="home" class="w-4 h-4"></i>Home</a>
+    <a href="product.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-primary-600 bg-primary-50"><i data-lucide="shopping-bag" class="w-4 h-4"></i>Shop</a>
+    <a href="checkout.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:text-primary-600"><i data-lucide="shopping-cart" class="w-4 h-4"></i>Cart <span id="mob-cart-badge" class="ml-auto w-5 h-5 bg-primary-600 text-white text-[10px] font-bold flex items-center justify-center rounded-full cart-count-badge">0</span></a>
+    <a href="faq.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:text-primary-600"><i data-lucide="help-circle" class="w-4 h-4"></i>Help Center</a>
+  </nav>
+  <div class="p-3 border-t border-neutral-100"><button id="mob-logout-btn" onclick="doLogout()" class="hidden w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50"><i data-lucide="log-out" class="w-4 h-4"></i>Sign Out</button></div>
+</div>
+
+<!-- TOP BAR -->
+<div class="bg-neutral-900 text-neutral-50 py-1.5 px-4 text-xs hidden md:block">
+  <div class="max-w-7xl mx-auto flex justify-between items-center">
+    <div class="flex items-center gap-5"><a href="tel:+2348001234567" class="flex items-center gap-1.5 hover:text-primary-300"><i data-lucide="phone" class="w-3 h-3"></i>+234 800 AHIA GLOBAL</a><a href="/cdn-cgi/l/email-protection#ea999f9a9a85989eaa8b82838b8d8685888b86c4898587" class="flex items-center gap-1.5 hover:text-primary-300"><i data-lucide="mail" class="w-3 h-3"></i><span class="__cf_email__" data-cfemail="c4b7b1b4b4abb6b084a5acada5a3a8aba6a5a8eaa7aba9">[email&#160;protected]</span></a></div>
+    <div class="flex items-center gap-4"><button class="hover:text-primary-300">Sell on Ahia</button><div class="h-3 w-px bg-neutral-700"></div><button class="hover:text-primary-300">Track Order</button><div class="h-3 w-px bg-neutral-700"></div><button class="flex items-center gap-1 hover:text-primary-300"><i data-lucide="globe" class="w-3 h-3"></i>EN / NGN</button></div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header id="main-header" class="sticky top-0 z-[200] bg-white border-b border-neutral-200 transition-shadow">
+  <div class="max-w-7xl mx-auto px-4 py-3">
+    <div class="flex items-center gap-3">
+      <button onclick="openMobileMenu()" class="md:hidden w-10 h-10 flex items-center justify-center rounded-xl hover:bg-neutral-100 flex-shrink-0"><i data-lucide="menu" class="w-5 h-5 text-neutral-700"></i></button>
+      <a href="index.html" class="flex items-center gap-2 flex-shrink-0"><div class="w-9 h-9 bg-primary-600 rounded-lg flex items-center justify-center text-white font-heading font-bold text-lg">A</div><span class="font-heading font-bold text-lg md:text-2xl text-neutral-900 tracking-tight">Ahia<span class="text-primary-600">Global</span></span></a>
+      <div class="hidden md:flex flex-1 max-w-lg mx-4 relative">
+        <input type="text" placeholder="Search products, brands…" class="w-full pl-10 pr-24 py-2.5 bg-neutral-50 border border-neutral-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all">
+        <i data-lucide="search" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400 w-4 h-4"></i>
+        <button class="absolute right-1.5 top-1/2 -translate-y-1/2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-1.5 rounded-full text-xs font-semibold">Search</button>
+      </div>
+      <div class="flex items-center gap-1.5 ml-auto md:ml-0">
+        <button class="md:hidden w-9 h-9 flex items-center justify-center rounded-xl hover:bg-neutral-100"><i data-lucide="search" class="w-5 h-5 text-neutral-600"></i></button>
+        <button class="hidden md:flex w-9 h-9 items-center justify-center rounded-xl hover:bg-neutral-100"><i data-lucide="bell" class="w-5 h-5 text-neutral-600"></i></button>
+        <button class="hidden md:flex w-9 h-9 items-center justify-center rounded-xl hover:bg-neutral-100"><i data-lucide="heart" class="w-5 h-5 text-neutral-600"></i></button>
+        <button onclick="openAuth('login')" id="header-auth-btn" class="hidden md:flex items-center gap-2 px-4 py-2 rounded-full border border-neutral-200 hover:border-primary-300 hover:bg-orange-50 text-sm font-medium text-neutral-700"><i data-lucide="user" class="w-4 h-4"></i><span id="header-auth-label">Sign In</span></button>
+        <a href="checkout.html" class="flex items-center gap-2 bg-neutral-900 text-white px-3 md:px-4 py-2 md:py-2.5 rounded-full hover:bg-neutral-800 transition-all">
+          <div class="relative"><i data-lucide="shopping-cart" class="w-4 h-4 md:w-5 md:h-5"></i><span id="header-cart-count" class="cart-count-badge absolute -top-2.5 -right-2.5 w-5 h-5 bg-primary-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-neutral-900">0</span></div>
+          <span class="hidden lg:block text-sm font-medium cart-total-label">$0.00</span>
+        </a>
+      </div>
+    </div>
+    <div class="mt-2.5 md:hidden relative"><input type="text" placeholder="Search products…" class="w-full pl-9 pr-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"><i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 w-4 h-4"></i></div>
+  </div>
+  <nav class="hidden md:block border-t border-neutral-100">
+    <div class="max-w-7xl mx-auto px-4">
+      <ul class="flex gap-0 text-sm font-medium text-neutral-600 overflow-x-auto" style="-ms-overflow-style:none;scrollbar-width:none">
+        <li><a href="index.html" class="flex items-center gap-1.5 py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-300 whitespace-nowrap"><i data-lucide="layout-grid" class="w-4 h-4"></i>All Categories</a></li>
+        <li><a href="product.html" class="flex py-3 px-3 text-primary-600 border-b-2 border-primary-600 whitespace-nowrap">Electronics</a></li>
+        <li><a href="product.html" class="flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-300 whitespace-nowrap">Fashion</a></li>
+        <li><a href="product.html" class="flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-300 whitespace-nowrap">Home &amp; Living</a></li>
+        <li><a href="product.html" class="flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-300 whitespace-nowrap">Beauty</a></li>
+        <li class="ml-auto"><button class="flex items-center gap-1 py-3 px-3 text-red-600 font-semibold whitespace-nowrap border-b-2 border-red-500"><i data-lucide="zap" class="w-3.5 h-3.5"></i>Flash Sales</button></li>
+      </ul>
+    </div>
+  </nav>
+</header>
+
+<!-- BREADCRUMB -->
+<div class="bg-white border-b border-neutral-100">
+  <div class="max-w-7xl mx-auto px-5 py-3">
+    <nav class="flex items-center gap-1.5 text-xs text-neutral-500 flex-wrap">
+      <a href="index.html" class="hover:text-primary-600">Home</a>
+      <i data-lucide="chevron-right" class="w-3 h-3"></i>
+      <a href="product.html" class="hover:text-primary-600">Electronics</a>
+      <i data-lucide="chevron-right" class="w-3 h-3"></i>
+      <a href="product.html" class="hover:text-primary-600">Audio</a>
+      <i data-lucide="chevron-right" class="w-3 h-3"></i>
+      <span class="text-neutral-900 font-medium" id="breadcrumb-name">Loading...</span>
+    </nav>
+  </div>
+</div>
+
+<!-- IMAGE ZOOM MODAL -->
+<div id="zoom-modal" class="fixed inset-0 z-[600] flex items-center justify-center p-4" style="background:rgba(0,0,0,.85);backdrop-filter:blur(8px)">
+  <button onclick="closeZoom()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 hover:bg-white/40 flex items-center justify-center text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+  <img id="zoom-img" src="" alt="" class="max-w-full max-h-full object-contain rounded-xl2" style="max-height:90vh">
+</div>
+
+<!-- MAIN PRODUCT SECTION -->
+<main class="max-w-7xl mx-auto px-5 py-7 md:py-12">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 xl:gap-14">
+
+    <!-- GALLERY -->
+    <div class="space-y-3">
+      <div class="relative aspect-square bg-neutral-50 rounded-xl2 overflow-hidden border border-neutral-100 group cursor-zoom-in" onclick="openZoom()">
+        <img id="main-img" src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=80" alt="Product" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+        <div class="absolute top-3 left-3"><span class="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">-30% OFF</span></div>
+        <button id="main-wish-btn" onclick="event.stopPropagation();toggleWishlist(this,'Premium Wireless Headphones')" class="absolute top-3 right-3 p-2.5 bg-white rounded-full shadow-md text-neutral-400 hover:text-red-500 transition-colors z-10"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></button>
+        <div class="absolute bottom-3 right-3 bg-white/80 backdrop-blur-sm rounded-lg px-2 py-1 flex items-center gap-1 text-xs text-neutral-600"><i data-lucide="zoom-in" class="w-3.5 h-3.5"></i>Tap to zoom</div>
+      </div>
+      <div class="grid grid-cols-4 gap-2" id="thumb-wrap">
+        <button onclick="changeImg(this,'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=80')" class="thumb-btn aspect-square rounded-xl border-2 border-primary-600 overflow-hidden bg-neutral-50 p-1"><img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover rounded-lg"></button>
+        <button onclick="changeImg(this,'https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=900&q=80')" class="thumb-btn aspect-square rounded-xl border-2 border-transparent hover:border-neutral-300 overflow-hidden bg-neutral-50 p-1 transition-all"><img src="https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover rounded-lg"></button>
+        <button onclick="changeImg(this,'https://images.unsplash.com/photo-1484704849700-f032a568e944?auto=format&fit=crop&w=900&q=80')" class="thumb-btn aspect-square rounded-xl border-2 border-transparent hover:border-neutral-300 overflow-hidden bg-neutral-50 p-1 transition-all"><img src="https://images.unsplash.com/photo-1484704849700-f032a568e944?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover rounded-lg"></button>
+        <button onclick="changeImg(this,'https://images.unsplash.com/photo-1524678606372-987d7e66c451?auto=format&fit=crop&w=900&q=80')" class="thumb-btn aspect-square rounded-xl border-2 border-transparent hover:border-neutral-300 overflow-hidden bg-neutral-50 p-1 transition-all"><img src="https://images.unsplash.com/photo-1524678606372-987d7e66c451?auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover rounded-lg"></button>
+      </div>
+    </div>
+
+    <!-- PRODUCT INFO -->
+    <div class="flex flex-col">
+      <div class="flex items-center gap-2 mb-2">
+        <span class="text-primary-600 font-semibold text-xs uppercase tracking-widest">Audio &amp; Sound</span>
+        <span class="bg-green-100 text-green-700 text-xs font-semibold px-2 py-0.5 rounded-full flex items-center gap-1"><i data-lucide="check-circle" class="w-3 h-3"></i>In Stock</span>
+      </div>
+      <p class="text-xs font-bold text-neutral-400 uppercase tracking-widest mb-2" id="prod-brand">Brand</p>
+      <h1 class="font-heading text-2xl md:text-3xl lg:text-4xl font-bold text-neutral-900 mb-3 leading-tight" id="prod-title">Loading...</h1>
+
+      <!-- rating -->
+      <div class="flex flex-wrap items-center gap-3 mb-4">
+        <div class="flex items-center gap-1" id="prod-stars">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15" stroke="#facc15" stroke-width="1"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15" stroke="#facc15" stroke-width="1"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15" stroke="#facc15" stroke-width="1"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15" stroke="#facc15" stroke-width="1"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15" stroke="#facc15" stroke-width="1"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77V2z"/><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="none" stroke="#facc15"/></svg>
+        </div>
+        <button class="text-sm text-primary-600 hover:underline font-medium" id="prod-review-count">4.8 (124 reviews)</button>
+        <span class="text-neutral-300">|</span>
+        <span class="text-sm text-neutral-500">1,240 sold</span>
+        <span class="text-neutral-300">|</span>
+        <button class="text-sm text-neutral-500 hover:text-neutral-700 flex items-center gap-1"><i data-lucide="share-2" class="w-3.5 h-3.5"></i>Share</button>
+      </div>
+
+      <!-- price -->
+      <div class="flex items-end gap-3 pb-5 mb-5 border-b border-neutral-100">
+        <span class="font-heading text-3xl md:text-4xl font-bold text-neutral-900" id="prod-price">$129.99</span>
+        <span class="text-lg text-neutral-400 line-through mb-0.5" id="prod-orig">$185.00</span>
+        <span class="bg-red-100 text-red-600 text-xs font-bold px-2 py-1 rounded-lg mb-1" id="prod-disc">Save $55.01</span>
+      </div>
+
+      <p class="text-sm md:text-base text-neutral-600 leading-relaxed mb-6">Experience crystal-clear sound with our latest ANC technology. Engineered for audiophiles who demand perfection — 30-hour battery life, quick charge (10 min = 5 hrs), and Bluetooth 5.2 multi-point pairing.</p>
+
+      <!-- color -->
+      <div class="mb-5">
+        <span class="block text-sm font-semibold text-neutral-900 mb-2.5">Color: <span id="sel-color" class="text-neutral-500 font-normal">Midnight Black</span></span>
+        <div class="flex gap-3" id="color-wrap">
+          <label class="cursor-pointer group"><input type="radio" name="color" class="sr-only" checked onchange="document.getElementById('sel-color').textContent='Midnight Black'"><span class="block w-9 h-9 rounded-full bg-neutral-900 ring-2 ring-neutral-900 ring-offset-2 group-hover:scale-110 transition-transform"></span></label>
+          <label class="cursor-pointer group"><input type="radio" name="color" class="sr-only" onchange="document.getElementById('sel-color').textContent='Sterling Silver'"><span class="block w-9 h-9 rounded-full bg-neutral-300 ring-2 ring-transparent ring-offset-2 hover:ring-neutral-400 group-hover:scale-110 transition-transform"></span></label>
+          <label class="cursor-pointer group"><input type="radio" name="color" class="sr-only" onchange="document.getElementById('sel-color').textContent='Ocean Blue'"><span class="block w-9 h-9 rounded-full bg-blue-800 ring-2 ring-transparent ring-offset-2 hover:ring-blue-500 group-hover:scale-110 transition-transform"></span></label>
+          <label class="cursor-pointer group"><input type="radio" name="color" class="sr-only" onchange="document.getElementById('sel-color').textContent='Sunset Red'"><span class="block w-9 h-9 rounded-full bg-red-600 ring-2 ring-transparent ring-offset-2 hover:ring-red-500 group-hover:scale-110 transition-transform"></span></label>
+        </div>
+
+        <!-- Out of stock variant notice -->
+        <div id="notify-me-section" class="hidden mt-4 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+          <p class="text-sm font-semibold text-amber-800 mb-2 flex items-center gap-2"><i data-lucide="bell" class="w-4 h-4"></i>This color is currently out of stock</p>
+          <div class="flex gap-2">
+            <input type="email" placeholder="your@email.com" class="flex-1 px-3 py-2 border border-amber-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-400">
+            <button onclick="notifyMe()" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold rounded-lg transition-colors whitespace-nowrap">Notify Me</button>
+          </div>
+        </div>
+
+      <!-- qty + CTA -->
+      <div class="flex flex-col sm:flex-row gap-3 mb-4">
+        <div class="flex items-center border border-neutral-200 rounded-full w-36 flex-shrink-0">
+          <button onclick="updateQty(-1)" class="w-12 h-12 flex items-center justify-center text-neutral-600 hover:text-primary-600 transition-colors"><i data-lucide="minus" class="w-4 h-4"></i></button>
+          <input type="number" id="qty-input" value="1" min="1" max="10" readonly class="w-12 text-center border-none bg-transparent font-semibold text-sm p-0 focus:outline-none">
+          <button onclick="updateQty(1)" class="w-12 h-12 flex items-center justify-center text-neutral-600 hover:text-primary-600 transition-colors"><i data-lucide="plus" class="w-4 h-4"></i></button>
+        </div>
+        <button onclick="handleAddToCart()" class="flex-1 bg-neutral-900 hover:bg-neutral-800 text-white h-12 rounded-full font-semibold text-sm transition-all shadow-card hover:shadow-hover flex items-center justify-center gap-2">
+          <i data-lucide="shopping-bag" class="w-4 h-4"></i> Add to Cart &mdash; <span id="btn-price">$129.99</span>
+        </button>
+      </div>
+      <a href="checkout.html" onclick="handleAddToCart(false)" class="w-full py-3 rounded-full border-2 border-neutral-900 text-neutral-900 font-semibold text-sm hover:bg-neutral-900 hover:text-white transition-all mb-6 text-center block">Buy Now</a>
+
+      <!-- trust badges -->
+      <div class="grid grid-cols-2 gap-2.5 mb-6">
+        <div class="flex items-center gap-2 p-3 bg-neutral-50 rounded-xl border border-neutral-100"><i data-lucide="truck" class="w-4 h-4 text-primary-600 flex-shrink-0"></i><span class="text-xs text-neutral-600">Free Delivery</span></div>
+        <div class="flex items-center gap-2 p-3 bg-neutral-50 rounded-xl border border-neutral-100"><i data-lucide="shield-check" class="w-4 h-4 text-primary-600 flex-shrink-0"></i><span class="text-xs text-neutral-600">2 Year Warranty</span></div>
+        <div class="flex items-center gap-2 p-3 bg-neutral-50 rounded-xl border border-neutral-100"><i data-lucide="refresh-cw" class="w-4 h-4 text-primary-600 flex-shrink-0"></i><span class="text-xs text-neutral-600">30-Day Returns</span></div>
+        <div class="flex items-center gap-2 p-3 bg-neutral-50 rounded-xl border border-neutral-100"><i data-lucide="lock" class="w-4 h-4 text-primary-600 flex-shrink-0"></i><span class="text-xs text-neutral-600">Secure Payment</span></div>
+      </div>
+
+      <!-- sold by -->
+      <div class="flex items-center gap-3 p-3.5 bg-neutral-50 rounded-xl border border-neutral-100">
+        <div class="w-9 h-9 bg-primary-100 rounded-full flex items-center justify-center"><i data-lucide="store" class="w-4 h-4 text-primary-600"></i></div>
+        <div class="flex-1"><p class="text-sm font-semibold text-neutral-900">TechHub Official</p><p class="text-xs text-neutral-500">98.4% positive feedback · 12,540 sales</p></div>
+        <button class="text-xs text-primary-600 font-semibold hover:underline">Visit Store</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="mt-14 md:mt-20">
+    <div class="border-b border-neutral-200 overflow-x-auto" style="-ms-overflow-style:none;scrollbar-width:none">
+      <div class="flex gap-6 min-w-max">
+        <button onclick="switchTab('description')" id="tab-description" class="tab-btn active">Description</button>
+        <button onclick="switchTab('specs')" id="tab-specs" class="tab-btn">Specifications</button>
+        <button onclick="switchTab('reviews')" id="tab-reviews" class="tab-btn">Reviews (124)</button>
+        <button onclick="switchTab('shipping')" id="tab-shipping" class="tab-btn">Shipping &amp; Returns</button>
+        <button onclick="switchTab('video')" id="tab-video" class="tab-btn">Product Video</button>
+      </div>
+    </div>
+
+    <div class="py-8">
+      <!-- Description -->
+      <div id="content-description">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+          <div class="md:col-span-2 space-y-4 text-neutral-600 text-sm md:text-base leading-relaxed">
+            <p id="prod-desc">Immerse yourself in high-fidelity audio with the AhiaGlobal Premium Wireless Headphones. Engineered for the audiophile who demands perfection, these headphones combine state-of-the-art noise cancellation with a sound profile that brings every detail of your music to life.</p>
+            <p>The lightweight, ergonomic design ensures comfort for hours of listening — whether on a long flight, commuting, or relaxing at home. Soft memory foam ear cushions adapt to your unique shape for optimal sound isolation.</p>
+            <h3 class="font-heading text-lg font-bold text-neutral-900 mt-4">Key Features</h3>
+            <ul class="space-y-2.5" id="prod-features">
+              <li class="flex items-start gap-3"><div class="w-5 h-5 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0 mt-0.5"><i data-lucide="check" class="w-3 h-3 text-primary-600"></i></div><span>Active Noise Cancellation (ANC) blocks out all external noise.</span></li>
+              <li class="flex items-start gap-3"><div class="w-5 h-5 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0 mt-0.5"><i data-lucide="check" class="w-3 h-3 text-primary-600"></i></div><span>Up to <strong>30 hours</strong> battery life on a single charge.</span></li>
+              <li class="flex items-start gap-3"><div class="w-5 h-5 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0 mt-0.5"><i data-lucide="check" class="w-3 h-3 text-primary-600"></i></div><span>Quick charge — 10 minutes gives you 5 hours of playback.</span></li>
+              <li class="flex items-start gap-3"><div class="w-5 h-5 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0 mt-0.5"><i data-lucide="check" class="w-3 h-3 text-primary-600"></i></div><span>Bluetooth 5.2 with multi-point pairing (connect 2 devices at once).</span></li>
+              <li class="flex items-start gap-3"><div class="w-5 h-5 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0 mt-0.5"><i data-lucide="check" class="w-3 h-3 text-primary-600"></i></div><span>40mm dynamic drivers for room-filling sound.</span></li>
+              <li class="flex items-start gap-3"><div class="w-5 h-5 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0 mt-0.5"><i data-lucide="check" class="w-3 h-3 text-primary-600"></i></div><span>Foldable design with premium hard-shell travel case included.</span></li>
+            </ul>
+          </div>
+          <div class="bg-neutral-50 p-5 rounded-xl2 border border-neutral-100 h-fit">
+            <h4 class="font-heading font-bold text-neutral-900 mb-4 text-sm">What's in the box?</h4>
+            <ul class="space-y-3.5 text-sm text-neutral-600">
+              <li class="flex items-center gap-3"><div class="w-9 h-9 bg-white rounded-full flex items-center justify-center border border-neutral-200 flex-shrink-0"><i data-lucide="headphones" class="w-4 h-4 text-neutral-400"></i></div>Premium Headphones (1×)</li>
+              <li class="flex items-center gap-3"><div class="w-9 h-9 bg-white rounded-full flex items-center justify-center border border-neutral-200 flex-shrink-0"><i data-lucide="zap" class="w-4 h-4 text-neutral-400"></i></div>USB-C Charging Cable (1×)</li>
+              <li class="flex items-center gap-3"><div class="w-9 h-9 bg-white rounded-full flex items-center justify-center border border-neutral-200 flex-shrink-0"><i data-lucide="mic" class="w-4 h-4 text-neutral-400"></i></div>3.5mm Audio Cable (1×)</li>
+              <li class="flex items-center gap-3"><div class="w-9 h-9 bg-white rounded-full flex items-center justify-center border border-neutral-200 flex-shrink-0"><i data-lucide="briefcase" class="w-4 h-4 text-neutral-400"></i></div>Hard Travel Case (1×)</li>
+              <li class="flex items-center gap-3"><div class="w-9 h-9 bg-white rounded-full flex items-center justify-center border border-neutral-200 flex-shrink-0"><i data-lucide="file-text" class="w-4 h-4 text-neutral-400"></i></div>User Manual &amp; Warranty Card</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Specs -->
+      <div id="content-specs" class="hidden">
+        <div class="max-w-2xl">
+          <table class="w-full text-left border-collapse text-sm">
+            <tbody id="prod-specs" class="divide-y divide-neutral-100">
+              <tr class="hover:bg-neutral-50"><td class="py-3.5 text-neutral-500 w-2/5">Weight</td><td class="py-3.5 text-neutral-900 font-medium">250g</td></tr>
+              <tr class="hover:bg-neutral-50"><td class="py-3.5 text-neutral-500">Battery Life (ANC On)</td><td class="py-3.5 text-neutral-900 font-medium">30 Hours</td></tr>
+              <tr class="hover:bg-neutral-50"><td class="py-3.5 text-neutral-500">Battery Life (ANC Off)</td><td class="py-3.5 text-neutral-900 font-medium">40 Hours</td></tr>
+              <tr class="hover:bg-neutral-50"><td class="py-3.5 text-neutral-500">Charging Time</td><td class="py-3.5 text-neutral-900 font-medium">2 Hours (Full); Quick: 10 min → 5 hrs</td></tr>
+              <tr class="hover:bg-neutral-50"><td class="py-3.5 text-neutral-500">Bluetooth Version</td><td class="py-3.5 text-neutral-900 font-medium">5.2</td></tr>
+              <tr class="hover:bg-neutral-50"><td class="py-3.5 text-neutral-500">Driver Size</td><td class="py-3.5 text-neutral-900 font-medium">40mm Dynamic Drivers</td></tr>
+              <tr class="hover:bg-neutral-50"><td class="py-3.5 text-neutral-500">Frequency Response</td><td class="py-3.5 text-neutral-900 font-medium">20Hz – 20kHz</td></tr>
+              <tr class="hover:bg-neutral-50"><td class="py-3.5 text-neutral-500">Impedance</td><td class="py-3.5 text-neutral-900 font-medium">32 Ω</td></tr>
+              <tr class="hover:bg-neutral-50"><td class="py-3.5 text-neutral-500">Microphone</td><td class="py-3.5 text-neutral-900 font-medium">Dual Beamforming Mics</td></tr>
+              <tr class="hover:bg-neutral-50"><td class="py-3.5 text-neutral-500">Noise Cancellation</td><td class="py-3.5 text-neutral-900 font-medium">Active (ANC) + Passive Isolation</td></tr>
+              <tr class="hover:bg-neutral-50"><td class="py-3.5 text-neutral-500">Connectivity</td><td class="py-3.5 text-neutral-900 font-medium">Bluetooth 5.2 + 3.5mm Aux</td></tr>
+              <tr class="hover:bg-neutral-50"><td class="py-3.5 text-neutral-500">Colors</td><td class="py-3.5 text-neutral-900 font-medium">Midnight Black, Sterling Silver, Ocean Blue, Sunset Red</td></tr>
+              <tr class="hover:bg-neutral-50"><td class="py-3.5 text-neutral-500">Warranty</td><td class="py-3.5 text-neutral-900 font-medium">2 Years (Global)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Reviews -->
+      <div id="content-reviews" class="hidden">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+          <div class="bg-neutral-50 p-5 rounded-xl2 border border-neutral-100 h-fit">
+            <div class="text-center mb-5">
+              <h3 class="font-heading text-4xl font-bold text-neutral-900">4.8</h3>
+              <div class="flex justify-center items-center gap-1 my-1.5">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#facc15" stroke="#facc15" stroke-width="1"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#facc15" stroke="#facc15" stroke-width="1"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#facc15" stroke="#facc15" stroke-width="1"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#facc15" stroke="#facc15" stroke-width="1"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#facc15" stroke="#facc15" stroke-width="1"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77V2z"/><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="none" stroke="#facc15"/></svg>
+              </div>
+              <p class="text-xs text-neutral-500">Based on 124 reviews</p>
+            </div>
+            <div class="space-y-2 mb-5">
+              <div class="flex items-center gap-2 text-xs"><span class="w-3 text-neutral-600 font-medium">5</span><div class="flex-1 h-2 bg-neutral-200 rounded-full overflow-hidden"><div class="h-full bg-yellow-400 rounded-full" style="width:85%"></div></div><span class="w-8 text-right text-neutral-500">85%</span></div>
+              <div class="flex items-center gap-2 text-xs"><span class="w-3 text-neutral-600 font-medium">4</span><div class="flex-1 h-2 bg-neutral-200 rounded-full overflow-hidden"><div class="h-full bg-yellow-400 rounded-full" style="width:10%"></div></div><span class="w-8 text-right text-neutral-500">10%</span></div>
+              <div class="flex items-center gap-2 text-xs"><span class="w-3 text-neutral-600 font-medium">3</span><div class="flex-1 h-2 bg-neutral-200 rounded-full overflow-hidden"><div class="h-full bg-yellow-400 rounded-full" style="width:3%"></div></div><span class="w-8 text-right text-neutral-500">3%</span></div>
+              <div class="flex items-center gap-2 text-xs"><span class="w-3 text-neutral-600 font-medium">2</span><div class="flex-1 h-2 bg-neutral-200 rounded-full overflow-hidden"><div class="h-full bg-yellow-400 rounded-full" style="width:1%"></div></div><span class="w-8 text-right text-neutral-500">1%</span></div>
+              <div class="flex items-center gap-2 text-xs"><span class="w-3 text-neutral-600 font-medium">1</span><div class="flex-1 h-2 bg-neutral-200 rounded-full overflow-hidden"><div class="h-full bg-yellow-400 rounded-full" style="width:1%"></div></div><span class="w-8 text-right text-neutral-500">1%</span></div>
+            </div>
+            <button onclick="openAuth('login')" class="w-full py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-full text-sm font-semibold transition-colors">Write a Review</button>
+          </div>
+          <div class="md:col-span-2 space-y-6" id="reviews-list">
+            <!-- reviews injected by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Shipping -->
+      <div id="content-shipping" class="hidden">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl">
+          <div>
+            <h3 class="font-heading font-bold text-neutral-900 mb-4 flex items-center gap-2"><i data-lucide="truck" class="w-5 h-5 text-primary-600"></i>Shipping Info</h3>
+            <div class="space-y-3 text-sm text-neutral-600">
+              <div class="flex justify-between py-2.5 border-b border-neutral-100"><span>Standard (Nigeria)</span><span class="font-medium text-neutral-900">3–5 business days</span></div>
+              <div class="flex justify-between py-2.5 border-b border-neutral-100"><span>Express (Nigeria)</span><span class="font-medium text-neutral-900">1–2 business days</span></div>
+              <div class="flex justify-between py-2.5 border-b border-neutral-100"><span>West Africa</span><span class="font-medium text-neutral-900">5–10 business days</span></div>
+              <div class="flex justify-between py-2.5"><span>International</span><span class="font-medium text-neutral-900">10–21 business days</span></div>
+            </div>
+            <div class="mt-4 p-3.5 bg-green-50 rounded-xl border border-green-100 flex items-center gap-2.5"><i data-lucide="check-circle" class="w-4 h-4 text-green-600 flex-shrink-0"></i><p class="text-xs text-green-700 font-medium">Free standard shipping on orders over ₦25,000</p></div>
+          </div>
+          <div>
+            <h3 class="font-heading font-bold text-neutral-900 mb-4 flex items-center gap-2"><i data-lucide="refresh-cw" class="w-5 h-5 text-primary-600"></i>Returns Policy</h3>
+            <div class="space-y-3 text-sm text-neutral-600">
+              <p class="flex items-start gap-2"><i data-lucide="check" class="w-4 h-4 text-primary-600 mt-0.5 flex-shrink-0"></i>30-day hassle-free return window</p>
+              <p class="flex items-start gap-2"><i data-lucide="check" class="w-4 h-4 text-primary-600 mt-0.5 flex-shrink-0"></i>Item must be in original condition &amp; packaging</p>
+              <p class="flex items-start gap-2"><i data-lucide="check" class="w-4 h-4 text-primary-600 mt-0.5 flex-shrink-0"></i>Refund processed within 3–5 business days</p>
+              <p class="flex items-start gap-2"><i data-lucide="check" class="w-4 h-4 text-primary-600 mt-0.5 flex-shrink-0"></i>Free returns for defective items</p>
+            </div>
+            <a href="faq.html" class="inline-flex items-center gap-1.5 mt-4 text-sm text-primary-600 font-semibold hover:underline"><i data-lucide="help-circle" class="w-4 h-4"></i>Full return policy in Help Center</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Video Tab -->
+      <div id="content-video" class="hidden">
+        <div class="max-w-3xl">
+          <h3 class="font-heading text-lg font-bold text-neutral-900 mb-4">Product Walkthrough</h3>
+          <div id="prod-video-container" class="relative rounded-xl2 overflow-hidden bg-neutral-900 cursor-pointer group" style="padding-bottom:56.25%" onclick="playProdVideo()">
+            <div class="absolute inset-0 flex items-center justify-center z-10">
+              <div class="w-16 h-16 bg-white/90 group-hover:bg-white rounded-full flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform duration-300">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="#ea580c"><polygon points="5,3 19,12 5,21"/></svg>
+              </div>
+            </div>
+            <div class="absolute inset-0 bg-neutral-800 flex items-center justify-center">
+              <p class="text-neutral-400 text-sm">Click to play product demo</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-3 gap-3 mt-4">
+            <div class="bg-neutral-50 rounded-xl p-3 text-center border border-neutral-100">
+              <p class="text-xs text-neutral-500 mb-1">Quality</p>
+              <p class="font-bold text-neutral-900 text-sm mt-1">Excellent</p>
+            </div>
+            <div class="bg-neutral-50 rounded-xl p-3 text-center border border-neutral-100">
+              <p class="text-xs text-neutral-500 mb-1">Value</p>
+              <p class="font-bold text-neutral-900 text-sm mt-1">Great</p>
+            </div>
+            <div class="bg-neutral-50 rounded-xl p-3 text-center border border-neutral-100">
+              <p class="text-xs text-neutral-500 mb-1">Durability</p>
+              <p class="font-bold text-neutral-900 text-sm mt-1">Very Good</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<!-- RELATED PRODUCTS -->
+<section class="py-10 md:py-14 bg-neutral-50 border-t border-neutral-200">
+  <div class="max-w-7xl mx-auto px-5">
+    <div class="flex items-center justify-between mb-5">
+      <h2 class="font-heading text-xl md:text-2xl font-bold text-neutral-900">You Might Also Like</h2>
+      <a href="product.html" class="text-sm text-primary-600 font-semibold flex items-center gap-1">View all <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+    </div>
+    <div class="scroll-wrap">
+      <button class="scroll-arrow left" onclick="scrollSection('related-scroll',-1)" aria-label="Scroll left">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="pscroll" id="related-scroll"></div>
+      <button class="scroll-arrow right" onclick="scrollSection('related-scroll',1)" aria-label="Scroll right">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="bg-white border-t border-neutral-100 py-8 pb-24 md:pb-8">
+  <div class="max-w-7xl mx-auto px-5">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2"><div class="w-7 h-7 bg-primary-600 rounded-md flex items-center justify-center text-white font-bold text-sm">A</div><span class="font-heading font-bold text-neutral-900">Ahia<span class="text-primary-600">Global</span></span></div>
+      <p class="text-xs text-neutral-400">© 2024 AhiaGlobal. All rights reserved.</p>
+      <div class="flex gap-4 text-xs text-neutral-500"><a href="faq.html" class="hover:text-primary-600">Help</a><button class="hover:text-primary-600">Privacy</button><button class="hover:text-primary-600">Terms</button></div>
+    </div>
+  </div>
+</footer>
+
+<!-- MOBILE BOTTOM NAV -->
+<div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-200 z-[150] flex">
+  <a href="index.html" class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-neutral-500"><i data-lucide="home" class="w-5 h-5"></i><span class="text-[10px] font-medium">Home</span></a>
+  <a href="product.html" class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-primary-600"><i data-lucide="layout-grid" class="w-5 h-5"></i><span class="text-[10px] font-medium">Shop</span></a>
+  <a href="checkout.html" class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-neutral-500 relative"><div class="relative"><i data-lucide="shopping-cart" class="w-5 h-5"></i><span class="cart-count-badge absolute -top-2 -right-2 w-4 h-4 bg-red-500 text-white text-[9px] font-bold flex items-center justify-center rounded-full">0</span></div><span class="text-[10px] font-medium">Cart</span></a>
+  <button class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-neutral-500"><i data-lucide="heart" class="w-5 h-5"></i><span class="text-[10px] font-medium">Wishlist</span></button>
+  <button onclick="openAuth('login')" class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-neutral-500"><i data-lucide="user" class="w-5 h-5"></i><span class="text-[10px] font-medium">Account</span></button>
+</div>
+
+<!-- MOBILE STICKY ADD TO CART BAR -->
+<div id="sticky-bar" class="md:hidden fixed bottom-16 left-0 right-0 z-[140] bg-white border-t border-neutral-200 p-3 flex gap-3 shadow-hover">
+  <button onclick="toggleWishlist(document.getElementById('main-wish-btn'),'Premium Wireless Headphones')" class="w-12 h-12 rounded-full border border-neutral-200 flex items-center justify-center text-neutral-500 hover:text-red-500 flex-shrink-0"><i data-lucide="heart" class="w-5 h-5"></i></button>
+  <button onclick="handleAddToCart()" class="flex-1 bg-primary-600 hover:bg-primary-700 text-white h-12 rounded-full font-semibold text-sm flex items-center justify-center gap-2"><i data-lucide="shopping-bag" class="w-4 h-4"></i>Add to Cart · <span class="font-bold" id="sticky-price">$129.99</span></button>
+</div>
+
+<script src="shared.js"></script>
+<script>
+/* ================================================================
+   MASTER PRODUCT CATALOGUE
+   Every product from index.html + shop.html lives here.
+   product.html reads ?id= from URL and renders the matching product.
+================================================================ */
+const CATALOGUE = {
+  // ── FASHION ──────────────────────────────────────────────────
+  fa1:{id:'fa1',name:'Ankara Print Blazer',price:72,orig:95,cat:'Fashion',brand:'AhiaStyle',rating:4.7,reviews:83,img:'https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=900&q=80',imgs:['https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=900&q=80'],colors:['Blue Ankara','Orange Ankara','Green Ankara'],desc:'Bold Ankara wax-print blazer with tailored silhouette. A statement piece honouring African heritage, fully lined with two functional pockets.',features:['100% authentic Ankara wax print','Fully lined interior','Two functional front pockets','Tailored slim-fit cut','Dry clean recommended'],specs:{Material:'Ankara wax cotton + lining',Sizes:'XS–XL',Fit:'Slim tailored',Care:'Dry clean',Origin:'Nigeria'}},
+  fa2:{id:'fa2',name:'Summer Floral Dress',price:45,orig:60,cat:'Fashion',brand:'AhiaStyle',rating:4.8,reviews:134,img:'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=900&q=80',imgs:['https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=900&q=80'],colors:['Floral Blue','Floral Pink','Floral White'],desc:'Lightweight summer floral maxi dress with wrap-around waist tie. Perfect for beach days and casual outings.',features:['Lightweight viscose fabric','Wrap-around waist tie','Adjustable spaghetti straps','Machine washable','True-to-size fit'],specs:{Material:'100% Viscose',Sizes:'XS–2XL',Fit:'Regular',Care:'Machine wash 30°C',Origin:'Ghana'}},
+  fa3:{id:'fa3',name:'Urban Cotton T-Shirt',price:28,orig:35,cat:'Fashion',brand:'UrbanAfrica',rating:4.5,reviews:67,img:'https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?w=900&q=80',imgs:['https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?w=900&q=80'],colors:['White','Black','Sand','Sage Green'],desc:'Premium 100% organic cotton t-shirt with relaxed fit and subtle embossed logo. GOTS certified.',features:['100% organic cotton','Relaxed unisex fit','Ribbed crew neckline','Pre-shrunk fabric','GOTS certified'],specs:{Material:'100% organic cotton 180gsm',Sizes:'XS–3XL',Fit:'Relaxed/unisex',Care:'Machine wash 40°C',Certification:'GOTS Organic'}},
+  fa4:{id:'fa4',name:'Boubou Traditional Set',price:95,orig:130,cat:'Fashion',brand:'Royal Kente',rating:4.9,reviews:45,img:'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=900&q=80',imgs:['https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=900&q=80'],colors:['Royal Blue','Emerald Green','Burgundy Red'],desc:'Grand Boubou two-piece set — top and trousers — in premium cotton-blend brocade with embroidered neckline. Master-tailored in Senegal.',features:['2-piece set: top + trousers','Cotton-blend brocade fabric','Intricate embroidered neckline','Loose flowing silhouette','Available in multiple sizes'],specs:{Material:'Cotton-blend brocade',Sizes:'S–4XL',Set:'2 pieces',Care:'Hand wash/dry clean',Origin:'Senegal — master tailors'}},
+  fa5:{id:'fa5',name:'Linen Wide-Leg Trousers',price:49,orig:65,cat:'Fashion',brand:'AhiaStyle',rating:4.6,reviews:52,img:'https://images.unsplash.com/photo-1591195853828-11db59a44f43?w=900&q=80',imgs:['https://images.unsplash.com/photo-1591195853828-11db59a44f43?w=900&q=80'],colors:['Ecru','Dusty Pink','Olive','Navy'],desc:'Premium Italian-blend linen wide-leg trousers with elasticated waistband and two deep side pockets.',features:['55% linen 45% cotton blend','Elasticated waistband','2 deep side pockets','Wide-leg relaxed silhouette','Machine washable'],specs:{Material:'55% linen, 45% cotton',Sizes:'XS–3XL',Fit:'Wide-leg relaxed',Care:'Machine wash 30°C',Origin:'Ethiopia — ethical factory'}},
+  fa6:{id:'fa6',name:'Adire Tie-Dye Top',price:34,orig:45,cat:'Fashion',brand:'AhiaStyle',rating:4.4,reviews:29,img:'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=900&q=80',imgs:['https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=900&q=80'],colors:['Indigo Blue','Forest Green','Earth Brown'],desc:'Authentic Adire tie-dye oversized top using traditional indigo resist-dyeing from Abeokuta. Each piece has a unique pattern.',features:['Authentic hand-dyed Adire technique','100% cotton fabric','Oversized boxy fit','Each piece has unique pattern','Supports Yoruba artisans'],specs:{Material:'100% cotton',Dye:'Natural indigo resist-dye',Sizes:'One-size (fits S–XL)',Care:'Hand wash cold',Origin:'Abeokuta, Nigeria'}},
+  fa7:{id:'fa7',name:'Kente Print Sneakers',price:89,orig:120,cat:'Fashion',brand:'AhiaSteps',rating:4.7,reviews:98,img:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=900&q=80',imgs:['https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=900&q=80'],colors:['Gold Kente','Blue Kente','Red Kente'],desc:'Hand-painted Kente cloth accent low-top sneakers. Limited edition artisan-made on vulcanised rubber sole.',features:['Hand-painted Kente fabric upper','Vulcanised rubber sole','Extra comfort insole','Limited edition design','Sizes UK 4–12'],specs:{Upper:'Canvas + Kente fabric',Sole:'Vulcanised rubber',Insole:'Foam comfort',Sizes:'UK 4–12 / EU 37–47',Edition:'Limited run'}},
+  fa8:{id:'fa8',name:'Leather Belt Bag',price:38,orig:55,cat:'Fashion',brand:'Craft Africa',rating:4.5,reviews:41,img:'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=900&q=80',imgs:['https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=900&q=80'],colors:['Tan','Black','Brown'],desc:'Genuine leather belt bag that converts from waist bag to crossbody. Perfect for travel with two compartments.',features:['Full-grain genuine leather','Convertible — waist or crossbody','YKK zip closure','2 compartments','Adjustable 100cm strap'],specs:{Material:'Full-grain cowhide leather',Dimensions:'22 × 14 × 5cm',Strap:'Adjustable 80–130cm',Closure:'YKK metal zip',Origin:'Ethiopia — fair-trade leather'}},
+  fa9:{id:'fa9',name:'Beaded Statement Necklace',price:22,orig:30,cat:'Fashion',brand:'Craft Africa',rating:4.6,reviews:35,img:'https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?w=900&q=80',imgs:['https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?w=900&q=80'],colors:['Multicolour','Blue/Gold','Red/Black'],desc:'Handmade beaded statement necklace using traditional Krobo glass beads from Ghana. Adjustable length.',features:['Handmade by Ghanaian artisans','Traditional Krobo glass beads','Adjustable 45–55cm chain','Lobster clasp','Fair-trade certified'],specs:{Beads:'Krobo glass',Length:'Adjustable 45–55cm',Clasp:'Gold-tone lobster',Origin:'Ghana — fair-trade',Packaging:'Gift box'}},
+  fa10:{id:'fa10',name:'Woven Raffia Hat',price:27,orig:38,cat:'Fashion',brand:'Craft Africa',rating:4.5,reviews:19,img:'https://images.unsplash.com/photo-1572307480813-ceb0e59d8325?w=900&q=80',imgs:['https://images.unsplash.com/photo-1572307480813-ceb0e59d8325?w=900&q=80'],colors:['Natural','Black','Tan'],desc:'Handwoven raffia sun hat with wide brim, adjustable inner band and grosgrain ribbon accent. UV50+ protection.',features:['100% natural raffia palm fibre','4cm wide brim for UV protection','Adjustable inner sizing band','Grosgrain ribbon accent','Packable — fold without damage'],specs:{Material:'100% natural raffia',Brim:'4cm',Head:'Adjustable 56–60cm',UV:'UV50+ protection',Origin:'Madagascar'}},
+  fa11:{id:'fa11',name:'African Print Mini Skirt',price:35,orig:48,cat:'Fashion',brand:'AhiaStyle',rating:4.4,reviews:28,img:'https://images.unsplash.com/photo-1583846717393-dc2412c95ed7?w=900&q=80',imgs:['https://images.unsplash.com/photo-1583846717393-dc2412c95ed7?w=900&q=80'],colors:['Red Print','Blue Print','Green Print'],desc:'Vibrant African wax-print A-line mini skirt with elasticated waistband. Bold and wearable for any occasion.',features:['African wax-print cotton','A-line silhouette','Elasticated waistband','Fully lined','Handmade in Nigeria'],specs:{Material:'Wax-print cotton + lining',Sizes:'XS–XL',Fit:'A-line',Care:'Hand wash',Origin:'Nigeria'}},
+  fa12:{id:'fa12',name:'Handwoven Basket Bag',price:55,orig:75,cat:'Fashion',brand:'Craft Africa',rating:4.7,reviews:38,img:'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=900&q=80',imgs:['https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=900&q=80'],colors:['Natural','Black','Brown'],desc:'Artisan handwoven seagrass basket bag with leather handles and cotton lining. Each piece is unique.',features:['Hand-woven by Kenyan artisans','Leather wrap handles','Cotton canvas lining','Zip inner pocket','Supports fair-trade artisans'],specs:{Material:'Seagrass + leather handles',Size:'38 × 30 × 18cm',Lining:'Cotton canvas',Closure:'Magnetic snap',Origin:'Kenya — fair-trade'}},
+
+  // ── ELECTRONICS ───────────────────────────────────────────────
+  el1:{id:'el1',name:'Premium Wireless Headphones',price:129.99,orig:185,cat:'Electronics',brand:'SoundMax',rating:4.8,reviews:124,img:'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=900&q=80',imgs:['https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=900&q=80','https://images.unsplash.com/photo-1583394838336-acd977736f90?w=900&q=80','https://images.unsplash.com/photo-1484704849700-f032a568e944?w=900&q=80','https://images.unsplash.com/photo-1524678606372-987d7e66c451?w=900&q=80'],colors:['Midnight Black','Silver','Rose Gold','Midnight Blue'],desc:'Immerse yourself in high-fidelity audio with industry-leading 40dB noise cancellation and 30-hour battery life.',features:['Industry-leading 40dB Active Noise Cancellation','30-hour battery life (50hrs without ANC)','Hi-Res Audio certified 20Hz–40kHz','Multi-point connection — pair 2 devices','Foldable premium build with carrying case'],specs:{Driver:'40mm Dynamic',Frequency:'20Hz–40kHz',Bluetooth:'5.2 multipoint',Battery:'30hrs ANC / 50hrs',Weight:'254g'}},
+  el2:{id:'el2',name:'Wireless Earbuds Pro',price:89.99,orig:120,cat:'Electronics',brand:'SoundMax',rating:4.6,reviews:87,img:'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=900&q=80',imgs:['https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=900&q=80'],colors:['White','Black','Navy'],desc:'True wireless earbuds with active noise cancellation, 8-hour playback and IPX5 water resistance.',features:['Active Noise Cancellation','8hrs playback + 24hrs case','IPX5 water resistant','Touch controls','USB-C fast charging'],specs:{Driver:'11mm dynamic',ANC:'Up to 25dB',Battery:'8hrs + 24hrs case',Water:'IPX5',Connectivity:'Bluetooth 5.3'}},
+  el3:{id:'el3',name:'Mechanical Keyboard RGB',price:79.99,orig:130,cat:'Electronics',brand:'KeyForce',rating:4.7,reviews:63,img:'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=900&q=80',imgs:['https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=900&q=80'],colors:['Black','White'],desc:'Tenkeyless mechanical keyboard with Cherry MX switches, per-key RGB backlighting and full anti-ghosting.',features:['Cherry MX Brown switches','Per-key RGB backlighting','87-key tenkeyless layout','USB-C detachable cable','N-key rollover anti-ghosting'],specs:{Layout:'87-key TKL',Switch:'Cherry MX Brown',Backlight:'Per-key RGB',Cable:'USB-C 1.8m',Weight:'820g'}},
+  el4:{id:'el4',name:'Portable BT Speaker',price:65,orig:90,cat:'Electronics',brand:'SoundMax',rating:4.5,reviews:55,img:'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=900&q=80',imgs:['https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=900&q=80'],colors:['Black','Blue','Red'],desc:'360° portable Bluetooth speaker with 20W output, IPX7 waterproofing and 20-hour battery.',features:['360° omnidirectional sound','20W total output','IPX7 fully waterproof','20-hour battery life','USB-C charging + speakerphone'],specs:{Output:'20W RMS',Frequency:'60Hz–20kHz',Battery:'20hrs',Water:'IPX7',Bluetooth:'5.0'}},
+  el5:{id:'el5',name:'Ergonomic Wireless Mouse',price:45,orig:60,cat:'Electronics',brand:'TechFlow',rating:4.4,reviews:39,img:'https://images.unsplash.com/photo-1527814050087-3793815479db?w=900&q=80',imgs:['https://images.unsplash.com/photo-1527814050087-3793815479db?w=900&q=80'],colors:['Black','Grey'],desc:'Ergonomic wireless mouse with adjustable DPI up to 4000, silent clicks and 90-day battery life.',features:['Adjustable DPI 400–4000','Silent click technology','90-day battery life','USB nano receiver + Bluetooth','Ergonomic thumb rest'],specs:{DPI:'400–4000 adjustable',Connectivity:'Bluetooth + USB Nano',Battery:'90 days',Buttons:'7 programmable',Weight:'103g'}},
+  el6:{id:'el6',name:'USB-C Hub 7-in-1',price:49.99,orig:70,cat:'Electronics',brand:'TechFlow',rating:4.6,reviews:71,img:'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=900&q=80',imgs:['https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=900&q=80'],colors:['Space Grey','Silver'],desc:'7-in-1 USB-C hub with 4K HDMI, 100W power delivery, SD card reader and 3 USB 3.0 ports.',features:['4K@60Hz HDMI output','100W USB-C Power Delivery','SD + microSD card reader','3× USB-A 3.0 ports','Aluminium heat-dissipation body'],specs:{HDMI:'4K 60Hz',PD:'100W pass-through',USB:'3× USB-A 3.0',Cards:'SD + microSD',Material:'Aluminium alloy'}},
+  el7:{id:'el7',name:'Webcam HD 1080p',price:59.99,orig:85,cat:'Electronics',brand:'TechFlow',rating:4.3,reviews:28,img:'https://images.unsplash.com/photo-1587826080692-f439cd0b70da?w=900&q=80',imgs:['https://images.unsplash.com/photo-1587826080692-f439cd0b70da?w=900&q=80'],colors:['Black'],desc:'1080p Full HD webcam with autofocus, built-in dual microphone and universal clip mount.',features:['1080p Full HD 30fps','Autofocus with face detection','Built-in dual noise-cancelling mic','Universal clip for monitors/laptops','USB plug-and-play'],specs:{Resolution:'1080p FHD 30fps',Focus:'Autofocus',Mic:'Dual stereo noise-cancelling',Mount:'Universal clip',Interface:'USB-A 2.0'}},
+  el8:{id:'el8',name:'Laptop Stand Aluminium',price:34.99,orig:50,cat:'Electronics',brand:'TechFlow',rating:4.7,reviews:110,img:'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=900&q=80',imgs:['https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=900&q=80'],colors:['Silver','Space Grey'],desc:'Adjustable aluminium laptop stand with 6 height settings, foldable design and anti-slip silicone pads.',features:['6 height levels (5cm–17cm)','Foldable for portability','Anti-slip silicone pads','Compatible with 10"–17" laptops','Improves airflow and posture'],specs:{Material:'Aluminium alloy',Heights:'6 levels 5–17cm',Compatibility:'10"–17" laptops',Weight:'560g',Foldable:'Yes'}},
+  el9:{id:'el9',name:'Smart Watch Fitness Pro',price:199,orig:330,cat:'Electronics',brand:'TimePro',rating:4.6,reviews:88,img:'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=900&q=80',imgs:['https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=900&q=80'],colors:['Silver','Black','Gold'],desc:'Elegant smartwatch with health tracking, 7-day battery, built-in GPS and 50m water resistance.',features:['1.4" AMOLED always-on display','Heart rate + SpO2 monitoring','7-day battery life','50m water resistance','GPS + sleep tracking'],specs:{Display:'1.4" AMOLED 454×454',Battery:'7 days',Sensors:'HR, SpO2, Accel, GPS',Water:'5ATM (50m)',Strap:'Interchangeable 22mm'}},
+  el10:{id:'el10',name:'Sony WH-1000XM5',price:279,orig:399,cat:'Electronics',brand:'Sony',rating:4.9,reviews:445,img:'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=900&q=80',imgs:['https://images.unsplash.com/photo-1583394838336-acd977736f90?w=900&q=80'],colors:['Black','Platinum Silver'],desc:"Sony's flagship noise-cancelling headphones. 30-hour battery, 8 microphones, multipoint Bluetooth connection.",features:['Industry-leading noise cancellation','30-hour battery with quick charge','8 microphones + Dual Noise Sensor','Multipoint connection (2 devices)','360 Reality Audio compatible'],specs:{Driver:'30mm dome',Frequency:'4Hz–40kHz',Battery:'30hrs / 3hr quick charge',Bluetooth:'5.2 multipoint',Weight:'250g'}},
+
+  // ── PHONES ────────────────────────────────────────────────────
+  ph1:{id:'ph1',name:'iPhone 15 Pro Max',price:1099,orig:1199,cat:'Phones',brand:'Apple',rating:4.9,reviews:320,img:'https://images.unsplash.com/photo-1696446702183-be88e4a4f4ab?w=900&q=80',imgs:['https://images.unsplash.com/photo-1696446702183-be88e4a4f4ab?w=900&q=80'],colors:['Natural Titanium','Blue Titanium','White Titanium','Black Titanium'],desc:'iPhone 15 Pro Max with A17 Pro chip, titanium design and 5× optical zoom. The most powerful iPhone camera ever made.',features:['A17 Pro chip with 6-core GPU','5× optical zoom (120mm telephoto)','Titanium design — lightest Pro Max','Action Button customisable','USB 3 speeds up to 20Gb/s'],specs:{Chip:'A17 Pro',Display:'6.7" Super Retina XDR ProMotion',Camera:'48MP + 12MP UW + 12MP 5× zoom',Battery:'Up to 29hrs video',Storage:'256GB / 512GB / 1TB'}},
+  ph2:{id:'ph2',name:'Samsung Galaxy S24',price:799,orig:899,cat:'Phones',brand:'Samsung',rating:4.8,reviews:210,img:'https://images.unsplash.com/photo-1591337676887-a217a6970a8a?w=900&q=80',imgs:['https://images.unsplash.com/photo-1591337676887-a217a6970a8a?w=900&q=80'],colors:['Onyx Black','Marble Grey','Cobalt Violet','Amber Yellow'],desc:'Galaxy S24 with Snapdragon 8 Gen 3, Galaxy AI features and a bright 6.2" Dynamic AMOLED 2X display.',features:['Snapdragon 8 Gen 3 for Galaxy','Galaxy AI: Chat Assist, Circle to Search','6.2" Dynamic AMOLED 2X 120Hz','50MP main camera','4,000mAh + 25W fast charging'],specs:{Chip:'Snapdragon 8 Gen 3',Display:'6.2" Dynamic AMOLED 120Hz',Camera:'50MP + 12MP + 10MP 3× zoom',Battery:'4,000mAh 25W',Storage:'128GB / 256GB'}},
+  ph3:{id:'ph3',name:'Tecno Camon 20',price:189,orig:229,cat:'Phones',brand:'Tecno',rating:4.4,reviews:95,img:'https://images.unsplash.com/photo-1556656793-08538906a9f8?w=900&q=80',imgs:['https://images.unsplash.com/photo-1556656793-08538906a9f8?w=900&q=80'],colors:['Predawn Black','Magic Skin White','Serenity Blue'],desc:'Tecno Camon 20 with 64MP RGBW camera, 33W fast charging and a stunning 6.67" AMOLED display.',features:['64MP RGBW camera with OIS','6.67" FHD+ AMOLED 120Hz','Helio G96 processor','5,000mAh + 33W fast charge','Side fingerprint sensor'],specs:{Chip:'Helio G96',Display:'6.67" FHD+ AMOLED 120Hz',Camera:'64MP RGBW + 2MP',Battery:'5,000mAh 33W',Storage:'128GB + microSD'}},
+  ph4:{id:'ph4',name:'Infinix Note 30 Pro',price:149,orig:179,cat:'Phones',brand:'Infinix',rating:4.3,reviews:78,img:'https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?w=900&q=80',imgs:['https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?w=900&q=80'],colors:['Interstellar Gold','Obsidian Black','Tuscany Brown'],desc:'Infinix Note 30 Pro with 108MP camera, 45W Thunder Charge and large 5,000mAh battery.',features:['108MP main camera','45W Thunder Charge (0–100% in 69min)','Helio G99 6nm processor','6.78" FHD+ AMOLED 120Hz','X-Axis Linear Motor'],specs:{Chip:'Helio G99',Display:'6.78" FHD+ AMOLED 120Hz',Camera:'108MP + 2MP + AI',Battery:'5,000mAh 45W',Storage:'256GB + microSD'}},
+  ph5:{id:'ph5',name:'Google Pixel 8 Pro',price:799,orig:999,cat:'Phones',brand:'Google',rating:4.7,reviews:145,img:'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=900&q=80',imgs:['https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=900&q=80'],colors:['Obsidian','Porcelain','Bay'],desc:'Pixel 8 Pro with Google Tensor G3, the most capable Pixel camera and 7 years of Android updates.',features:['Google Tensor G3 chip','50MP main camera with pro video','7 years OS & security updates guaranteed','Temperature sensor built-in','AI features: Magic Eraser, Best Take'],specs:{Chip:'Google Tensor G3',Display:'6.7" LTPO OLED 120Hz',Camera:'50MP + 48MP UW + 48MP 5× zoom',Battery:'5,050mAh 30W',Storage:'128GB / 256GB / 512GB / 1TB'}},
+  ph6:{id:'ph6',name:'OnePlus 12',price:549,orig:699,cat:'Phones',brand:'OnePlus',rating:4.6,reviews:88,img:'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=900&q=80',imgs:['https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=900&q=80'],colors:['Silky Black','Flowy Emerald'],desc:'OnePlus 12 with Snapdragon 8 Gen 3, 100W SUPERVOOC charging and Hasselblad camera system.',features:['Snapdragon 8 Gen 3','100W SUPERVOOC (26-min full charge)','50W wireless charging','Hasselblad camera system','6.82" QHD+ 120Hz ProXDR'],specs:{Chip:'Snapdragon 8 Gen 3',Display:'6.82" QHD+ 120Hz',Camera:'50MP Hasselblad + 48MP UW + 64MP 3× zoom',Battery:'5,400mAh 100W',Storage:'256GB / 512GB'}},
+  ph7:{id:'ph7',name:'Samsung Galaxy Tab S9',price:699,orig:799,cat:'Phones',brand:'Samsung',rating:4.8,reviews:134,img:'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=900&q=80',imgs:['https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=900&q=80'],colors:['Graphite','Beige'],desc:'Galaxy Tab S9 with Snapdragon 8 Gen 2, IP68 rating, Dynamic AMOLED 2X and S Pen included.',features:['Snapdragon 8 Gen 2 for Galaxy','11" Dynamic AMOLED 2X 120Hz','IP68 water & dust resistant','S Pen included in box','DeX mode for desktop experience'],specs:{Chip:'Snapdragon 8 Gen 2',Display:'11" Dynamic AMOLED 120Hz',Storage:'128GB / 256GB + microSD',Battery:'8,400mAh 45W',SPen:'Included'}},
+  ph8:{id:'ph8',name:'Xiaomi 14 Ultra',price:649,orig:749,cat:'Phones',brand:'Xiaomi',rating:4.7,reviews:112,img:'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=900&q=80',imgs:['https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=900&q=80'],colors:['Black','White'],desc:'Xiaomi 14 Ultra with Leica Summilux lenses, Snapdragon 8 Gen 3 and 90W HyperCharge.',features:['Leica Summilux quad-camera','Snapdragon 8 Gen 3','90W wired + 80W wireless charge','IP68 rating','6.73" LTPO AMOLED 120Hz'],specs:{Chip:'Snapdragon 8 Gen 3',Display:'6.73" LTPO AMOLED 120Hz',Camera:'50MP Leica × 4 cameras',Battery:'5,000mAh 90W',Storage:'256GB / 512GB / 1TB'}},
+  ph9:{id:'ph9',name:'Nokia G60 5G',price:289,orig:349,cat:'Phones',brand:'Nokia',rating:4.3,reviews:56,img:'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=900&q=80',imgs:['https://images.unsplash.com/photo-1580910051074-3eb694886505?w=900&q=80'],colors:['Ice Blue','Pure Black'],desc:'Nokia G60 5G with 50MP camera, 3 years guaranteed OS updates and eco-friendly recycled design.',features:['50MP main camera','3 years OS updates guaranteed','5G connectivity','4,500mAh battery','Snapdragon 695 5G chipset'],specs:{Chip:'Snapdragon 695 5G',Display:'6.58" IPS LCD 120Hz',Camera:'50MP + 5MP UW + 2MP depth',Battery:'4,500mAh 20W',Storage:'128GB + microSD'}},
+  ph10:{id:'ph10',name:'Oppo Reno 11 Pro',price:449,orig:549,cat:'Phones',brand:'Oppo',rating:4.5,reviews:77,img:'https://images.unsplash.com/photo-1567581935884-3349723552ca?w=900&q=80',imgs:['https://images.unsplash.com/photo-1567581935884-3349723552ca?w=900&q=80'],colors:['Misty Green','Rock Grey'],desc:'Oppo Reno 11 Pro with 50MP triple camera, 80W SUPERVOOC and gorgeous curved 6.7" AMOLED.',features:['50MP OmniVision camera with OIS','80W SUPERVOOC fast charge','Curved 3D glass design','Dimensity 8200 chipset','6.7" FHD+ AMOLED 120Hz'],specs:{Chip:'MediaTek Dimensity 8200',Display:'6.7" FHD+ AMOLED 120Hz',Camera:'50MP + 8MP UW + 32MP 2× zoom',Battery:'4,600mAh 80W',Storage:'256GB + microSD'}},
+
+  // ── HOME & LIVING ─────────────────────────────────────────────
+  ho1:{id:'ho1',name:'Ceramic Vase Set of 3',price:32,orig:45,cat:'Home',brand:'Craft Africa',rating:4.5,reviews:44,img:'https://images.unsplash.com/photo-1629198688000-71f23e745b6e?w=900&q=80',imgs:['https://images.unsplash.com/photo-1629198688000-71f23e745b6e?w=900&q=80'],colors:['Terracotta','White','Sage'],desc:'Set of 3 handthrown ceramic vases in graduated sizes. Perfect for dried flowers or standalone decor.',features:['Set of 3 graduated sizes','Handthrown by local ceramicists','Food-safe glaze','Drainage hole in smallest','Gift-box packaging'],specs:{Sizes:'12cm / 18cm / 24cm',Material:'Stoneware ceramic',Finish:'Matte glaze',Set:'3 pieces',Origin:'South Africa'}},
+  ho2:{id:'ho2',name:'Macramé Wall Hanging',price:42,orig:60,cat:'Home',brand:'Craft Africa',rating:4.6,reviews:37,img:'https://images.unsplash.com/photo-1513519245088-0e12902e35ca?w=900&q=80',imgs:['https://images.unsplash.com/photo-1513519245088-0e12902e35ca?w=900&q=80'],colors:['Natural White','Dusty Rose','Sage'],desc:'Handcrafted macramé wall hanging made from 100% cotton rope with a driftwood dowel.',features:['100% natural cotton rope','Driftwood dowel included','Ready to hang','Approx 60cm wide × 90cm long','Handmade in South Africa'],specs:{Size:'60cm × 90cm',Material:'100% cotton rope',Dowel:'Driftwood',Care:'Spot clean only',Origin:'South Africa'}},
+  ho3:{id:'ho3',name:'Teak Wood Serving Tray',price:38,orig:55,cat:'Home',brand:'Craft Africa',rating:4.4,reviews:29,img:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=900&q=80',imgs:['https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=900&q=80'],colors:['Natural Teak','Dark Walnut'],desc:'Solid teak wood serving tray with cut-out handles. Food-safe finish, great for breakfast in bed or entertaining.',features:['Solid teak hardwood','Food-safe natural oil finish','Cut-out handles for easy carrying','Suitable for hot and cold items','Wipe clean with damp cloth'],specs:{Size:'45 × 30 × 4cm',Material:'Solid teak wood',Finish:'Natural food-safe oil',Care:'Wipe clean',Origin:'Kenya'}},
+  ho4:{id:'ho4',name:'African Print Throw Pillow',price:22,orig:30,cat:'Home',brand:'AhiaStyle',rating:4.5,reviews:53,img:'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=900&q=80',imgs:['https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=900&q=80'],colors:['Orange Kente','Blue Adire','Red Ankara'],desc:'Vibrant African wax-print throw pillow with removable cover and plush insert. Adds bold colour to any space.',features:['African wax-print cotton cover','Plush polyester fill insert','Removable zippered cover','Machine washable cover','45 × 45cm size'],specs:{Size:'45 × 45cm',Cover:'African wax-print cotton',Fill:'Polyester',Closure:'Hidden zip',Care:'Machine wash cold'}},
+  ho5:{id:'ho5',name:'Handmade Beeswax Candles',price:18,orig:25,cat:'Home',brand:'Craft Africa',rating:4.8,reviews:82,img:'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=900&q=80',imgs:['https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=900&q=80'],colors:['Natural Honey','White','Black'],desc:'Set of 3 handmade pure beeswax pillar candles. Natural honey scent, clean burn, no paraffin.',features:['100% pure beeswax','Natural honey fragrance','Cotton wick — clean burn','Set of 3 pillar candles','8-hour burn time each'],specs:{Content:'3 pillar candles',Material:'100% pure beeswax',Scent:'Natural honey',BurnTime:'~8hrs each',Wick:'Cotton — paraffin-free'}},
+  ho6:{id:'ho6',name:'Woven Cotton Throw Blanket',price:48,orig:65,cat:'Home',brand:'AhiaStyle',rating:4.6,reviews:61,img:'https://images.unsplash.com/photo-1567016432779-094069958ea5?w=900&q=80',imgs:['https://images.unsplash.com/photo-1567016432779-094069958ea5?w=900&q=80'],colors:['Cream','Mustard','Rust'],desc:'Handwoven cotton throw blanket with fringe edges. Lightweight and breathable for year-round use.',features:['100% cotton — breathable','Handwoven texture','Fringe trim edges','Lightweight for sofa or travel','Machine washable'],specs:{Size:'130 × 170cm',Material:'100% cotton',Weight:'600g',Care:'Machine wash cold',Origin:'Morocco'}},
+  ho7:{id:'ho7',name:'Bamboo Kitchen Utensil Set',price:24,orig:34,cat:'Home',brand:'EcoHome',rating:4.5,reviews:47,img:'https://images.unsplash.com/photo-1584990347449-a2d4c28a9765?w=900&q=80',imgs:['https://images.unsplash.com/photo-1584990347449-a2d4c28a9765?w=900&q=80'],colors:['Natural Bamboo'],desc:'5-piece bamboo kitchen utensil set with spoon rest. Sustainable, heat-resistant and gentle on non-stick cookware.',features:['5-piece set + spoon rest','Organic bamboo — eco-friendly','Heat resistant up to 220°C','Gentle on all cookware types','Hand wash recommended'],specs:{Set:'5 pieces + spoon rest',Material:'Organic bamboo',Heat:'Up to 220°C',Care:'Hand wash, dry immediately',Origin:'Sustainably sourced'}},
+  ho8:{id:'ho8',name:'Linen Duvet Cover Set',price:65,orig:90,cat:'Home',brand:'AhiaStyle',rating:4.7,reviews:73,img:'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=900&q=80',imgs:['https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=900&q=80'],colors:['White','Sage','Stone'],desc:'Premium stonewashed linen duvet cover set. Naturally cooling, gets softer with every wash.',features:['100% European flax linen','Stonewashed for immediate softness','Button closure — no zip scratches','Set includes duvet cover + 2 pillowcases','Machine washable'],specs:{Set:'Duvet cover + 2 pillowcases',Material:'100% linen',Sizes:'Double / King / Super King',Care:'Machine wash 40°C',Origin:'Portugal — OEKO-TEX certified'}},
+  ho9:{id:'ho9',name:'Rattan Storage Basket',price:28,orig:40,cat:'Home',brand:'Craft Africa',rating:4.4,reviews:38,img:'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=900&q=80',imgs:['https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=900&q=80'],colors:['Natural Rattan','Black'],desc:'Handwoven rattan storage basket with cotton liner. Perfect for blankets, toys or laundry.',features:['Handwoven natural rattan','Removable cotton liner','Sturdy flat base','Two carry handles','Multiple size options'],specs:{Sizes:'S: 25×25cm / M: 35×35cm / L: 45×45cm',Material:'Natural rattan + cotton',Handles:'Two woven handles',Care:'Wipe exterior, wash liner',Origin:'Indonesia'}},
+  ho10:{id:'ho10',name:'Scented Reed Diffuser',price:19.99,orig:28,cat:'Home',brand:'AhiaStyle',rating:4.6,reviews:55,img:'https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=900&q=80',imgs:['https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=900&q=80'],colors:['Oud & Amber','Jasmine & Rose','Citrus & Cedar'],desc:'Luxury reed diffuser with 100ml fragrance oil and 8 premium rattan reeds. 8–12 weeks continuous fragrance.',features:['100ml premium fragrance oil','8 natural rattan reeds','8–12 weeks continuous scent','No flame — safe for all rooms','Recyclable glass bottle'],specs:{Volume:'100ml',Reeds:'8 natural rattan',Duration:'8–12 weeks',Fragrances:'Oud, Jasmine, Citrus',Bottle:'Recyclable glass'}},
+
+  // ── BEAUTY ────────────────────────────────────────────────────
+  be1:{id:'be1',name:'Shea Butter Body Cream',price:19.99,orig:28,cat:'Beauty',brand:'AfriGlow',rating:4.8,reviews:145,img:'https://images.unsplash.com/photo-1596462502278-27bfdd403348?w=900&q=80',imgs:['https://images.unsplash.com/photo-1596462502278-27bfdd403348?w=900&q=80'],colors:['Original','Lavender','Coconut'],desc:'Rich African shea butter body cream with natural plant extracts. Absorbs fast, locks in moisture for 24 hours.',features:['Raw unrefined shea butter base','24-hour moisture lock','Natural plant extracts','Suitable for all skin types','Dermatologist tested'],specs:{Weight:'250ml',Base:'Unrefined shea butter',Fragrance:'Light natural',Skin:'All skin types',Shelf:'24 months'}},
+  be2:{id:'be2',name:'Black Soap Cleansing Bar',price:12.99,orig:18,cat:'Beauty',brand:'AfriGlow',rating:4.7,reviews:98,img:'https://images.unsplash.com/photo-1584305574647-0cc949a2bb9f?w=900&q=80',imgs:['https://images.unsplash.com/photo-1584305574647-0cc949a2bb9f?w=900&q=80'],colors:['Original','Tea Tree','Turmeric'],desc:'Authentic African black soap made from plantain ash, cocoa pods and shea butter. Gently cleanses all skin types.',features:['Traditional African black soap','Plantain ash + cocoa pod ash','Unrefined shea butter enriched','Balances oily and dry skin','No synthetic fragrance or dyes'],specs:{Weight:'100g',Ingredients:'Plantain ash, cocoa pods, shea butter',Skin:'All types',Fragrance:'Unscented',Origin:'Ghana — traditional recipe'}},
+  be3:{id:'be3',name:'Natural Hair Growth Oil',price:24.99,orig:35,cat:'Beauty',brand:'AfriGlow',rating:4.6,reviews:113,img:'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=900&q=80',imgs:['https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=900&q=80'],colors:['Original Blend','Rosemary & Mint'],desc:'Natural hair growth oil with castor oil, rosemary and vitamin E. Strengthens strands and promotes scalp health.',features:['Jamaican black castor oil base','Rosemary + peppermint + vitamin E','Promotes hair growth and thickness','Reduces breakage and split ends','Suitable for all hair types'],specs:{Volume:'100ml',Base:'Jamaican black castor oil',Key:'Rosemary, peppermint, vitamin E',Hair:'All types',Use:'2–3× per week'}},
+  be4:{id:'be4',name:'Vitamin C Serum 30ml',price:29.99,orig:45,cat:'Beauty',brand:'AfriGlow',rating:4.7,reviews:87,img:'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=900&q=80',imgs:['https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=900&q=80'],colors:['Original'],desc:'15% Vitamin C brightening serum with hyaluronic acid and ferulic acid. Fades dark spots, boosts collagen.',features:['15% stabilised Vitamin C (L-ascorbic acid)','Hyaluronic acid — deep hydration','Ferulic acid — antioxidant boost','Fades dark spots in 4 weeks','Fragrance-free, paraben-free'],specs:{Volume:'30ml',VitC:'15% L-ascorbic acid',pH:'3.0–3.5',Skin:'All types',Apply:'AM after cleanser, before SPF'}},
+  be5:{id:'be5',name:'Argan Oil Face Moisturiser',price:22.99,orig:32,cat:'Beauty',brand:'AfriGlow',rating:4.5,reviews:64,img:'https://images.unsplash.com/photo-1601049676869-702ea24cfd58?w=900&q=80',imgs:['https://images.unsplash.com/photo-1601049676869-702ea24cfd58?w=900&q=80'],colors:['Original'],desc:'Lightweight daily moisturiser with Moroccan argan oil, niacinamide and aloe vera. For radiant, hydrated skin.',features:['Pure Moroccan argan oil','Niacinamide for even skin tone','Aloe vera — calming & soothing','Non-greasy, fast-absorbing','SPF 15 morning protection'],specs:{Volume:'50ml',Key:'Argan oil, niacinamide, aloe vera',SPF:'15 (day use)',Skin:'Normal to dry',Fragrance:'Light floral'}},
+  be6:{id:'be6',name:'Natural Lip Balm Set x6',price:11.99,orig:18,cat:'Beauty',brand:'AfriGlow',rating:4.6,reviews:112,img:'https://images.unsplash.com/photo-1586495777744-4e6232bf48e9?w=900&q=80',imgs:['https://images.unsplash.com/photo-1586495777744-4e6232bf48e9?w=900&q=80'],colors:['Assorted Flavours'],desc:'Set of 6 natural beeswax lip balms in assorted flavours. No parabens, no petroleum, just natural ingredients.',features:['6-piece assorted set','Natural beeswax + shea butter','Vitamin E + coconut oil','No parabens or petroleum','Flavours: vanilla, mango, berry, mint, honey, coconut'],specs:{Count:'6 balms × 4g',Base:'Beeswax + shea butter',Vitamin:'E enriched',Flavours:'6 assorted',Free:'Paraben & petroleum-free'}},
+  be7:{id:'be7',name:'Turmeric Brightening Mask',price:16.99,orig:24,cat:'Beauty',brand:'AfriGlow',rating:4.5,reviews:79,img:'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=900&q=80',imgs:['https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=900&q=80'],colors:['Original'],desc:'Turmeric and kaolin clay brightening face mask. Reduces dark spots, unclogs pores and brightens complexion.',features:['Turmeric — natural brightener','Kaolin clay — draws out impurities','Vitamin C + liquorice extract','For all skin tones — gentle formula','10–15 min application, 2× weekly'],specs:{Weight:'75ml',Key:'Turmeric, kaolin clay, vitamin C',Apply:'10–15 mins 2× weekly',Skin:'All skin tones',Free:'Sulphate & paraben-free'}},
+  be8:{id:'be8',name:'Coconut Oil Hair Treatment',price:14.99,orig:20,cat:'Beauty',brand:'AfriGlow',rating:4.7,reviews:134,img:'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=900&q=80',imgs:['https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=900&q=80'],colors:['Original','Argan Blend'],desc:'Deep conditioning coconut oil hair treatment with keratin and aloe. Restores shine and eliminates frizz.',features:['Virgin coconut oil base','Hydrolysed keratin — strengthens','Aloe vera — moisturises scalp','Heat protection up to 230°C','Leave-in or rinse-out use'],specs:{Volume:'200ml',Base:'Virgin coconut oil',Key:'Keratin, aloe vera',HeatProtect:'Up to 230°C',Use:'Leave-in or rinse-out'}},
+  be9:{id:'be9',name:'Rose Water Face Toner',price:13.99,orig:19,cat:'Beauty',brand:'AfriGlow',rating:4.4,reviews:58,img:'https://images.unsplash.com/photo-1570194065650-d99fb4b63def?w=900&q=80',imgs:['https://images.unsplash.com/photo-1570194065650-d99fb4b63def?w=900&q=80'],colors:['Rose Water','Green Tea'],desc:'Pure rose water facial toner that balances skin pH, tightens pores and preps skin for serum.',features:['Pure distilled rose water','Hyaluronic acid — boosts hydration','Witch hazel — tightens pores','Balances skin pH naturally','Alcohol-free gentle formula'],specs:{Volume:'150ml',Key:'Rose water, witch hazel, hyaluronic acid',pH:'5.5–6.0',Skin:'All types',Apply:'After cleansing, before serum'}},
+  be10:{id:'be10',name:'Charcoal Detox Face Scrub',price:17.99,orig:26,cat:'Beauty',brand:'AfriGlow',rating:4.5,reviews:67,img:'https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=900&q=80',imgs:['https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=900&q=80'],colors:['Activated Charcoal','Coffee & Coconut'],desc:'Activated charcoal exfoliating face scrub. Deep cleanses pores, removes dead skin cells and reduces blackheads.',features:['Activated charcoal — deep detox','Walnut shell micro-exfoliants','Tea tree oil — antibacterial','Reduces blackheads and pores','Use 2–3× weekly for best results'],specs:{Weight:'100ml',Key:'Activated charcoal, walnut shell, tea tree',Use:'2–3× per week',Skin:'Oily to combination',Free:'Sulphate-free'}},
+
+  // ── SPORTS ────────────────────────────────────────────────────
+  sp1:{id:'sp1',name:'Pro Resistance Band Set',price:22.99,orig:35,cat:'Sports',brand:'FitAfrica',rating:4.6,reviews:74,img:'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=900&q=80',imgs:['https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=900&q=80'],colors:['Mixed Colours'],desc:'Set of 5 resistance bands in graduated resistance levels (10–50 lbs) with carry bag and exercise guide.',features:['5 bands: 10, 20, 30, 40, 50 lbs','Natural latex — snap-resistant','Stackable up to 150 lbs combined','Includes carry bag + exercise guide','Suitable for all fitness levels'],specs:{Set:'5 bands',Resistance:'10–50 lbs each',Material:'100% natural latex',Total:'Up to 150 lbs stacked',Includes:'Carry bag + guide'}},
+  sp2:{id:'sp2',name:'Yoga Mat Premium 6mm',price:34.99,orig:50,cat:'Sports',brand:'FitAfrica',rating:4.8,reviews:132,img:'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=900&q=80',imgs:['https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=900&q=80'],colors:['Purple','Blue','Black','Pink'],desc:'Premium 6mm thick TPE yoga mat with alignment lines, non-slip texture and carrying strap.',features:['6mm thick — optimal cushioning','Non-toxic TPE material','Double-sided non-slip texture','Alignment guide lines printed','Includes carrying strap'],specs:{Thickness:'6mm',Material:'TPE (eco-friendly)',Size:'183 × 61cm',Weight:'1.1kg',Care:'Wipe with damp cloth'}},
+  sp3:{id:'sp3',name:'Running Shoes Ultralight',price:89.99,orig:130,cat:'Sports',brand:'FitAfrica',rating:4.7,reviews:89,img:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=900&q=80',imgs:['https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=900&q=80'],colors:['Black/White','Grey/Orange','Blue/White'],desc:'Ultralight running shoes with responsive foam midsole, breathable mesh upper and high-grip rubber outsole.',features:['Responsive foam midsole','Breathable engineered mesh','High-grip rubber outsole','Removable cushioned insole','Available US sizes 6–13'],specs:{Upper:'Engineered mesh',Midsole:'Responsive foam',Outsole:'High-grip rubber',Sizes:'US 6–13 / EU 39–47',Weight:'240g (single shoe)'}},
+  sp4:{id:'sp4',name:'Smart Water Bottle 1L',price:28.99,orig:40,cat:'Sports',brand:'FitAfrica',rating:4.5,reviews:56,img:'https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?w=900&q=80',imgs:['https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?w=900&q=80'],colors:['Black','White','Blue'],desc:'1-litre insulated smart water bottle with time markers, temperature display and leak-proof lid.',features:['1 litre capacity','Time markers for hydration tracking','Temperature display on lid','Double-wall vacuum insulated','Leak-proof flip lid'],specs:{Capacity:'1 litre',Insulation:'Double-wall vacuum',Display:'Temperature LED',Material:'18/8 stainless steel',Lid:'Leak-proof flip cap'}},
+  sp5:{id:'sp5',name:'Adjustable Dumbbell Set',price:79.99,orig:120,cat:'Sports',brand:'FitAfrica',rating:4.7,reviews:98,img:'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=900&q=80',imgs:['https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=900&q=80'],colors:['Black'],desc:'Adjustable dumbbell pair with quick-change weight selector. Replaces 8 pairs of dumbbells in one compact unit.',features:['Adjustable 2–24kg per dumbbell','Quick 15-second weight change','Replaces 8 pairs of dumbbells','Durable over-moulded handle','Includes storage tray'],specs:{Range:'2–24kg per dumbbell',Increments:'2kg steps',Mechanism:'Click-dial selector',Material:'Steel + ABS housing',Tray:'Included'}},
+  sp6:{id:'sp6',name:'Jump Rope Speed Cable',price:14.99,orig:22,cat:'Sports',brand:'FitAfrica',rating:4.4,reviews:63,img:'https://images.unsplash.com/photo-1518644730709-0835105d9daa?w=900&q=80',imgs:['https://images.unsplash.com/photo-1518644730709-0835105d9daa?w=900&q=80'],colors:['Black','Red','Blue'],desc:'Speed cable jump rope with ball-bearing handles for smooth rotation. Adjustable length for all heights.',features:['Steel speed cable','Ball-bearing smooth rotation','Ergonomic foam handles','Adjustable cable length','Includes storage pouch'],specs:{Cable:'2.5mm steel speed wire',Handles:'Ergonomic foam grip',Bearings:'Ball-bearing',Length:'Adjustable up to 3m',Pouch:'Included'}},
+  sp7:{id:'sp7',name:'Gym Gloves Padded',price:18.99,orig:28,cat:'Sports',brand:'FitAfrica',rating:4.5,reviews:47,img:'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=900&q=80',imgs:['https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=900&q=80'],colors:['Black','Black/Pink'],desc:'Full palm padded gym gloves with wrist support strap. Protect palms and improve grip during lifting.',features:['Full palm gel padding','3-inch wrist support strap','Breathable mesh back','Pull tab for easy removal','Available XS–XXL'],specs:{Padding:'Full palm gel',Wrist:'3-inch velcro strap',Back:'Breathable mesh',Closure:'Velcro wrist',Sizes:'XS–XXL'}},
+  sp8:{id:'sp8',name:'Foam Roller Deep Tissue',price:24.99,orig:38,cat:'Sports',brand:'FitAfrica',rating:4.6,reviews:81,img:'https://images.unsplash.com/photo-1510894347713-fc3dc6166086?w=900&q=80',imgs:['https://images.unsplash.com/photo-1510894347713-fc3dc6166086?w=900&q=80'],colors:['Black','Blue'],desc:'High-density foam roller for deep tissue massage and myofascial release. Grid texture targets muscle knots.',features:['High-density EVA foam','Grid texture for targeted massage','Hollow core — supports 300kg','33cm length — full back coverage','Includes exercise guide poster'],specs:{Size:'33 × 14cm diameter',Material:'High-density EVA',Core:'Hollow ABS — supports 300kg',Texture:'Grid pattern',Guide:'Exercise poster included'}},
+  sp9:{id:'sp9',name:'Protein Shaker Bottle',price:12.99,orig:18,cat:'Sports',brand:'FitAfrica',rating:4.3,reviews:52,img:'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=900&q=80',imgs:['https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=900&q=80'],colors:['Black','Blue','Pink'],desc:'600ml BPA-free protein shaker with stainless steel mixing ball, storage compartment and leak-proof lid.',features:['600ml BPA-free Tritan plastic','Stainless steel mixing ball','Lower storage compartment','Leak-proof flip lid','Dishwasher safe'],specs:{Capacity:'600ml',Material:'BPA-free Tritan',Mixer:'Stainless steel ball',Storage:'Lower powder compartment',Care:'Dishwasher safe'}},
+  sp10:{id:'sp10',name:'Compression Running Tights',price:39.99,orig:58,cat:'Sports',brand:'FitAfrica',rating:4.5,reviews:44,img:'https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=900&q=80',imgs:['https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=900&q=80'],colors:['Black','Navy','Grey'],desc:'4-way stretch compression running tights with phone pocket, reflective strips and moisture-wicking fabric.',features:['4-way stretch compression fabric','Side phone pocket (fits XL phones)','Reflective strips for night safety','Moisture-wicking — stays dry','Flat seams — anti-chafe'],specs:{Material:'80% nylon 20% spandex',Stretch:'4-way',Pocket:'Side phone pocket',Safety:'Reflective strips',Sizes:'XS–3XL'}},
+
+  // ── GIFTS ─────────────────────────────────────────────────────
+  gi1:{id:'gi1',name:'African Art Print Set A3',price:35,orig:50,cat:'Gifts',brand:'AhiaArt',rating:4.8,reviews:42,img:'https://images.unsplash.com/photo-1513519245088-0e12902e35ca?w=900&q=80',imgs:['https://images.unsplash.com/photo-1513519245088-0e12902e35ca?w=900&q=80'],colors:['Set A (Wildlife)','Set B (Portraits)','Set C (Abstract)'],desc:'Set of 3 premium A3 giclée prints celebrating African art and culture. Museum-quality archival paper.',features:['3 × A3 prints (297 × 420mm)','Giclée museum-quality print','200gsm archival matte paper','Unframed — ready to frame','Free poster tube packaging'],specs:{Size:'A3 × 3 prints',Print:'Giclée archival ink',Paper:'200gsm matte',Frame:'Unframed',Packaging:'Free poster tube'}},
+  gi2:{id:'gi2',name:'Personalised Photo Mug',price:16.99,orig:24,cat:'Gifts',brand:'AhiaGifts',rating:4.6,reviews:89,img:'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=900&q=80',imgs:['https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=900&q=80'],colors:['White','Black Handle','Colour Changing'],desc:'Personalised photo mug printed with your image and message. 330ml ceramic, dishwasher-safe.',features:['Upload your own photo & text','330ml ceramic mug','Dishwasher safe sublimation print','Heat-resistant handle','Gift-boxed and ready to give'],specs:{Capacity:'330ml',Material:'Ceramic',Print:'Sublimation — fade-proof',Care:'Dishwasher safe',Box:'Gift box included'}},
+  gi3:{id:'gi3',name:'Luxury Scented Candle Gift Set',price:42,orig:58,cat:'Gifts',brand:'AhiaGifts',rating:4.7,reviews:63,img:'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=900&q=80',imgs:['https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=900&q=80'],colors:['Oud & Amber','Florals','Fresh Citrus'],desc:'Set of 3 luxury soy wax candles in amber glass jars with wooden wicks. 40-hour burn time each.',features:['3 × 180ml soy wax candles','Crackling wooden wicks','Amber glass jars — reusable','40-hour burn time each','Luxury gift box with ribbon'],specs:{Count:'3 × 180ml',Wax:'100% soy wax',Wick:'Crackling wooden wick',BurnTime:'~40hrs each',Box:'Luxury gift box'}},
+  gi4:{id:'gi4',name:'Kente Cloth Gift Wrap Bundle',price:12.99,orig:18,cat:'Gifts',brand:'AhiaGifts',rating:4.5,reviews:37,img:'https://images.unsplash.com/photo-1607478900766-efe13248b125?w=900&q=80',imgs:['https://images.unsplash.com/photo-1607478900766-efe13248b125?w=900&q=80'],colors:['Gold Kente','Blue Kente','Mixed'],desc:'Bundle of 3 Kente-inspired gift wrapping sheets with matching ribbon and gift tags. Reusable fabric.',features:['3 fabric gift wrap sheets','Kente-inspired wax print','Matching grosgrain ribbon','3 blank gift tags included','Reusable — eco-friendly'],specs:{Count:'3 sheets + ribbon + tags',Material:'Wax-print cotton fabric',Size:'70 × 70cm each',Reusable:'Yes',Origin:'Made in Nigeria'}},
+  gi5:{id:'gi5',name:'Artisan Honey Gift Box',price:28,orig:40,cat:'Gifts',brand:'AhiaGifts',rating:4.9,reviews:55,img:'https://images.unsplash.com/photo-1471943038054-fd98a759579f?w=900&q=80',imgs:['https://images.unsplash.com/photo-1471943038054-fd98a759579f?w=900&q=80'],colors:['Forest Honey','Acacia Honey','Mixed Variety'],desc:'Gift box of 3 raw artisan honeys from African beekeepers. Unfiltered, unpasteurised, traceable origin.',features:['3 × 250g raw artisan honeys','Unfiltered + unpasteurised','Traceable to single apiary','Supports African beekeepers','Wooden gift box with spoon'],specs:{Count:'3 × 250g jars',Type:'Raw artisan honey',Process:'Unfiltered & unpasteurised',Box:'Wooden gift box + spoon',Origin:'Kenya & Ethiopia beekeepers'}},
+  gi6:{id:'gi6',name:'Wooden Photo Frame Set',price:24.99,orig:35,cat:'Gifts',brand:'AhiaGifts',rating:4.5,reviews:48,img:'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=900&q=80',imgs:['https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=900&q=80'],colors:['Natural Wood','Dark Walnut','White'],desc:'Set of 3 solid wood photo frames in three sizes. Freestanding and wall mountable. Makes a perfect gift.',features:['Set of 3 frames (4×6, 5×7, 8×10)','Solid wood construction','Freestanding + wall mountable','Glass front — not acrylic','Gift-boxed set'],specs:{Sizes:'4×6" + 5×7" + 8×10"',Material:'Solid wood',Front:'Real glass',Display:'Freestanding or wall mount',Box:'Gift box included'}},
+  gi7:{id:'gi7',name:'Essential Oils Starter Kit',price:32,orig:45,cat:'Gifts',brand:'AfriGlow',rating:4.6,reviews:71,img:'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=900&q=80',imgs:['https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=900&q=80'],colors:['6-Oil Kit','12-Oil Kit'],desc:'Starter kit of 6 pure essential oils — lavender, peppermint, eucalyptus, lemon, frankincense, tea tree.',features:['6 × 10ml pure essential oils','100% pure — no carrier oil','Dropper caps for easy use','Lavender, Peppermint, Eucalyptus, Lemon, Frankincense, Tea Tree','Includes usage guide booklet'],specs:{Count:'6 × 10ml',Purity:'100% pure essential oils',Oils:'Lavender, Peppermint, Eucalyptus, Lemon, Frankincense, Tea Tree',Guide:'Usage booklet included',Box:'Magnetic gift box'}},
+  gi8:{id:'gi8',name:'Afrocentric Journal Notebook',price:14.99,orig:22,cat:'Gifts',brand:'AhiaArt',rating:4.7,reviews:58,img:'https://images.unsplash.com/photo-1531346878377-a5be20888e57?w=900&q=80',imgs:['https://images.unsplash.com/photo-1531346878377-a5be20888e57?w=900&q=80'],colors:['Kente Cover','Adire Cover','Portrait Cover'],desc:'A5 hardcover journal with Afrocentric artwork cover, dotted pages and bookmark ribbon. 200 pages.',features:['A5 size (148 × 210mm)','Hardcover Afrocentric artwork','200 dotted pages — 90gsm','Elastic closure band','Bookmark ribbon'],specs:{Size:'A5 (148 × 210mm)',Pages:'200 dotted 90gsm',Cover:'Hard laminate',Closure:'Elastic band',Extras:'Bookmark ribbon + back pocket'}},
+  gi9:{id:'gi9',name:'Gourmet Spice Gift Set',price:22.99,orig:32,cat:'Gifts',brand:'AhiaGifts',rating:4.5,reviews:34,img:'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80',imgs:['https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80'],colors:['West African Blends','East African Blends'],desc:'Set of 5 gourmet African spice blends for cooking. Suya spice, jollof blend, berbere, ras el hanout and peri-peri.',features:['5 × 50g spice blend jars','Suya, Jollof, Berbere, Ras el Hanout, Peri-Peri','No artificial colours or preservatives','Recipe cards included','Wooden crate presentation'],specs:{Count:'5 × 50g jars',Blends:'Suya, Jollof, Berbere, Ras el Hanout, Peri-Peri',Free:'No artificial additives',Recipes:'Cards included',Packaging:'Wooden crate'}},
+  gi10:{id:'gi10',name:'Silk Scarf Hand-Painted',price:38,orig:55,cat:'Gifts',brand:'AhiaArt',rating:4.8,reviews:29,img:'https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?w=900&q=80',imgs:['https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?w=900&q=80'],colors:['Sunset','Ocean','Forest'],desc:'Hand-painted pure silk scarf with original African-inspired artwork. Each piece is a unique, wearable work of art.',features:['100% pure silk charmeuse','Hand-painted original artwork','Each piece uniquely individual','90 × 90cm square','Gift-boxed with certificate of authenticity'],specs:{Size:'90 × 90cm',Material:'100% pure silk charmeuse',Print:'Hand-painted original',Certificate:'Authenticity included',Box:'Luxury gift box'}},
+
+  // ── LAPTOPS ───────────────────────────────────────────────────
+  la1:{id:'la1',name:'Dell XPS 15 Laptop',price:1299,orig:1799,cat:'Laptops',brand:'Dell',rating:4.8,reviews:267,img:'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=900&q=80',imgs:['https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=900&q=80'],colors:['Platinum Silver','Arctic White'],desc:'Dell XPS 15 with Intel Core i7-13700H, NVIDIA RTX 4060 and a 15.6" 3.5K OLED touch display.',features:['Intel Core i7-13700H (14-core)','NVIDIA RTX 4060 8GB GPU','15.6" 3.5K OLED 120Hz touch','32GB DDR5 RAM','1TB NVMe SSD PCIe 4'],specs:{CPU:'Intel Core i7-13700H',GPU:'NVIDIA RTX 4060 8GB',RAM:'32GB DDR5',Storage:'1TB NVMe SSD',Display:'15.6" 3.5K OLED 120Hz'}},
+  la2:{id:'la2',name:'MacBook Air M2',price:1099,orig:1299,cat:'Laptops',brand:'Apple',rating:4.9,reviews:389,img:'https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=900&q=80',imgs:['https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=900&q=80'],colors:['Space Grey','Starlight','Midnight','Silver'],desc:'MacBook Air M2 — redesigned fanless design, 13.6" Liquid Retina display and all-day 18-hour battery.',features:['Apple M2 chip (8-core CPU)','13.6" Liquid Retina Display','18-hour battery life','Fanless silent design','MagSafe 3 charging'],specs:{Chip:'Apple M2',Display:'13.6" Liquid Retina',RAM:'8GB / 16GB unified memory',Storage:'256GB / 512GB / 1TB SSD',Battery:'Up to 18 hours'}},
+  la3:{id:'la3',name:'HP Pavilion 15 Ryzen 7',price:699,orig:899,cat:'Laptops',brand:'HP',rating:4.5,reviews:145,img:'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=900&q=80',imgs:['https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=900&q=80'],colors:['Natural Silver','Warm Gold'],desc:'HP Pavilion 15 with AMD Ryzen 7, 16GB RAM and 512GB SSD. Excellent value for everyday productivity.',features:['AMD Ryzen 7 5700U processor','16GB DDR4 RAM','512GB PCIe NVMe SSD','15.6" FHD IPS 250 nit display','USB-C + HDMI + USB-A connectivity'],specs:{CPU:'AMD Ryzen 7 5700U',RAM:'16GB DDR4',Storage:'512GB NVMe SSD',Display:'15.6" FHD IPS',Battery:'Up to 8 hours'}},
+  la4:{id:'la4',name:'Lenovo ThinkPad X1 Carbon',price:1199,orig:1599,cat:'Laptops',brand:'Lenovo',rating:4.7,reviews:201,img:'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=900&q=80',imgs:['https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=900&q=80'],colors:['Black'],desc:'ThinkPad X1 Carbon Gen 11 — ultra-light business laptop at 1.12kg with military-grade MIL-SPEC durability.',features:['Intel Core i7-1365U vPro','1.12kg — ultra-light carbon fibre','MIL-SPEC 810H durability','14" 2.8K OLED 120Hz display','Thunderbolt 4 × 2'],specs:{CPU:'Intel Core i7-1365U',Weight:'1.12kg',Display:'14" 2.8K OLED 120Hz',Ports:'Thunderbolt 4 × 2, USB-A, HDMI',MIL:'MIL-SPEC 810H certified'}},
+  la5:{id:'la5',name:'Acer Aspire 5 i5 11th Gen',price:499,orig:649,cat:'Laptops',brand:'Acer',rating:4.4,reviews:112,img:'https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?w=900&q=80',imgs:['https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?w=900&q=80'],colors:['Steel Grey','Pure Silver'],desc:'Acer Aspire 5 — the reliable everyday laptop with 11th Gen Intel Core i5, Wi-Fi 6 and backlit keyboard.',features:['Intel Core i5-1135G7','8GB DDR4 RAM (upgradeable to 32GB)','512GB NVMe SSD','15.6" FHD IPS display','Wi-Fi 6 + backlit keyboard'],specs:{CPU:'Intel Core i5-1135G7',RAM:'8GB DDR4',Storage:'512GB NVMe SSD',Display:'15.6" FHD IPS',WiFi:'Wi-Fi 6'}},
+  la6:{id:'la6',name:'ASUS ROG Strix G15',price:1399,orig:1799,cat:'Laptops',brand:'ASUS',rating:4.8,reviews:178,img:'https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=900&q=80',imgs:['https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=900&q=80'],colors:['Eclipse Grey','Volt Green'],desc:'ASUS ROG Strix G15 gaming laptop with Ryzen 9 6900HX, RX 6800M GPU and 300Hz gaming display.',features:['AMD Ryzen 9 6900HX (8-core)','AMD Radeon RX 6800M 12GB GPU','15.6" FHD IPS 300Hz display','32GB DDR5 RAM','1TB PCIe 4.0 NVMe SSD'],specs:{CPU:'AMD Ryzen 9 6900HX',GPU:'AMD RX 6800M 12GB',RAM:'32GB DDR5',Display:'15.6" FHD 300Hz',Storage:'1TB PCIe 4.0'}},
+  la7:{id:'la7',name:'Microsoft Surface Pro 9',price:999,orig:1299,cat:'Laptops',brand:'Microsoft',rating:4.6,reviews:134,img:'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=900&q=80',imgs:['https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=900&q=80'],colors:['Graphite','Platinum','Sapphire','Forest'],desc:'Surface Pro 9 — the versatile tablet-to-laptop with 12th Gen Intel Core i5, 13" PixelSense display and detachable keyboard.',features:['Intel Core i5-1235U','13" PixelSense Flow Display 120Hz','Surface Slim Pen 2 compatible','Detachable keyboard (optional)','Up to 15.5hrs battery'],specs:{CPU:'Intel Core i5-1235U',Display:'13" PixelSense 120Hz',RAM:'8GB / 16GB',Storage:'256GB / 512GB SSD',Battery:'Up to 15.5hrs'}},
+  la8:{id:'la8',name:'Samsung Chromebook 4',price:249,orig:329,cat:'Laptops',brand:'Samsung',rating:4.3,reviews:89,img:'https://images.unsplash.com/photo-1561154464-82e9adf32764?w=900&q=80',imgs:['https://images.unsplash.com/photo-1561154464-82e9adf32764?w=900&q=80'],colors:['Platinum Titan','Charcoal'],desc:'Samsung Chromebook 4 — fast, light and affordable. Perfect for students with Google apps and 10-hour battery.',features:['Intel Celeron N4000','11.6" HD LED display','32GB eMMC storage','10-hour battery life','Military-grade MIL-SPEC 810G'],specs:{CPU:'Intel Celeron N4000',RAM:'4GB LPDDR4',Storage:'32GB eMMC',Display:'11.6" HD 220 nit',Battery:'Up to 10 hours'}},
+};
+
+/* ================================================================
+   REVIEWS PER CATEGORY
+================================================================ */
+const REVIEW_SETS = {
+  Electronics:[
+    {name:'Chukwuemeka O.',init:'CO',color:'bg-orange-100 text-orange-700',stars:5,title:'Absolutely worth it!',body:'Outstanding quality for the price. Delivery was fast and packaging was perfect. Will definitely buy again from AhiaGlobal.',date:'3 days ago'},
+    {name:'Amina Hassan',init:'AH',color:'bg-purple-100 text-purple-700',stars:5,title:'Exceeded my expectations',body:'Bought this as a gift and the recipient was blown away. The quality is exactly as described. Shipping to Lagos was faster than expected.',date:'1 week ago'},
+    {name:'Sarah Miller',init:'SM',color:'bg-green-100 text-green-700',stars:4,title:'Great product, minor packaging dent',body:'The product itself is excellent and works perfectly. Packaging had a small dent on arrival but the item was unaffected. Overall very happy.',date:'2 weeks ago'},
+    {name:'David K.',init:'DK',color:'bg-blue-100 text-blue-700',stars:5,title:'Best purchase I\'ve made this year',body:'Researched this for months before buying. Everything the reviews said is true. Performance is flawless and battery life is impressive.',date:'3 weeks ago'},
+  ],
+  Fashion:[
+    {name:'Ngozi B.',init:'NB',color:'bg-pink-100 text-pink-700',stars:5,title:'Stunning quality!',body:'The fabric is even better in person. Sizing was accurate and it arrived beautifully folded. I\'ve had so many compliments wearing this.',date:'2 days ago'},
+    {name:'James O.',init:'JO',color:'bg-primary-100 text-primary-700',stars:4,title:'Great fit, colour slightly different',body:'Fits true to size and the quality is excellent. The colour in person is slightly darker than the photos but still beautiful.',date:'5 days ago'},
+    {name:'Fatima A.',init:'FA',color:'bg-amber-100 text-amber-700',stars:5,title:'Authentic and beautiful',body:'As an African fashion lover, I appreciate the authenticity of this piece. The craftsmanship is superb and you can feel the quality in every stitch.',date:'1 week ago'},
+    {name:'Blessing E.',init:'BE',color:'bg-teal-100 text-teal-700',stars:5,title:'Perfect for special occasions',body:'Wore this to a wedding and got compliments all day. The material is breathable and comfortable even after hours of wear.',date:'2 weeks ago'},
+  ],
+  default:[
+    {name:'John Doe',init:'JD',color:'bg-primary-100 text-primary-700',stars:5,title:'Great product, fast delivery',body:'Exactly as described. Packed securely and arrived on time. AhiaGlobal\'s customer service was also helpful when I had a question.',date:'1 week ago'},
+    {name:'Grace N.',init:'GN',color:'bg-green-100 text-green-700',stars:4,title:'Good value for money',body:'Quality is solid for the price. Would recommend to anyone looking for a reliable option without breaking the bank.',date:'2 weeks ago'},
+    {name:'Emeka T.',init:'ET',color:'bg-orange-100 text-orange-700',stars:5,title:'Will buy again',body:'Second time ordering this. Consistent quality and the price is fair. Delivery to Abuja took 3 days which is great.',date:'3 weeks ago'},
+    {name:'Chisom A.',init:'CA',color:'bg-blue-100 text-blue-700',stars:4,title:'Happy with my purchase',body:'Took a chance on this and was not disappointed. Packaging was neat and the item matched the photos perfectly.',date:'1 month ago'},
+  ]
+};
+
+/* ================================================================
+   DYNAMIC PAGE LOADER
+================================================================ */
+let CURRENT_PRODUCT = null;
+let BASE_PRICE = 129.99;
+let qty = 1;
+
+function getProductId() {
+  return new URLSearchParams(window.location.search).get('id') || 'f1';
+}
+
+function loadProduct() {
+  const id = getProductId();
+  const p = CATALOGUE[id];
+  if (!p) { window.location.href = 'shop.html'; return; }
+  CURRENT_PRODUCT = p;
+  BASE_PRICE = p.price;
+
+  // Page title
+  document.title = p.name + ' — AhiaGlobal';
+
+  // Breadcrumb
+  const bc = document.getElementById('breadcrumb-name');
+  if (bc) bc.textContent = p.name;
+  const bcat = document.getElementById('breadcrumb-cat');
+  if (bcat) bcat.textContent = p.cat;
+
+  // Main image
+  const mainImg = document.getElementById('main-img');
+  if (mainImg) mainImg.src = p.img;
+
+  // Thumbnails
+  const thumbWrap = document.getElementById('thumb-wrap');
+  if (thumbWrap) {
+    thumbWrap.innerHTML = (p.imgs || [p.img]).map((src, i) => `
+      <button onclick="changeImg(this,'${src}')" class="thumb-btn aspect-square rounded-xl border-2 ${i===0?'border-primary-600':'border-transparent hover:border-neutral-300'} overflow-hidden bg-neutral-50 p-1 transition-all">
+        <img src="${src.replace('w=900','w=200')}" class="w-full h-full object-cover rounded-lg" alt="">
+      </button>`).join('');
+  }
+
+  // Title, brand, price
+  const title = document.getElementById('prod-title');
+  if (title) title.textContent = p.name;
+  const brand = document.getElementById('prod-brand');
+  if (brand) brand.textContent = p.brand || '';
+  const priceEl = document.getElementById('prod-price');
+  if (priceEl) priceEl.textContent = '$' + p.price.toFixed(2);
+  const origEl = document.getElementById('prod-orig');
+  if (origEl) { if (p.orig) { origEl.textContent = '$' + p.orig.toFixed(2); origEl.classList.remove('hidden'); } else origEl.classList.add('hidden'); }
+  const discEl = document.getElementById('prod-disc');
+  if (discEl) { if (p.orig && p.price < p.orig) { discEl.textContent = 'Save $' + (p.orig - p.price).toFixed(2); discEl.classList.remove('hidden'); } else discEl.classList.add('hidden'); }
+  const btnPrice = document.getElementById('btn-price');
+  if (btnPrice) btnPrice.textContent = '$' + p.price.toFixed(2);
+  const stickyPrice = document.getElementById('sticky-price');
+  if (stickyPrice) stickyPrice.textContent = '$' + p.price.toFixed(2);
+
+  // Rating
+  const starsEl = document.getElementById('prod-stars');
+  if (starsEl) {
+    const s = p.rating || 4.5;
+    starsEl.innerHTML = Array.from({length:5},(_,i)=>`<svg width="15" height="15" viewBox="0 0 24 24" fill="${i<Math.floor(s)?'#facc15':'none'}" stroke="${i<Math.floor(s)?'#facc15':'#d1d5db'}" stroke-width="1.5"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>`).join('') + `<span class="text-sm font-semibold text-neutral-700 ml-1">${s}</span>`;
+  }
+  const revCount = document.getElementById('prod-review-count');
+  if (revCount) revCount.textContent = (p.reviews||0) + ' reviews';
+
+  // Description
+  const descEl = document.getElementById('prod-desc');
+  if (descEl) descEl.textContent = p.desc || '';
+
+  // Features
+  const featEl = document.getElementById('prod-features');
+  if (featEl) featEl.innerHTML = (p.features||[]).map(f=>`<li class="flex items-start gap-2.5"><svg class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span class="text-sm text-neutral-700">${f}</span></li>`).join('');
+
+  // Specs table
+  const specsEl = document.getElementById('prod-specs');
+  if (specsEl) specsEl.innerHTML = Object.entries(p.specs||{}).map(([k,v])=>`<tr class="border-b border-neutral-50"><td class="py-3 pr-6 text-sm font-medium text-neutral-500 w-40">${k}</td><td class="py-3 text-sm text-neutral-900">${v}</td></tr>`).join('');
+
+  // Colors
+  const colorWrap = document.getElementById('color-wrap');
+  const selColor = document.getElementById('sel-color');
+  if (colorWrap) {
+    colorWrap.innerHTML = (p.colors||['Default']).map((c,i)=>`
+      <label class="cursor-pointer">
+        <input type="radio" name="color" value="${c}" ${i===0?'checked':''} class="sr-only" onchange="document.getElementById('sel-color').textContent='${c}'">
+        <span class="block px-3 py-1.5 text-xs font-semibold border-2 rounded-lg transition-all ${i===0?'border-primary-600 bg-primary-50 text-primary-700':'border-neutral-200 text-neutral-600 hover:border-primary-300'}">${c}</span>
+      </label>`).join('');
+  }
+  if (selColor) selColor.textContent = (p.colors||['Default'])[0];
+
+  // Wishlist btn name
+  const wishBtn = document.getElementById('main-wish-btn');
+  if (wishBtn) wishBtn.setAttribute('onclick', `event.stopPropagation();toggleWishlist(this,'${p.name}')`);
+
+  // Tab review count
+  const tabRev = document.getElementById('tab-reviews');
+  if (tabRev) tabRev.textContent = `Reviews (${p.reviews||0})`;
+}
+
+/* ================================================================
+   QUANTITY + ADD TO CART
+================================================================ */
+function updateQty(d) {
+  qty = Math.max(1, Math.min(10, qty + d));
+  document.getElementById('qty-input').value = qty;
+  const total = '$' + (BASE_PRICE * qty).toFixed(2);
+  if (document.getElementById('btn-price')) document.getElementById('btn-price').textContent = total;
+  if (document.getElementById('sticky-price')) document.getElementById('sticky-price').textContent = total;
+}
+
+function handleAddToCart() {
+  const p = CURRENT_PRODUCT || {id:'f1', name:'Product', price:0, img:''};
+  addItem(p.id, p.name, BASE_PRICE * qty, p.img);
+}
+
+/* ================================================================
+   IMAGE GALLERY
+================================================================ */
+function changeImg(btn, src) {
+  const img = document.getElementById('main-img');
+  img.style.opacity = '0';
+  setTimeout(() => { img.src = src; img.style.opacity = '1'; }, 180);
+  document.querySelectorAll('.thumb-btn').forEach(b => { b.classList.remove('border-primary-600','bg-primary-50'); b.classList.add('border-transparent'); });
+  btn.classList.remove('border-transparent'); btn.classList.add('border-primary-600','bg-primary-50');
+  if (document.getElementById('zoom-img')) document.getElementById('zoom-img').src = src;
+}
+
+function openZoom() {
+  document.getElementById('zoom-img').src = document.getElementById('main-img').src;
+  document.getElementById('zoom-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeZoom() { document.getElementById('zoom-modal').classList.remove('open'); document.body.style.overflow = ''; }
+document.getElementById('zoom-modal').addEventListener('click', function(e) { if (e.target === this) closeZoom(); });
+
+/* ================================================================
+   TABS
+================================================================ */
+function switchTab(name) {
+  ['description','specs','reviews','shipping','video'].forEach(t => {
+    document.getElementById('content-'+t).classList.toggle('hidden', t !== name);
+    const btn = document.getElementById('tab-'+t);
+    if (btn) btn.classList.toggle('active', t === name);
+  });
+  lucide.createIcons();
+}
+
+/* ================================================================
+   STICKY BAR
+================================================================ */
+window.addEventListener('scroll', () => {
+  document.getElementById('sticky-bar')?.classList.toggle('visible', window.scrollY > 400);
+  document.getElementById('main-header')?.classList.toggle('scrolled', window.scrollY > 10);
+});
+
+/* ================================================================
+   REVIEWS
+================================================================ */
+function renderReviews() {
+  const container = document.getElementById('reviews-list');
+  if (!container) return;
+  const cat = CURRENT_PRODUCT?.cat || 'default';
+  const revSet = REVIEW_SETS[cat] || REVIEW_SETS.default;
+  const starsHtml = (n) => Array.from({length:5},(_,i)=>`<svg width="13" height="13" viewBox="0 0 24 24" fill="${i<n?'#facc15':'none'}" stroke="${i<n?'#facc15':'#d1d5db'}" stroke-width="1"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>`).join('');
+  container.innerHTML = revSet.map(r => `
+    <div class="border-b border-neutral-100 pb-6 last:border-0">
+      <div class="flex justify-between items-start mb-3 flex-wrap gap-2">
+        <div class="flex items-center gap-3"><div class="w-9 h-9 rounded-full ${r.color} flex items-center justify-center font-bold text-sm flex-shrink-0">${r.init}</div><div><h4 class="font-bold text-neutral-900 text-sm">${r.name}</h4><span class="text-xs text-neutral-400">Verified Purchase · ${r.date}</span></div></div>
+        <div class="flex gap-0.5">${starsHtml(r.stars)}</div>
+      </div>
+      <h5 class="font-bold text-neutral-900 text-sm mb-1.5">${r.title}</h5>
+      <p class="text-neutral-600 text-sm leading-relaxed">${r.body}</p>
+      <div class="flex items-center gap-4 mt-3"><button class="text-xs text-neutral-500 hover:text-primary-600 flex items-center gap-1"><i data-lucide="thumbs-up" class="w-3.5 h-3.5"></i>Helpful</button><button class="text-xs text-neutral-500 hover:text-neutral-700">Report</button></div>
+    </div>`).join('');
+}
+
+/* ================================================================
+   RELATED PRODUCTS (same category, exclude current)
+================================================================ */
+function renderRelated() {
+  const container = document.getElementById('related-scroll');
+  if (!container) return;
+  const currentId = getProductId();
+  const cat = CURRENT_PRODUCT?.cat;
+  let related = Object.values(CATALOGUE).filter(p => p.id !== currentId && (cat ? p.cat === cat : true)).slice(0, 10);
+  if (related.length < 4) related = Object.values(CATALOGUE).filter(p => p.id !== currentId).slice(0, 10);
+  container.innerHTML = related.map(p => `
+    <div class="rpcard">
+      <div class="bg-white rounded-xl2 border border-neutral-100 overflow-hidden" style="transition:box-shadow .22s,transform .22s" onmouseover="this.style.boxShadow='0 10px 28px -4px rgba(15,23,42,.16)';this.style.transform='translateY(-2px)'" onmouseout="this.style.boxShadow='';this.style.transform=''">
+        <a href="product.html?id=${p.id}" style="display:block" class="relative aspect-square overflow-hidden bg-neutral-50">
+          <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover" loading="lazy">
+        </a>
+        <div class="p-3">
+          <a href="product.html?id=${p.id}" class="block text-xs font-medium text-neutral-800 line-clamp-2 mb-1.5 hover:text-primary-600 transition-colors">${p.name}</a>
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-primary-600 text-sm">$${p.price.toFixed(2)}</span>
+            <button onclick="addItem('${p.id}','${p.name}',${p.price},'${p.img}')" class="text-xs font-semibold text-neutral-700 hover:text-primary-600 transition-colors">+ Cart</button>
+          </div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+/* ================================================================
+   NOTIFY ME / COLOR SWATCHES
+================================================================ */
+function notifyMe() {
+  showToast('success','Notify Me set!','We\'ll email you when this item is back in stock.');
+}
+
+/* ================================================================
+   SCROLL ARROWS
+================================================================ */
+function playProdVideo() {
+  var container = document.getElementById('prod-video-container');
+  if (!container) return;
+  container.innerHTML = '<iframe style="position:absolute;inset:0;width:100%;height:100%" src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0" frameborder="0" allow="autoplay;fullscreen" allowfullscreen></iframe>';
+}
+
+function scrollSection(id, dir) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var cardW = el.querySelector('.rpcard') ? el.querySelector('.rpcard').offsetWidth + 14 : 210;
+  el.scrollBy({ left: dir * cardW * 3, behavior: 'smooth' });
+}
+
+/* ================================================================
+   INIT
+================================================================ */
+document.addEventListener('DOMContentLoaded', () => {
+  loadProduct();
+  renderReviews();
+  renderRelated();
+  lucide.createIcons();
+});
+</script>
+</body>
+</html>

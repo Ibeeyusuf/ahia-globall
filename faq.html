@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Help Center &amp; FAQ — AhiaGlobal</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="shared.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-serif'],body:['Inter','sans-serif']},colors:{primary:{50:'#fff7ed',100:'#ffedd5',200:'#fed7aa',300:'#fdba74',400:'#fb923c',500:'#f97316',600:'#ea580c',700:'#c2410c',800:'#9a3412',900:'#7c2d12'},neutral:{50:'#f8fafc',100:'#f1f5f9',200:'#e2e8f0',300:'#cbd5e1',400:'#94a3b8',500:'#64748b',600:'#475569',700:'#334155',800:'#1e293b',900:'#0f172a'}},boxShadow:{card:'0 4px 14px -3px rgba(15,23,42,.09)',hover:'0 12px 30px -5px rgba(15,23,42,.16)',modal:'0 24px 60px -8px rgba(15,23,42,.28)'},borderRadius:{xl2:'0.875rem',xl3:'1.25rem'}}}}
+</script>
+<style>
+#auth-modal{opacity:0;pointer-events:none;transition:opacity .25s}
+#auth-modal.open{opacity:1;pointer-events:auto}
+#auth-box{transform:translateY(14px) scale(.96);transition:transform .28s cubic-bezier(.34,1.56,.64,1),opacity .25s;opacity:0}
+#auth-modal.open #auth-box{transform:translateY(0) scale(1);opacity:1}
+.field:focus-within label{color:#ea580c}
+.field:focus-within input,.field:focus-within textarea{border-color:#ea580c;box-shadow:0 0 0 3px rgba(234,88,12,.12);outline:none}
+.faq-answer{max-height:0;overflow:hidden;transition:max-height .38s cubic-bezier(.4,0,.2,1)}
+.faq-answer.open{max-height:800px}
+.faq-icon{transition:transform .3s ease}
+.faq-item.open .faq-icon{transform:rotate(45deg)}
+.faq-item.open{border-color:#ea580c;box-shadow:0 0 0 1px #ea580c}
+.cat-btn{transition:all .2s;cursor:pointer}
+.cat-btn.active{background:#ea580c;color:#fff;border-color:#ea580c}
+.scrolled{box-shadow:0 2px 20px -4px rgba(15,23,42,.12)}
+@keyframes toastIn{from{opacity:0;transform:translateX(110%)}to{opacity:1;transform:translateX(0)}}
+@keyframes toastOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(110%)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.anim-fu{animation:fadeUp .5s ease both}
+</style>
+</head>
+<body class="font-body bg-neutral-50 text-neutral-900">
+
+<div id="toast-stack" class="fixed top-20 right-3 z-[9999] flex flex-col gap-2 w-80 max-w-[calc(100vw-1.5rem)] pointer-events-none"></div>
+
+<!-- AUTH MODAL -->
+<div id="auth-modal" class="fixed inset-0 z-[500] flex items-center justify-center p-4" style="background:rgba(15,23,42,.6);backdrop-filter:blur(6px)">
+  <div id="auth-box" class="bg-white rounded-xl3 shadow-modal w-full max-w-[420px] relative overflow-hidden max-h-[90vh] overflow-y-auto">
+    <button onclick="closeAuth()" class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center"><i data-lucide="x" class="w-4 h-4 text-neutral-600"></i></button>
+    <div class="flex border-b border-neutral-100">
+      <button id="tab-login" onclick="switchAuth('login')" class="flex-1 py-4 text-sm font-semibold text-primary-600 border-b-2 border-primary-600">Sign In</button>
+      <button id="tab-signup" onclick="switchAuth('signup')" class="flex-1 py-4 text-sm font-semibold text-neutral-400 border-b-2 border-transparent hover:text-neutral-700">Create Account</button>
+    </div>
+    <div id="panel-login" class="p-6">
+      <div class="text-center mb-5"><div class="w-11 h-11 bg-primary-600 rounded-xl flex items-center justify-center text-white font-heading font-bold text-lg mx-auto mb-2">A</div><h2 class="font-heading text-xl font-bold">Welcome back</h2></div>
+      <div class="space-y-3">
+        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Email</label><input id="login-email" type="email" placeholder="you@example.com" class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"></div>
+        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Password</label><div class="relative"><input id="login-pw" type="password" placeholder="••••••••" class="w-full px-4 py-2.5 pr-10 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"><button type="button" onclick="togglePw('login-pw',this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"><i data-lucide="eye" class="w-4 h-4"></i></button></div></div>
+        <button onclick="handleLogin()" class="w-full bg-primary-600 hover:bg-primary-700 text-white py-3 rounded-full font-semibold text-sm flex items-center justify-center gap-2">Sign In <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+      </div>
+      <p class="text-center text-sm text-neutral-500 mt-4">No account? <button onclick="switchAuth('signup')" class="text-primary-600 font-semibold hover:underline">Create one</button></p>
+    </div>
+    <div id="panel-signup" class="p-6 hidden">
+      <div class="text-center mb-5"><div class="w-11 h-11 bg-primary-600 rounded-xl flex items-center justify-center text-white font-heading font-bold text-lg mx-auto mb-2">A</div><h2 class="font-heading text-xl font-bold">Create account</h2></div>
+      <div class="space-y-3">
+        <div class="grid grid-cols-2 gap-3">
+          <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">First name</label><input id="signup-firstname" type="text" placeholder="John" class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50"></div>
+          <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Last name</label><input id="signup-lastname" type="text" placeholder="Doe" class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50"></div>
+        </div>
+        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Email</label><input id="signup-email" type="email" placeholder="you@example.com" class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50"></div>
+        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Password</label><div class="relative"><input id="signup-pw" type="password" placeholder="Min. 8 characters" class="w-full px-4 py-2.5 pr-10 border border-neutral-200 rounded-lg text-sm bg-neutral-50"><button type="button" onclick="togglePw('signup-pw',this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"><i data-lucide="eye" class="w-4 h-4"></i></button></div></div>
+        <label class="flex items-start gap-2 cursor-pointer"><input id="signup-agree" type="checkbox" class="w-4 h-4 mt-0.5 accent-orange-600 rounded flex-shrink-0"><span class="text-xs text-neutral-500">I agree to <a href="#" class="text-primary-600 hover:underline">Terms</a> &amp; <a href="#" class="text-primary-600 hover:underline">Privacy</a></span></label>
+        <button onclick="handleSignup()" class="w-full bg-primary-600 hover:bg-primary-700 text-white py-3 rounded-full font-semibold text-sm flex items-center justify-center gap-2">Create Account <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+      </div>
+      <p class="text-center text-sm text-neutral-500 mt-4">Have account? <button onclick="switchAuth('login')" class="text-primary-600 font-semibold hover:underline">Sign in</button></p>
+    </div>
+  </div>
+</div>
+
+<!-- TOP BAR -->
+<div class="bg-neutral-900 text-neutral-50 py-1.5 px-4 text-xs hidden md:block">
+  <div class="max-w-7xl mx-auto flex justify-between items-center">
+    <div class="flex items-center gap-5"><a href="tel:+2348001234567" class="flex items-center gap-1.5 hover:text-primary-300"><i data-lucide="phone" class="w-3 h-3"></i>+234 800 AHIA GLOBAL</a><a href="/cdn-cgi/l/email-protection#eb989e9b9b84999fab8a83828a8c8784898a87c5888486" class="flex items-center gap-1.5 hover:text-primary-300"><i data-lucide="mail" class="w-3 h-3"></i><span class="__cf_email__" data-cfemail="a7d4d2d7d7c8d5d3e7c6cfcec6c0cbc8c5c6cb89c4c8ca">[email&#160;protected]</span></a></div>
+    <div class="flex items-center gap-4"><a href="index.html" class="hover:text-primary-300">Sell on Ahia</a><div class="h-3 w-px bg-neutral-700"></div><a href="confirmation.html" class="hover:text-primary-300">Track Order</a></div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header id="main-header" class="sticky top-0 z-[200] bg-white border-b border-neutral-200 transition-shadow">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
+    <a href="index.html" class="flex items-center gap-2 flex-shrink-0"><div class="w-9 h-9 bg-primary-600 rounded-lg flex items-center justify-center text-white font-heading font-bold text-lg">A</div><span class="font-heading font-bold text-lg md:text-2xl text-neutral-900 tracking-tight">Ahia<span class="text-primary-600">Global</span></span></a>
+    <div class="flex items-center gap-1.5 ml-auto">
+      <button onclick="openAuth('login')" id="header-auth-btn" class="hidden md:flex items-center gap-2 px-4 py-2 rounded-full border border-neutral-200 hover:border-primary-300 hover:bg-orange-50 text-sm font-medium text-neutral-700"><i data-lucide="user" class="w-4 h-4"></i><span id="header-auth-label">Sign In</span></button>
+      <a href="checkout.html" class="flex items-center gap-2 bg-neutral-900 text-white px-3 md:px-4 py-2 md:py-2.5 rounded-full hover:bg-neutral-800 transition-all">
+        <div class="relative"><i data-lucide="shopping-cart" class="w-4 h-4 md:w-5 md:h-5"></i><span id="header-cart-count" class="cart-count-badge absolute -top-2.5 -right-2.5 w-5 h-5 bg-primary-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-neutral-900">0</span></div>
+        <span class="hidden lg:block text-sm font-medium cart-total-label">$0.00</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 text-white py-14 md:py-20 relative overflow-hidden">
+  <div class="absolute inset-0 opacity-[0.04]" style="background-image:radial-gradient(circle at 20% 50%, #ea580c, transparent 60%),radial-gradient(circle at 80% 50%, #3b82f6, transparent 60%)"></div>
+  <div class="max-w-3xl mx-auto px-5 text-center relative z-10">
+    <div class="inline-flex items-center gap-2 bg-primary-600/20 border border-primary-500/30 text-primary-300 text-xs font-bold px-4 py-1.5 rounded-full mb-5 uppercase tracking-wider"><i data-lucide="help-circle" class="w-3.5 h-3.5"></i>Help Center</div>
+    <h1 class="font-heading text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight anim-fu">How Can We Help You?</h1>
+    <p class="text-neutral-300 text-base mb-8 anim-fu">Find answers to common questions, or reach out to our 24/7 support team.</p>
+    <div class="relative max-w-xl mx-auto anim-fu">
+      <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400 pointer-events-none"></i>
+      <input type="text" id="faq-search" oninput="searchFAQ(this.value)" placeholder="Search questions e.g. 'return policy', 'track order'…" class="w-full pl-12 pr-12 py-4 rounded-full bg-white text-neutral-900 placeholder-neutral-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 shadow-hover">
+      <button id="clear-search-btn" onclick="clearSearch()" class="hidden absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+    </div>
+  </div>
+</section>
+
+<!-- QUICK STATS -->
+<div class="bg-white border-b border-neutral-100">
+  <div class="max-w-5xl mx-auto px-5 py-5">
+    <div class="grid grid-cols-3 gap-4 text-center">
+      <div><p class="font-heading text-2xl font-bold text-primary-600">98%</p><p class="text-xs text-neutral-500 mt-0.5">Customer Satisfaction</p></div>
+      <div><p class="font-heading text-2xl font-bold text-primary-600">&lt;2h</p><p class="text-xs text-neutral-500 mt-0.5">Avg. Response Time</p></div>
+      <div><p class="font-heading text-2xl font-bold text-primary-600">24/7</p><p class="text-xs text-neutral-500 mt-0.5">Support Available</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="max-w-5xl mx-auto px-5 py-10 space-y-8">
+
+  <!-- CATEGORY FILTER TABS -->
+  <div class="flex gap-2.5 flex-wrap" id="cat-tabs">
+    <button onclick="filterCat('all',this)" class="cat-btn active px-4 py-2 text-sm font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700">All Topics</button>
+    <button onclick="filterCat('shipping',this)" class="cat-btn px-4 py-2 text-sm font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 flex items-center gap-1.5"><i data-lucide="truck" class="w-3.5 h-3.5"></i>Shipping</button>
+    <button onclick="filterCat('returns',this)" class="cat-btn px-4 py-2 text-sm font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 flex items-center gap-1.5"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>Returns</button>
+    <button onclick="filterCat('payments',this)" class="cat-btn px-4 py-2 text-sm font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 flex items-center gap-1.5"><i data-lucide="credit-card" class="w-3.5 h-3.5"></i>Payments</button>
+    <button onclick="filterCat('products',this)" class="cat-btn px-4 py-2 text-sm font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 flex items-center gap-1.5"><i data-lucide="package" class="w-3.5 h-3.5"></i>Products</button>
+    <button onclick="filterCat('account',this)" class="cat-btn px-4 py-2 text-sm font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 flex items-center gap-1.5"><i data-lucide="user" class="w-3.5 h-3.5"></i>Account</button>
+  </div>
+
+  <!-- NO RESULTS -->
+  <div id="no-results" class="hidden text-center py-16">
+    <div class="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="search-x" class="w-8 h-8 text-neutral-400"></i></div>
+    <h3 class="font-heading text-lg font-bold text-neutral-700 mb-2">No results found</h3>
+    <p class="text-neutral-500 text-sm">Try different keywords or <button onclick="clearSearch()" class="text-primary-600 hover:underline font-medium">clear search</button></p>
+  </div>
+
+  <!-- FAQ LIST -->
+  <div id="faq-list" class="space-y-3">
+
+    <!-- SHIPPING -->
+    <div class="faq-section" data-cat="shipping">
+      <div class="flex items-center gap-2 mb-3 mt-2"><div class="w-7 h-7 bg-blue-100 rounded-lg flex items-center justify-center"><i data-lucide="truck" class="w-4 h-4 text-blue-600"></i></div><h3 class="font-heading text-sm font-bold text-neutral-600 uppercase tracking-wider">Shipping &amp; Delivery</h3></div>
+    </div>
+    <div class="faq-item bg-white rounded-xl2 border border-neutral-200 overflow-hidden hover:border-neutral-300 transition-colors" data-cat="shipping" data-q="how long does shipping take delivery time">
+      <button onclick="toggleFAQ(this)" class="w-full flex items-center justify-between p-5 text-left gap-4"><span class="text-sm font-semibold text-neutral-900">How long does shipping take?</span><i data-lucide="plus" class="w-5 h-5 text-neutral-400 faq-icon flex-shrink-0"></i></button>
+      <div class="faq-answer"><div class="px-5 pb-5 border-t border-neutral-100 pt-4 text-sm text-neutral-600 leading-relaxed">
+        <p class="mb-3">Shipping times vary by location:</p>
+        <div class="bg-neutral-50 rounded-xl p-4 space-y-2">
+          <div class="flex justify-between text-xs"><span class="font-medium text-neutral-700">Standard Nigeria</span><span>3–5 business days</span></div>
+          <div class="flex justify-between text-xs"><span class="font-medium text-neutral-700">Express Nigeria</span><span>1–2 business days</span></div>
+          <div class="flex justify-between text-xs"><span class="font-medium text-neutral-700">West Africa</span><span>5–10 business days</span></div>
+          <div class="flex justify-between text-xs"><span class="font-medium text-neutral-700">International</span><span>10–21 business days</span></div>
+        </div>
+        <p class="mt-3">Orders placed before 2 PM WAT on business days are processed same day.</p>
+      </div></div>
+    </div>
+    <div class="faq-item bg-white rounded-xl2 border border-neutral-200 overflow-hidden hover:border-neutral-300 transition-colors" data-cat="shipping" data-q="free shipping how to qualify order">
+      <button onclick="toggleFAQ(this)" class="w-full flex items-center justify-between p-5 text-left gap-4"><span class="text-sm font-semibold text-neutral-900">Do you offer free shipping?</span><i data-lucide="plus" class="w-5 h-5 text-neutral-400 faq-icon flex-shrink-0"></i></button>
+      <div class="faq-answer"><div class="px-5 pb-5 border-t border-neutral-100 pt-4 text-sm text-neutral-600">Yes! Free standard shipping on orders over <strong class="text-primary-600">₦25,000</strong> within Nigeria. For international orders, free shipping applies on orders over <strong class="text-primary-600">$150 USD</strong>. The threshold is automatically applied at checkout.</div></div>
+    </div>
+    <div class="faq-item bg-white rounded-xl2 border border-neutral-200 overflow-hidden hover:border-neutral-300 transition-colors" data-cat="shipping" data-q="track order tracking number where is my order">
+      <button onclick="toggleFAQ(this)" class="w-full flex items-center justify-between p-5 text-left gap-4"><span class="text-sm font-semibold text-neutral-900">How do I track my order?</span><i data-lucide="plus" class="w-5 h-5 text-neutral-400 faq-icon flex-shrink-0"></i></button>
+      <div class="faq-answer"><div class="px-5 pb-5 border-t border-neutral-100 pt-4 text-sm text-neutral-600 leading-relaxed"><p class="mb-2">Once your order ships, you'll receive a tracking number via email and SMS. Track via:</p><ol class="list-decimal list-inside space-y-1.5"><li>The tracking link in your shipping confirmation email</li><li>Your AhiaGlobal account under "My Orders"</li><li>Our <a href="confirmation.html" class="text-primary-600 hover:underline">Order Tracking page</a></li></ol></div></div>
+    </div>
+    <div class="faq-item bg-white rounded-xl2 border border-neutral-200 overflow-hidden hover:border-neutral-300 transition-colors" data-cat="shipping" data-q="international shipping worldwide countries">
+      <button onclick="toggleFAQ(this)" class="w-full flex items-center justify-between p-5 text-left gap-4"><span class="text-sm font-semibold text-neutral-900">Do you ship internationally?</span><i data-lucide="plus" class="w-5 h-5 text-neutral-400 faq-icon flex-shrink-0"></i></button>
+      <div class="faq-answer"><div class="px-5 pb-5 border-t border-neutral-100 pt-4 text-sm text-neutral-600">Yes, AhiaGlobal ships to over 50 countries worldwide with strong coverage across Africa, Europe, North America, and Asia. Shipping rates are calculated at checkout. Please note that customs duties and import taxes are the buyer's responsibility.</div></div>
+    </div>
+
+    <!-- RETURNS -->
+    <div class="faq-section" data-cat="returns">
+      <div class="flex items-center gap-2 mb-3 mt-6"><div class="w-7 h-7 bg-amber-100 rounded-lg flex items-center justify-center"><i data-lucide="rotate-ccw" class="w-4 h-4 text-amber-600"></i></div><h3 class="font-heading text-sm font-bold text-neutral-600 uppercase tracking-wider">Returns &amp; Refunds</h3></div>
+    </div>
+    <div class="faq-item bg-white rounded-xl2 border border-neutral-200 overflow-hidden hover:border-neutral-300 transition-colors" data-cat="returns" data-q="return policy how to return item refund">
+      <button onclick="toggleFAQ(this)" class="w-full flex items-center justify-between p-5 text-left gap-4"><span class="text-sm font-semibold text-neutral-900">What is your return policy?</span><i data-lucide="plus" class="w-5 h-5 text-neutral-400 faq-icon flex-shrink-0"></i></button>
+      <div class="faq-answer"><div class="px-5 pb-5 border-t border-neutral-100 pt-4 text-sm text-neutral-600 leading-relaxed"><p class="mb-2">We offer a <strong class="text-neutral-900">30-day hassle-free return policy</strong>. Items must be:</p><ul class="list-disc list-inside space-y-1 mb-3"><li>In original, unused condition</li><li>In original packaging with all tags attached</li><li>Accompanied by the original receipt</li></ul><p>Perishables, intimate apparel, and digital downloads are non-returnable. Sale items are final sale unless defective.</p></div></div>
+    </div>
+    <div class="faq-item bg-white rounded-xl2 border border-neutral-200 overflow-hidden hover:border-neutral-300 transition-colors" data-cat="returns" data-q="refund time how long money back">
+      <button onclick="toggleFAQ(this)" class="w-full flex items-center justify-between p-5 text-left gap-4"><span class="text-sm font-semibold text-neutral-900">How long do refunds take?</span><i data-lucide="plus" class="w-5 h-5 text-neutral-400 faq-icon flex-shrink-0"></i></button>
+      <div class="faq-answer"><div class="px-5 pb-5 border-t border-neutral-100 pt-4 text-sm text-neutral-600"><p class="mb-3">Once we receive and inspect your return, refunds are processed within 3–5 business days:</p><div class="bg-neutral-50 rounded-xl p-4 space-y-2"><div class="flex justify-between text-xs"><span class="font-medium">Credit/Debit Card</span><span>5–10 business days</span></div><div class="flex justify-between text-xs"><span class="font-medium">Mobile Money</span><span>1–3 business days</span></div><div class="flex justify-between text-xs"><span class="font-medium">PayPal</span><span>3–5 business days</span></div><div class="flex justify-between text-xs"><span class="font-medium">Store Credit</span><span>Instant</span></div></div></div></div>
+    </div>
+    <div class="faq-item bg-white rounded-xl2 border border-neutral-200 overflow-hidden hover:border-neutral-300 transition-colors" data-cat="returns" data-q="how to start a return initiate return request">
+      <button onclick="toggleFAQ(this)" class="w-full flex items-center justify-between p-5 text-left gap-4"><span class="text-sm font-semibold text-neutral-900">How do I initiate a return?</span><i data-lucide="plus" class="w-5 h-5 text-neutral-400 faq-icon flex-shrink-0"></i></button>
+      <div class="faq-answer"><div class="px-5 pb-5 border-t border-neutral-100 pt-4 text-sm text-neutral-600"><ol class="list-decimal list-inside space-y-2"><li>Log into your account and go to "My Orders"</li><li>Select the order and click "Request Return"</li><li>Choose the item(s) and reason for return</li><li>Print the prepaid return label (for eligible orders)</li><li>Drop off at any partner courier location</li></ol><p class="mt-3 text-neutral-500">You can also initiate via chat or email support.</p></div></div>
+    </div>
+
+    <!-- PAYMENTS -->
+    <div class="faq-section" data-cat="payments">
+      <div class="flex items-center gap-2 mb-3 mt-6"><div class="w-7 h-7 bg-green-100 rounded-lg flex items-center justify-center"><i data-lucide="credit-card" class="w-4 h-4 text-green-600"></i></div><h3 class="font-heading text-sm font-bold text-neutral-600 uppercase tracking-wider">Payments &amp; Billing</h3></div>
+    </div>
+    <div class="faq-item bg-white rounded-xl2 border border-neutral-200 overflow-hidden hover:border-neutral-300 transition-colors" data-cat="payments" data-q="payment methods accepted credit card paypal mobile money">
+      <button onclick="toggleFAQ(this)" class="w-full flex items-center justify-between p-5 text-left gap-4"><span class="text-sm font-semibold text-neutral-900">What payment methods do you accept?</span><i data-lucide="plus" class="w-5 h-5 text-neutral-400 faq-icon flex-shrink-0"></i></button>
+      <div class="faq-answer"><div class="px-5 pb-5 border-t border-neutral-100 pt-4 text-sm text-neutral-600"><div class="grid grid-cols-2 gap-2"><div class="flex items-center gap-2 bg-neutral-50 rounded-lg p-2.5"><i data-lucide="credit-card" class="w-4 h-4 text-neutral-500"></i><span class="text-xs font-medium">Visa / Mastercard</span></div><div class="flex items-center gap-2 bg-neutral-50 rounded-lg p-2.5"><i data-lucide="smartphone" class="w-4 h-4 text-neutral-500"></i><span class="text-xs font-medium">Mobile Money</span></div><div class="flex items-center gap-2 bg-neutral-50 rounded-lg p-2.5"><i data-lucide="wallet" class="w-4 h-4 text-neutral-500"></i><span class="text-xs font-medium">PayPal</span></div><div class="flex items-center gap-2 bg-neutral-50 rounded-lg p-2.5"><i data-lucide="landmark" class="w-4 h-4 text-neutral-500"></i><span class="text-xs font-medium">Bank Transfer</span></div></div></div></div>
+    </div>
+    <div class="faq-item bg-white rounded-xl2 border border-neutral-200 overflow-hidden hover:border-neutral-300 transition-colors" data-cat="payments" data-q="is payment secure safe ssl encryption">
+      <button onclick="toggleFAQ(this)" class="w-full flex items-center justify-between p-5 text-left gap-4"><span class="text-sm font-semibold text-neutral-900">Is my payment information secure?</span><i data-lucide="plus" class="w-5 h-5 text-neutral-400 faq-icon flex-shrink-0"></i></button>
+      <div class="faq-answer"><div class="px-5 pb-5 border-t border-neutral-100 pt-4 text-sm text-neutral-600">Absolutely. AhiaGlobal uses <strong class="text-neutral-900">256-bit SSL encryption</strong> for all transactions and is PCI DSS Level 1 compliant — the highest payment security standard. We never store your full card details on our servers.</div></div>
+    </div>
+    <div class="faq-item bg-white rounded-xl2 border border-neutral-200 overflow-hidden hover:border-neutral-300 transition-colors" data-cat="payments" data-q="local currency naira dollar payment currency">
+      <button onclick="toggleFAQ(this)" class="w-full flex items-center justify-between p-5 text-left gap-4"><span class="text-sm font-semibold text-neutral-900">Can I pay in my local currency?</span><i data-lucide="plus" class="w-5 h-5 text-neutral-400 faq-icon flex-shrink-0"></i></button>
+      <div class="faq-answer"><div class="px-5 pb-5 border-t border-neutral-100 pt-4 text-sm text-neutral-600">Yes! We support NGN, GHS, KES, ZAR, USD, GBP, and EUR. Your currency is detected automatically based on your location but can be changed in the header currency selector.</div></div>
+    </div>
+
+    <!-- PRODUCTS -->
+    <div class="faq-section" data-cat="products">
+      <div class="flex items-center gap-2 mb-3 mt-6"><div class="w-7 h-7 bg-purple-100 rounded-lg flex items-center justify-center"><i data-lucide="package" class="w-4 h-4 text-purple-600"></i></div><h3 class="font-heading text-sm font-bold text-neutral-600 uppercase tracking-wider">Products &amp; Inventory</h3></div>
+    </div>
+    <div class="faq-item bg-white rounded-xl2 border border-neutral-200 overflow-hidden hover:border-neutral-300 transition-colors" data-cat="products" data-q="genuine authentic original products fake counterfeit">
+      <button onclick="toggleFAQ(this)" class="w-full flex items-center justify-between p-5 text-left gap-4"><span class="text-sm font-semibold text-neutral-900">Are all products genuine and authentic?</span><i data-lucide="plus" class="w-5 h-5 text-neutral-400 faq-icon flex-shrink-0"></i></button>
+      <div class="faq-answer"><div class="px-5 pb-5 border-t border-neutral-100 pt-4 text-sm text-neutral-600">Yes, 100%. AhiaGlobal only sources from verified manufacturers, authorized distributors, and trusted suppliers. Every seller on our platform goes through a rigorous verification process. If you ever receive a counterfeit item, we offer a full refund and investigate the seller.</div></div>
+    </div>
+    <div class="faq-item bg-white rounded-xl2 border border-neutral-200 overflow-hidden hover:border-neutral-300 transition-colors" data-cat="products" data-q="out of stock notify me when available">
+      <button onclick="toggleFAQ(this)" class="w-full flex items-center justify-between p-5 text-left gap-4"><span class="text-sm font-semibold text-neutral-900">What if an item is out of stock?</span><i data-lucide="plus" class="w-5 h-5 text-neutral-400 faq-icon flex-shrink-0"></i></button>
+      <div class="faq-answer"><div class="px-5 pb-5 border-t border-neutral-100 pt-4 text-sm text-neutral-600">Click the "Notify Me" button on any out-of-stock product page. We'll send an email or SMS as soon as the item is restocked. You can also add it to your Wishlist to keep track — restocks can sell out quickly!</div></div>
+    </div>
+
+    <!-- ACCOUNT -->
+    <div class="faq-section" data-cat="account">
+      <div class="flex items-center gap-2 mb-3 mt-6"><div class="w-7 h-7 bg-rose-100 rounded-lg flex items-center justify-center"><i data-lucide="user" class="w-4 h-4 text-rose-600"></i></div><h3 class="font-heading text-sm font-bold text-neutral-600 uppercase tracking-wider">Account &amp; Profile</h3></div>
+    </div>
+    <div class="faq-item bg-white rounded-xl2 border border-neutral-200 overflow-hidden hover:border-neutral-300 transition-colors" data-cat="account" data-q="create account how to register sign up">
+      <button onclick="toggleFAQ(this)" class="w-full flex items-center justify-between p-5 text-left gap-4"><span class="text-sm font-semibold text-neutral-900">How do I create an account?</span><i data-lucide="plus" class="w-5 h-5 text-neutral-400 faq-icon flex-shrink-0"></i></button>
+      <div class="faq-answer"><div class="px-5 pb-5 border-t border-neutral-100 pt-4 text-sm text-neutral-600"><ol class="list-decimal list-inside space-y-1.5"><li>Click "Sign In" in the top-right corner</li><li>Select "Create Account"</li><li>Enter your name, email, and password</li><li>Verify your email address</li></ol><p class="mt-2">You can also sign up with Google or Facebook for faster access.</p><button onclick="closeAuth();openAuth('signup')" class="mt-3 inline-flex items-center gap-1.5 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-full transition-colors"><i data-lucide="user-plus" class="w-3.5 h-3.5"></i>Create Account Now</button></div></div>
+    </div>
+    <div class="faq-item bg-white rounded-xl2 border border-neutral-200 overflow-hidden hover:border-neutral-300 transition-colors" data-cat="account" data-q="forgot password reset password login">
+      <button onclick="toggleFAQ(this)" class="w-full flex items-center justify-between p-5 text-left gap-4"><span class="text-sm font-semibold text-neutral-900">How do I reset my password?</span><i data-lucide="plus" class="w-5 h-5 text-neutral-400 faq-icon flex-shrink-0"></i></button>
+      <div class="faq-answer"><div class="px-5 pb-5 border-t border-neutral-100 pt-4 text-sm text-neutral-600">Click "Sign In", then "Forgot Password?" on the login page. Enter your registered email and we'll send a secure reset link valid for 24 hours. If you don't receive it, check your spam folder or contact our support team.</div></div>
+    </div>
+    <div class="faq-item bg-white rounded-xl2 border border-neutral-200 overflow-hidden hover:border-neutral-300 transition-colors" data-cat="account" data-q="delete account close account remove">
+      <button onclick="toggleFAQ(this)" class="w-full flex items-center justify-between p-5 text-left gap-4"><span class="text-sm font-semibold text-neutral-900">Can I delete my account?</span><i data-lucide="plus" class="w-5 h-5 text-neutral-400 faq-icon flex-shrink-0"></i></button>
+      <div class="faq-answer"><div class="px-5 pb-5 border-t border-neutral-100 pt-4 text-sm text-neutral-600">Yes. Go to Account Settings → Privacy &amp; Security → Request Account Deletion. All pending orders must be completed or cancelled first. Transaction records are retained for legal compliance for up to 7 years as required by law.</div></div>
+    </div>
+  </div>
+
+  <!-- CONTACT FORM (Lead Capture — PRD 3.8) -->
+  <section class="bg-white rounded-xl2 shadow-card border border-neutral-100 p-6 md:p-8">
+    <h2 class="font-heading text-lg font-bold text-neutral-900 mb-1">Send Us a Message</h2>
+    <p class="text-sm text-neutral-500 mb-6">Can't find what you need? Fill out the form and we'll get back to you within 2 hours.</p>
+    <div id="contact-form-wrap">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1.5">Full Name</label><input id="cf-name" type="text" placeholder="John Adeyemi" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"></div>
+        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1.5">Email Address</label><input id="cf-email" type="email" placeholder="you@example.com" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"></div>
+        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1.5">Order Number (optional)</label><input id="cf-order" type="text" placeholder="#AH-00000" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"></div>
+        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1.5">Topic</label>
+          <div class="relative"><select id="cf-topic" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all appearance-none"><option value="">Select a topic</option><option>Order issue</option><option>Return / Refund</option><option>Shipping problem</option><option>Payment issue</option><option>Product inquiry</option><option>Account help</option><option>Other</option></select><i data-lucide="chevron-down" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none"></i></div>
+        </div>
+        <div class="sm:col-span-2 field"><label class="block text-sm font-medium text-neutral-700 mb-1.5">Message</label><textarea id="cf-message" rows="4" placeholder="Describe your issue in detail…" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all resize-none"></textarea></div>
+      </div>
+      <button onclick="submitContactForm()" class="flex items-center gap-2 px-8 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-full transition-all shadow-card hover:shadow-hover"><i data-lucide="send" class="w-4 h-4"></i>Send Message</button>
+    </div>
+    <!-- thank you state -->
+    <div id="contact-thanks" class="hidden text-center py-10">
+      <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="check" class="w-8 h-8 text-green-600"></i></div>
+      <h3 class="font-heading text-xl font-bold text-neutral-900 mb-2">Message Sent!</h3>
+      <p class="text-neutral-500 text-sm">Thank you for reaching out. We'll respond to your email within 2 hours.</p>
+      <button onclick="resetContactForm()" class="mt-5 text-sm text-primary-600 font-semibold hover:underline">Send another message</button>
+    </div>
+  </section>
+
+  <!-- STILL NEED HELP CTA -->
+  <section class="bg-gradient-to-br from-neutral-900 to-neutral-800 rounded-xl2 p-7 md:p-10 text-white text-center">
+    <div class="w-14 h-14 bg-primary-600/20 border border-primary-500/30 rounded-full flex items-center justify-center mx-auto mb-5"><i data-lucide="headphones" class="w-7 h-7 text-primary-400"></i></div>
+    <h2 class="font-heading text-2xl md:text-3xl font-bold mb-3">Still Need Help?</h2>
+    <p class="text-neutral-300 mb-8 max-w-md mx-auto text-sm">Our friendly support team is available 24/7 to assist with any questions or concerns.</p>
+    <div class="flex flex-col sm:flex-row justify-center gap-3 flex-wrap">
+      <a href="tel:+2348001234567" class="flex items-center justify-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-full transition-colors text-sm"><i data-lucide="phone" class="w-4 h-4"></i>Call +234 800 123 4567</a>
+      <a href="/cdn-cgi/l/email-protection#4a393f3a3a25383e0a2b22232b2d2625282b2664292527" class="flex items-center justify-center gap-2 px-6 py-3 bg-white/10 border border-white/20 text-white font-semibold rounded-full hover:bg-white/20 transition-colors text-sm"><i data-lucide="mail" class="w-4 h-4"></i>Email Support</a>
+      <button onclick="showToast('info','Live Chat','Connecting you to an agent… avg. wait 30 seconds.')" class="flex items-center justify-center gap-2 px-6 py-3 bg-white/10 border border-white/20 text-white font-semibold rounded-full hover:bg-white/20 transition-colors text-sm"><i data-lucide="message-square" class="w-4 h-4"></i>Live Chat</button>
+    </div>
+    <p class="text-neutral-500 text-xs mt-6"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b1c2c4c1c1dec3c5f1d0d9d8d0d6ddded3d0dd9fd2dedc">[email&#160;protected]</a> · Average response &lt;2 hours</p>
+  </section>
+</div>
+
+<!-- MOBILE BOTTOM NAV -->
+<div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-200 z-[150] flex">
+  <a href="index.html" class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-neutral-500"><i data-lucide="home" class="w-5 h-5"></i><span class="text-[10px] font-medium">Home</span></a>
+  <a href="product.html" class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-neutral-500"><i data-lucide="layout-grid" class="w-5 h-5"></i><span class="text-[10px] font-medium">Shop</span></a>
+  <a href="checkout.html" class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-neutral-500 relative"><div class="relative"><i data-lucide="shopping-cart" class="w-5 h-5"></i><span class="cart-count-badge absolute -top-2 -right-2 w-4 h-4 bg-red-500 text-white text-[9px] font-bold flex items-center justify-center rounded-full">0</span></div><span class="text-[10px] font-medium">Cart</span></a>
+  <button class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-neutral-500"><i data-lucide="heart" class="w-5 h-5"></i><span class="text-[10px] font-medium">Wishlist</span></button>
+  <a href="faq.html" class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-primary-600"><i data-lucide="help-circle" class="w-5 h-5"></i><span class="text-[10px] font-medium">Help</span></a>
+</div>
+
+<!-- FOOTER -->
+<footer class="bg-white border-t border-neutral-100 py-8 pb-24 md:pb-8 mt-4">
+  <div class="max-w-5xl mx-auto px-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-2"><div class="w-7 h-7 bg-primary-600 rounded-md flex items-center justify-center text-white font-bold text-sm">A</div><span class="font-heading font-bold text-neutral-900">Ahia<span class="text-primary-600">Global</span></span></div>
+    <p class="text-xs text-neutral-400">© 2024 AhiaGlobal. All rights reserved.</p>
+    <div class="flex gap-4 text-xs text-neutral-500"><a href="index.html" class="hover:text-primary-600">Home</a><button class="hover:text-primary-600">Privacy</button><button class="hover:text-primary-600">Terms</button></div>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="shared.js"></script>
+<script>
+function toggleFAQ(btn) {
+  const item = btn.closest('.faq-item');
+  const answer = item.querySelector('.faq-answer');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => {
+    i.classList.remove('open');
+    i.querySelector('.faq-answer').classList.remove('open');
+  });
+  if (!isOpen) { item.classList.add('open'); answer.classList.add('open'); }
+  lucide.createIcons();
+}
+
+function searchFAQ(q) {
+  const val = q.toLowerCase().trim();
+  document.getElementById('clear-search-btn').classList.toggle('hidden', val === '');
+  const items = document.querySelectorAll('.faq-item');
+  const sections = document.querySelectorAll('.faq-section');
+  let visible = 0;
+  items.forEach(item => {
+    const text = (item.dataset.q || '') + ' ' + item.querySelector('button span').textContent + ' ' + item.querySelector('.faq-answer')?.textContent;
+    const match = val === '' || text.toLowerCase().includes(val);
+    item.style.display = match ? '' : 'none';
+    if (match) visible++;
+  });
+  sections.forEach(s => {
+    const cat = s.dataset.cat;
+    const catItems = [...document.querySelectorAll(`.faq-item[data-cat="${cat}"]`)];
+    s.style.display = catItems.some(i => i.style.display !== 'none') ? '' : 'none';
+  });
+  document.getElementById('no-results').classList.toggle('hidden', visible > 0 || val === '');
+}
+
+function clearSearch() {
+  document.getElementById('faq-search').value = '';
+  document.getElementById('clear-search-btn').classList.add('hidden');
+  searchFAQ('');
+  filterCat('all', document.querySelector('.cat-btn'));
+}
+
+function filterCat(cat, btn) {
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.style.display = (cat === 'all' || item.dataset.cat === cat) ? '' : 'none';
+  });
+  document.querySelectorAll('.faq-section').forEach(s => {
+    s.style.display = (cat === 'all' || s.dataset.cat === cat) ? '' : 'none';
+  });
+  document.getElementById('no-results').classList.add('hidden');
+  document.getElementById('faq-search').value = '';
+  document.getElementById('clear-search-btn').classList.add('hidden');
+}
+
+function submitContactForm() {
+  const name = document.getElementById('cf-name')?.value?.trim();
+  const email = document.getElementById('cf-email')?.value?.trim();
+  const message = document.getElementById('cf-message')?.value?.trim();
+  if (!name) { showToast('error','Missing name','Please enter your full name.'); return; }
+  if (!email || !/\S+@\S+\.\S+/.test(email)) { showToast('error','Invalid email','Please enter a valid email address.'); return; }
+  if (!message) { showToast('error','Missing message','Please describe your issue.'); return; }
+  document.getElementById('contact-form-wrap').classList.add('hidden');
+  document.getElementById('contact-thanks').classList.remove('hidden');
+  lucide.createIcons();
+}
+
+function resetContactForm() {
+  document.getElementById('contact-form-wrap').classList.remove('hidden');
+  document.getElementById('contact-thanks').classList.add('hidden');
+  ['cf-name','cf-email','cf-message'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+}
+
+window.addEventListener('scroll', () => {
+  document.getElementById('main-header')?.classList.toggle('scrolled', window.scrollY > 10);
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  lucide && lucide.createIcons();
+});
+</script>
+</body>
+</html>

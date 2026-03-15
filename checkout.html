@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Secure Checkout — AhiaGlobal</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="shared.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-serif'],body:['Inter','sans-serif']},colors:{primary:{50:'#fff7ed',100:'#ffedd5',200:'#fed7aa',300:'#fdba74',400:'#fb923c',500:'#f97316',600:'#ea580c',700:'#c2410c',800:'#9a3412',900:'#7c2d12'},neutral:{50:'#f8fafc',100:'#f1f5f9',200:'#e2e8f0',300:'#cbd5e1',400:'#94a3b8',500:'#64748b',600:'#475569',700:'#334155',800:'#1e293b',900:'#0f172a'}},boxShadow:{card:'0 4px 14px -3px rgba(15,23,42,.09)',hover:'0 12px 30px -5px rgba(15,23,42,.16)',modal:'0 24px 60px -8px rgba(15,23,42,.28)'},borderRadius:{xl2:'0.875rem',xl3:'1.25rem'}}}}
+</script>
+<style>
+#auth-modal{opacity:0;pointer-events:none;transition:opacity .25s}
+#auth-modal.open{opacity:1;pointer-events:auto}
+#auth-box{transform:translateY(14px) scale(.96);transition:transform .28s cubic-bezier(.34,1.56,.64,1),opacity .25s;opacity:0}
+#auth-modal.open #auth-box{transform:translateY(0) scale(1);opacity:1}
+.field:focus-within label{color:#ea580c}
+.field:focus-within input,.field:focus-within select{border-color:#ea580c;box-shadow:0 0 0 3px rgba(234,88,12,.12);outline:none}
+.step-active{color:#ea580c;font-weight:600}
+.step-done{color:#22c55e}
+.pay-option{cursor:pointer;transition:all .2s}
+.pay-option:has(input:checked){border-color:#ea580c;background:#fff7ed}
+@keyframes toastIn{from{opacity:0;transform:translateX(110%)}to{opacity:1;transform:translateX(0)}}
+@keyframes toastOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(110%)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{animation:spin 1s linear infinite}
+/* card number formatting visual */
+.card-input{letter-spacing:.05em}
+
+#order-summary-body { transition: max-height .35s ease, opacity .35s ease; }
+#order-summary-body.collapsed { max-height: 0 !important; overflow: hidden; opacity: 0; }
+</style>
+</head>
+<body class="font-body bg-neutral-100 text-neutral-900 min-h-screen">
+
+<div id="toast-stack" class="fixed top-20 right-3 z-[9999] flex flex-col gap-2 w-80 max-w-[calc(100vw-1.5rem)] pointer-events-none"></div>
+
+<!-- AUTH MODAL -->
+<div id="auth-modal" class="fixed inset-0 z-[500] flex items-center justify-center p-4" style="background:rgba(15,23,42,.6);backdrop-filter:blur(6px)">
+  <div id="auth-box" class="bg-white rounded-xl3 shadow-modal w-full max-w-[420px] relative overflow-hidden max-h-[90vh] overflow-y-auto">
+    <button onclick="closeAuth()" class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center"><i data-lucide="x" class="w-4 h-4 text-neutral-600"></i></button>
+    <div class="flex border-b border-neutral-100">
+      <button id="tab-login" onclick="switchAuth('login')" class="flex-1 py-4 text-sm font-semibold text-primary-600 border-b-2 border-primary-600">Sign In</button>
+      <button id="tab-signup" onclick="switchAuth('signup')" class="flex-1 py-4 text-sm font-semibold text-neutral-400 border-b-2 border-transparent hover:text-neutral-700">Create Account</button>
+    </div>
+    <div id="panel-login" class="p-6">
+      <div class="text-center mb-5"><div class="w-11 h-11 bg-primary-600 rounded-xl flex items-center justify-center text-white font-heading font-bold text-lg mx-auto mb-2">A</div><h2 class="font-heading text-xl font-bold">Welcome back</h2></div>
+      <div class="space-y-3">
+        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Email</label><input id="login-email" type="email" placeholder="you@example.com" class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"></div>
+        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Password</label><div class="relative"><input id="login-pw" type="password" placeholder="••••••••" class="w-full px-4 py-2.5 pr-10 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"><button type="button" onclick="togglePw('login-pw',this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"><i data-lucide="eye" class="w-4 h-4"></i></button></div></div>
+        <button onclick="handleLogin()" class="w-full bg-primary-600 hover:bg-primary-700 text-white py-3 rounded-full font-semibold text-sm flex items-center justify-center gap-2">Sign In <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+      </div>
+      <p class="text-center text-sm text-neutral-500 mt-4">No account? <button onclick="switchAuth('signup')" class="text-primary-600 font-semibold hover:underline">Create one</button></p>
+    </div>
+    <div id="panel-signup" class="p-6 hidden">
+      <div class="text-center mb-5"><div class="w-11 h-11 bg-primary-600 rounded-xl flex items-center justify-center text-white font-heading font-bold text-lg mx-auto mb-2">A</div><h2 class="font-heading text-xl font-bold">Create account</h2></div>
+      <div class="space-y-3">
+        <div class="grid grid-cols-2 gap-3">
+          <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">First name</label><input id="signup-firstname" type="text" placeholder="John" class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50"></div>
+          <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Last name</label><input id="signup-lastname" type="text" placeholder="Doe" class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50"></div>
+        </div>
+        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Email</label><input id="signup-email" type="email" placeholder="you@example.com" class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50"></div>
+        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Password</label><div class="relative"><input id="signup-pw" type="password" placeholder="Min. 8 characters" class="w-full px-4 py-2.5 pr-10 border border-neutral-200 rounded-lg text-sm bg-neutral-50"><button type="button" onclick="togglePw('signup-pw',this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"><i data-lucide="eye" class="w-4 h-4"></i></button></div></div>
+        <label class="flex items-start gap-2 cursor-pointer"><input id="signup-agree" type="checkbox" class="w-4 h-4 mt-0.5 accent-orange-600 rounded flex-shrink-0"><span class="text-xs text-neutral-500">I agree to <a href="#" class="text-primary-600 hover:underline">Terms</a> &amp; <a href="#" class="text-primary-600 hover:underline">Privacy Policy</a></span></label>
+        <button onclick="handleSignup()" class="w-full bg-primary-600 hover:bg-primary-700 text-white py-3 rounded-full font-semibold text-sm flex items-center justify-center gap-2">Create Account <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+      </div>
+      <p class="text-center text-sm text-neutral-500 mt-4">Have account? <button onclick="switchAuth('login')" class="text-primary-600 font-semibold hover:underline">Sign in</button></p>
+    </div>
+  </div>
+</div>
+
+<!-- CHECKOUT HEADER -->
+<header class="bg-white border-b border-neutral-200 sticky top-0 z-[200] shadow-sm">
+  <div class="max-w-6xl mx-auto px-5 py-4 flex items-center justify-between gap-4">
+    <a href="index.html" class="flex items-center gap-2 flex-shrink-0">
+      <div class="w-9 h-9 bg-primary-600 rounded-lg flex items-center justify-center text-white font-heading font-bold text-lg">A</div>
+      <span class="font-heading font-bold text-lg md:text-xl text-neutral-900 tracking-tight">Ahia<span class="text-primary-600">Global</span></span>
+    </a>
+    <!-- step progress -->
+    <div class="hidden md:flex items-center gap-2 text-sm">
+      <a href="index.html" class="flex items-center gap-1.5 text-green-600 font-medium"><i data-lucide="check-circle" class="w-4 h-4"></i>Cart</a>
+      <i data-lucide="chevron-right" class="w-4 h-4 text-neutral-300"></i>
+      <span class="flex items-center gap-1.5 text-primary-600 font-semibold"><i data-lucide="credit-card" class="w-4 h-4"></i>Checkout</span>
+      <i data-lucide="chevron-right" class="w-4 h-4 text-neutral-300"></i>
+      <span class="text-neutral-400">Confirmation</span>
+    </div>
+    <div class="flex items-center gap-1.5 text-xs text-neutral-500"><i data-lucide="lock" class="w-3.5 h-3.5 text-green-600"></i><span class="hidden sm:inline font-medium text-green-700">Secure Checkout</span></div>
+  </div>
+</header>
+
+<main class="max-w-6xl mx-auto px-5 py-7 md:py-12">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+    <!-- LEFT: FORMS -->
+    <div class="lg:col-span-7 space-y-5">
+
+      <!-- 1. Contact -->
+      <section class="bg-white rounded-xl2 shadow-card border border-neutral-100 overflow-hidden">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
+          <h2 class="font-heading text-base font-bold text-neutral-900 flex items-center gap-2.5"><span class="w-7 h-7 rounded-full bg-primary-600 text-white text-xs font-bold flex items-center justify-center">1</span>Contact Information</h2>
+          <button onclick="openAuth('login')" class="text-sm text-primary-600 font-semibold hover:underline flex items-center gap-1"><i data-lucide="user" class="w-3.5 h-3.5"></i>Log in</button>
+        </div>
+        <div class="p-6 space-y-4">
+          <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1.5">Email Address <span class="text-red-500">*</span></label><input id="contact-email" type="email" placeholder="you@example.com" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"></div>
+          <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1.5">Phone Number <span class="text-red-500">*</span></label><input id="contact-phone" type="tel" placeholder="+234 800 000 0000" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"></div>
+          <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="w-4 h-4 accent-orange-600 rounded"><span class="text-sm text-neutral-600">Email me with exclusive offers &amp; new arrivals</span></label>
+        </div>
+      </section>
+
+      <!-- 2. Shipping -->
+      <section class="bg-white rounded-xl2 shadow-card border border-neutral-100 overflow-hidden">
+        <div class="px-6 py-4 border-b border-neutral-100"><h2 class="font-heading text-base font-bold text-neutral-900 flex items-center gap-2.5"><span class="w-7 h-7 rounded-full bg-primary-600 text-white text-xs font-bold flex items-center justify-center">2</span>Shipping Address</h2></div>
+        <div class="p-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1.5">First Name <span class="text-red-500">*</span></label><input id="ship-fname" type="text" placeholder="John" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"></div>
+            <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1.5">Last Name <span class="text-red-500">*</span></label><input id="ship-lname" type="text" placeholder="Doe" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"></div>
+            <div class="sm:col-span-2 field"><label class="block text-sm font-medium text-neutral-700 mb-1.5">Address <span class="text-red-500">*</span></label><input id="ship-addr" type="text" placeholder="14 Victoria Island Road, Apt 3B" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"></div>
+            <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1.5">City <span class="text-red-500">*</span></label><input id="ship-city" type="text" placeholder="Lagos" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"></div>
+            <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1.5">Country <span class="text-red-500">*</span></label>
+              <div class="relative"><select id="ship-country" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all appearance-none"><option>Nigeria</option><option>Ghana</option><option>Kenya</option><option>South Africa</option><option>United Kingdom</option><option>United States</option><option>Canada</option><option>France</option></select><i data-lucide="chevron-down" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 pointer-events-none"></i></div>
+            </div>
+            <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1.5">State / Province</label><input id="ship-state" type="text" placeholder="Lagos State" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"></div>
+            <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1.5">Postal Code</label><input id="ship-zip" type="text" placeholder="100001" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"></div>
+          </div>
+
+          <!-- shipping method -->
+          <div class="mt-5">
+            <p class="text-sm font-semibold text-neutral-900 mb-3">Shipping Method</p>
+            <div class="space-y-2.5">
+              <label class="pay-option flex items-center gap-3 p-3.5 border border-neutral-200 rounded-xl cursor-pointer hover:border-primary-300">
+                <input type="radio" name="shipping" value="standard" checked class="w-4 h-4 accent-orange-600 flex-shrink-0">
+                <div class="flex-1"><p class="text-sm font-medium text-neutral-900">Standard Shipping</p><p class="text-xs text-neutral-500">3–5 business days</p></div>
+                <span class="text-sm font-bold text-green-600">Free</span>
+              </label>
+              <label class="pay-option flex items-center gap-3 p-3.5 border border-neutral-200 rounded-xl cursor-pointer hover:border-primary-300">
+                <input type="radio" name="shipping" value="express" class="w-4 h-4 accent-orange-600 flex-shrink-0">
+                <div class="flex-1"><p class="text-sm font-medium text-neutral-900">Express Shipping</p><p class="text-xs text-neutral-500">1–2 business days</p></div>
+                <span class="text-sm font-bold text-neutral-900">$9.99</span>
+              </label>
+              <label class="pay-option flex items-center gap-3 p-3.5 border border-neutral-200 rounded-xl cursor-pointer hover:border-primary-300">
+                <input type="radio" name="shipping" value="overnight" class="w-4 h-4 accent-orange-600 flex-shrink-0">
+                <div class="flex-1"><p class="text-sm font-medium text-neutral-900">Overnight</p><p class="text-xs text-neutral-500">Next business day</p></div>
+                <span class="text-sm font-bold text-neutral-900">$24.99</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Payment -->
+      <section class="bg-white rounded-xl2 shadow-card border border-neutral-100 overflow-hidden">
+        <div class="px-6 py-4 border-b border-neutral-100"><h2 class="font-heading text-base font-bold text-neutral-900 flex items-center gap-2.5"><span class="w-7 h-7 rounded-full bg-primary-600 text-white text-xs font-bold flex items-center justify-center">3</span>Payment Method</h2></div>
+        <div class="p-6 space-y-3">
+          <!-- card -->
+          <label class="pay-option flex items-start gap-3 p-4 border-2 border-primary-600 bg-primary-50/30 rounded-xl cursor-pointer" id="pay-card-label">
+            <input type="radio" name="payment" value="card" checked onchange="showPayPanel('card')" class="w-4 h-4 accent-orange-600 mt-0.5 flex-shrink-0">
+            <div class="flex-1">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-sm font-semibold text-neutral-900">Credit / Debit Card</span>
+                <div class="flex gap-1.5">
+                  <div class="h-6 w-10 bg-white border border-neutral-200 rounded flex items-center justify-center"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png" class="h-3 object-contain" alt="MC"></div>
+                  <div class="h-6 w-10 bg-white border border-neutral-200 rounded flex items-center justify-center"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png" class="h-2.5 object-contain" alt="Visa"></div>
+                </div>
+              </div>
+              <div id="card-panel" class="space-y-3">
+                <div class="field"><input id="card-number" type="text" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCard(this)" class="card-input w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-white transition-all"></div>
+                <div class="grid grid-cols-2 gap-3">
+                  <div class="field"><input id="card-exp" type="text" placeholder="MM / YY" maxlength="7" oninput="formatExp(this)" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-white transition-all"></div>
+                  <div class="field relative"><input id="card-cvc" type="text" placeholder="CVC" maxlength="4" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-white transition-all"><i data-lucide="help-circle" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400"></i></div>
+                </div>
+                <div class="field"><input id="card-name" type="text" placeholder="Name on card" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-white transition-all"></div>
+                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="w-4 h-4 accent-orange-600 rounded"><span class="text-xs text-neutral-600">Save card for future purchases</span></label>
+              </div>
+            </div>
+          </label>
+
+          <!-- mobile money -->
+          <label class="pay-option flex items-center gap-3 p-4 border border-neutral-200 rounded-xl cursor-pointer hover:border-primary-300">
+            <input type="radio" name="payment" value="mobile" onchange="showPayPanel('mobile')" class="w-4 h-4 accent-orange-600 flex-shrink-0">
+            <div class="flex-1"><p class="text-sm font-semibold text-neutral-900">Mobile Money</p><p class="text-xs text-neutral-500">M-Pesa, MTN MoMo, Airtel Money</p></div>
+            <i data-lucide="smartphone" class="w-5 h-5 text-neutral-400"></i>
+          </label>
+          <div id="mobile-panel" class="hidden px-4 py-3 bg-neutral-50 rounded-xl border border-neutral-200">
+            <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1.5">Mobile Number</label><input type="tel" placeholder="+234 800 000 0000" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-white transition-all"></div>
+            <div class="field mt-3"><label class="block text-sm font-medium text-neutral-700 mb-1.5">Provider</label>
+              <div class="relative"><select class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-white transition-all appearance-none"><option>MTN Mobile Money</option><option>Airtel Money</option><option>M-Pesa (Safaricom)</option><option>Orange Money</option></select><i data-lucide="chevron-down" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 pointer-events-none"></i></div>
+            </div>
+          </div>
+
+          <!-- paypal -->
+          <label class="pay-option flex items-center gap-3 p-4 border border-neutral-200 rounded-xl cursor-pointer hover:border-primary-300">
+            <input type="radio" name="payment" value="paypal" onchange="showPayPanel('paypal')" class="w-4 h-4 accent-orange-600 flex-shrink-0">
+            <div class="flex-1"><p class="text-sm font-semibold text-neutral-900">PayPal</p><p class="text-xs text-neutral-500">Pay securely via your PayPal account</p></div>
+            <svg height="20" viewBox="0 0 101 32" xmlns="http://www.w3.org/2000/svg"><path fill="#003087" d="M12.237 2.8H6.433c-.4 0-.742.292-.806.687L3.2 26.228c-.047.298.183.567.484.567h2.803c.4 0 .742-.292.806-.687l.614-3.882c.063-.395.406-.687.806-.687h1.86c3.873 0 6.108-1.875 6.693-5.593.263-1.626.011-2.904-.748-3.798-.833-.984-2.31-1.505-4.28-1.505l-.001.157zm.669 5.509c-.321 2.102-1.93 2.102-3.488 2.102h-.887l.621-3.937c.037-.238.242-.413.482-.413h.407c1.061 0 2.062 0 2.578.603.31.36.405.895.287 1.645z"/><path fill="#003087" d="M34.303 8.199h-2.812c-.241 0-.445.175-.483.413l-.124.784-.196-.285c-.608-.882-1.962-1.177-3.315-1.177-3.102 0-5.749 2.35-6.266 5.647-.268 1.646.113 3.218 1.047 4.314.857.996 2.081 1.411 3.54 1.411 2.5 0 3.887-1.608 3.887-1.608l-.125.779c-.048.3.182.568.484.568h2.532c.401 0 .742-.292.806-.687l1.519-9.597c.047-.297-.183-.566-.494-.562zm-3.918 5.462c-.27 1.607-1.542 2.686-3.168 2.686-.815 0-1.467-.262-1.884-.758-.415-.492-.572-1.193-.44-1.973.252-1.592 1.543-2.707 3.144-2.707.797 0 1.446.264 1.871.764.428.503.598 1.207.477 1.988z"/></svg>
+          </label>
+
+          <!-- bank transfer -->
+          <label class="pay-option flex items-center gap-3 p-4 border border-neutral-200 rounded-xl cursor-pointer hover:border-primary-300">
+            <input type="radio" name="payment" value="bank" onchange="showPayPanel('bank')" class="w-4 h-4 accent-orange-600 flex-shrink-0">
+            <div class="flex-1"><p class="text-sm font-semibold text-neutral-900">Bank Transfer</p><p class="text-xs text-neutral-500">Direct bank transfer (USSD / Internet Banking)</p></div>
+            <i data-lucide="landmark" class="w-5 h-5 text-neutral-400"></i>
+          </label>
+          <div id="bank-panel" class="hidden px-4 py-3 bg-neutral-50 rounded-xl border border-neutral-200 text-sm text-neutral-600">
+            <p class="font-medium text-neutral-900 mb-2">Transfer to:</p>
+            <div class="space-y-1.5">
+              <div class="flex justify-between"><span class="text-neutral-500">Bank</span><span class="font-medium">Zenith Bank PLC</span></div>
+              <div class="flex justify-between"><span class="text-neutral-500">Account</span><span class="font-medium">1234567890</span></div>
+              <div class="flex justify-between"><span class="text-neutral-500">Name</span><span class="font-medium">AhiaGlobal Ltd.</span></div>
+            </div>
+            <p class="text-xs text-neutral-500 mt-2">Include your order number as payment reference. Orders confirmed after payment verification (up to 2 hrs).</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- RIGHT: ORDER SUMMARY -->
+    <div class="lg:col-span-5">
+      <div class="sticky top-24 space-y-4">
+        <div class="bg-white rounded-xl2 shadow-card border border-neutral-100 overflow-hidden">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-neutral-100 cursor-pointer" onclick="toggleOrderSummary()">
+            <div class="flex items-center gap-2">
+              <h3 class="font-heading text-base font-bold text-neutral-900">Order Summary</h3>
+              <span class="lg:hidden text-xs text-neutral-500 font-medium" id="summary-total-peek">· $296.99</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <a href="product.html" onclick="event.stopPropagation()" class="text-xs text-primary-600 font-semibold hover:underline flex items-center gap-1 hidden lg:flex"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i>Edit</a>
+              <i data-lucide="chevron-down" class="w-4 h-4 text-neutral-500 lg:hidden transition-transform" id="summary-chevron"></i>
+            </div>
+          </div>
+          </div>
+          <div class="p-5 space-y-5" id="order-summary-body">
+            <!-- items -->
+            <div class="space-y-4" id="order-items">
+              <div class="flex gap-3">
+                <div class="w-14 h-14 rounded-lg bg-neutral-100 overflow-hidden flex-shrink-0 border border-neutral-200"><img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&q=80" class="w-full h-full object-cover" alt=""></div>
+                <div class="flex-1 min-w-0"><h4 class="text-sm font-medium text-neutral-900 line-clamp-2">Premium Wireless Headphones</h4><p class="text-xs text-neutral-500 mt-0.5">Color: Black · Qty: 1</p></div>
+                <div class="text-right flex-shrink-0"><p class="text-sm font-bold text-neutral-900">$129.99</p></div>
+              </div>
+              <div class="flex gap-3">
+                <div class="w-14 h-14 rounded-lg bg-neutral-100 overflow-hidden flex-shrink-0 border border-neutral-200"><img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200&q=80" class="w-full h-full object-cover" alt=""></div>
+                <div class="flex-1 min-w-0"><h4 class="text-sm font-medium text-neutral-900 line-clamp-2">Minimalist Analog Watch</h4><p class="text-xs text-neutral-500 mt-0.5">Strap: Leather · Qty: 1</p></div>
+                <div class="text-right flex-shrink-0"><p class="text-sm font-bold text-neutral-900">$145.00</p></div>
+              </div>
+            </div>
+
+            <!-- promo code -->
+            <div class="flex gap-2">
+              <input id="promo-input" type="text" placeholder="Discount code" class="flex-1 px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100">
+              <button onclick="applyPromo()" class="px-4 py-2.5 bg-neutral-200 hover:bg-neutral-300 text-neutral-700 font-semibold rounded-lg text-sm transition-colors">Apply</button>
+            </div>
+
+            <!-- totals -->
+            <div class="space-y-2.5 pt-4 border-t border-neutral-100">
+              <div class="flex justify-between text-sm text-neutral-600"><span>Subtotal</span><span>$274.99</span></div>
+              <div class="flex justify-between text-sm text-neutral-600"><span>Shipping</span><span id="shipping-cost" class="text-green-600 font-medium">Free</span></div>
+              <div id="discount-row" class="hidden flex justify-between text-sm text-green-600"><span>Discount (AHIA10)</span><span>-$27.49</span></div>
+              <div class="flex justify-between text-sm text-neutral-600"><span>Tax (VAT 8%)</span><span>$22.00</span></div>
+              <div class="flex justify-between items-center pt-3 border-t border-neutral-100">
+                <span class="font-heading font-bold text-lg text-neutral-900">Total</span>
+                <div class="text-right"><span class="text-xs text-neutral-400 block">USD</span><span class="font-heading font-bold text-2xl text-primary-600" id="grand-total">$296.99</span></div>
+              </div>
+            </div>
+
+            <!-- CTA -->
+            <button onclick="placeOrder()" id="place-order-btn" class="w-full bg-neutral-900 hover:bg-neutral-800 text-white py-4 rounded-full font-bold text-base transition-all shadow-card hover:shadow-hover flex items-center justify-center gap-2">
+              <i data-lucide="lock" class="w-4 h-4"></i>
+              <span id="btn-label">Pay $296.99</span>
+            </button>
+            <p class="text-xs text-center text-neutral-500 leading-relaxed">By placing your order you agree to our <a href="#" class="underline hover:text-primary-600">Terms</a> and <a href="#" class="underline hover:text-primary-600">Privacy Policy</a>. Payments are encrypted and secure.</p>
+          </div>
+        </div>
+
+        <!-- trust badges -->
+        <div class="flex flex-wrap justify-center gap-3 px-4">
+          <div class="flex items-center gap-1.5 text-xs text-neutral-500"><i data-lucide="shield-check" class="w-4 h-4 text-green-600"></i>256-bit SSL</div>
+          <div class="flex items-center gap-1.5 text-xs text-neutral-500"><i data-lucide="lock" class="w-4 h-4 text-green-600"></i>PCI DSS Compliant</div>
+          <div class="flex items-center gap-1.5 text-xs text-neutral-500"><i data-lucide="refresh-cw" class="w-4 h-4 text-green-600"></i>30-Day Returns</div>
+        </div>
+        <div class="flex justify-center gap-3 grayscale hover:grayscale-0 transition-all opacity-60">
+          <div class="h-7 w-11 bg-neutral-200 rounded flex items-center justify-center text-xs font-bold text-neutral-600">VISA</div>
+          <div class="h-7 w-11 bg-neutral-200 rounded flex items-center justify-center text-xs font-bold text-neutral-600">MC</div>
+          <div class="h-7 w-11 bg-neutral-200 rounded flex items-center justify-center text-xs font-bold text-neutral-600">AMEX</div>
+          <div class="h-7 w-11 bg-neutral-200 rounded flex items-center justify-center text-xs font-bold text-neutral-600">PAYPAL</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="bg-white border-t border-neutral-100 py-6 mt-10">
+  <div class="max-w-6xl mx-auto px-5 text-center text-xs text-neutral-400">© 2024 AhiaGlobal. All rights reserved. · <a href="faq.html" class="hover:text-primary-600">Help Center</a></div>
+</footer>
+
+<script src="shared.js"></script>
+<script>
+function showPayPanel(type) {
+  document.getElementById('card-panel').classList.toggle('hidden', type !== 'card');
+  document.getElementById('mobile-panel').classList.toggle('hidden', type !== 'mobile');
+  document.getElementById('bank-panel').classList.toggle('hidden', type !== 'bank');
+  const paypalMsg = document.getElementById('paypal-msg');
+  if (paypalMsg) paypalMsg.classList.toggle('hidden', type !== 'paypal');
+}
+
+function formatCard(el) {
+  let v = el.value.replace(/\D/g, '').substring(0, 16);
+  el.value = v.replace(/(.{4})/g, '$1 ').trim();
+}
+
+function formatExp(el) {
+  let v = el.value.replace(/\D/g, '').substring(0, 4);
+  if (v.length >= 3) v = v.substring(0, 2) + ' / ' + v.substring(2);
+  el.value = v;
+}
+
+// shipping cost update
+document.querySelectorAll('input[name="shipping"]').forEach(r => {
+  r.addEventListener('change', () => {
+    const costs = { standard: 'Free', express: '$9.99', overnight: '$24.99' };
+    const extras = { standard: 0, express: 9.99, overnight: 24.99 };
+    document.getElementById('shipping-cost').textContent = costs[r.value];
+    document.getElementById('shipping-cost').className = r.value === 'standard' ? 'text-green-600 font-medium text-sm' : 'text-sm font-medium text-neutral-900';
+    const base = 296.99;
+    document.getElementById('grand-total').textContent = '$' + (base + extras[r.value]).toFixed(2);
+    document.getElementById('btn-label').textContent = 'Pay $' + (base + extras[r.value]).toFixed(2);
+  });
+});
+
+function applyPromo() {
+  const code = document.getElementById('promo-input').value.trim().toUpperCase();
+  if (code === 'AHIA10') {
+    document.getElementById('discount-row').classList.remove('hidden');
+    document.getElementById('grand-total').textContent = '$269.50';
+    document.getElementById('btn-label').textContent = 'Pay $269.50';
+    showToast('success', 'Promo applied!', '10% discount has been applied to your order.');
+    document.getElementById('promo-input').disabled = true;
+  } else if (code === '') {
+    showToast('error', 'No code entered', 'Please enter a discount code.');
+  } else {
+    showToast('error', 'Invalid code', `"${code}" is not a valid promo code.`);
+  }
+}
+
+function validateForm() {
+  const required = [
+    { id: 'contact-email', label: 'Email address' },
+    { id: 'contact-phone', label: 'Phone number' },
+    { id: 'ship-fname',    label: 'First name' },
+    { id: 'ship-lname',    label: 'Last name' },
+    { id: 'ship-addr',     label: 'Address' },
+    { id: 'ship-city',     label: 'City' },
+  ];
+  for (const f of required) {
+    const el = document.getElementById(f.id);
+    if (!el?.value?.trim()) {
+      el?.focus();
+      showToast('error', 'Missing field', `Please enter your ${f.label}.`);
+      return false;
+    }
+  }
+  // card validation
+  const payMethod = document.querySelector('input[name="payment"]:checked')?.value;
+  if (payMethod === 'card') {
+    const num = document.getElementById('card-number')?.value?.replace(/\s/g, '');
+    if (!num || num.length < 16) { showToast('error', 'Invalid card', 'Please enter a valid 16-digit card number.'); return false; }
+    const exp = document.getElementById('card-exp')?.value;
+    if (!exp || exp.length < 4) { showToast('error', 'Invalid expiry', 'Please enter your card expiry date.'); return false; }
+    const cvc = document.getElementById('card-cvc')?.value;
+    if (!cvc || cvc.length < 3) { showToast('error', 'Invalid CVC', 'Please enter a valid CVC.'); return false; }
+  }
+  return true;
+}
+
+function placeOrder() {
+  if (!validateForm()) return;
+  const btn = document.getElementById('place-order-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<svg class="spin w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg> Processing payment…';
+  setTimeout(() => {
+    window.location.href = 'confirmation.html';
+  }, 2200);
+}
+
+window.addEventListener('scroll', () => { document.querySelector('header')?.classList.toggle('scrolled', window.scrollY > 5); });
+document.addEventListener('DOMContentLoaded', () => { lucide.createIcons(); });
+
+let summaryOpen = true;
+function toggleOrderSummary() {
+  if (window.innerWidth >= 1024) return; // desktop always open
+  summaryOpen = !summaryOpen;
+  const body = document.getElementById('order-summary-body');
+  const chevron = document.getElementById('summary-chevron');
+  body.classList.toggle('collapsed', !summaryOpen);
+  if (!summaryOpen) { body.style.maxHeight = '0'; } 
+  else { body.style.maxHeight = body.scrollHeight + 'px'; setTimeout(() => body.style.maxHeight = 'none', 350); }
+  if (chevron) chevron.style.transform = summaryOpen ? 'rotate(0deg)' : 'rotate(-90deg)';
+}
+// On mobile, start collapsed
+if (window.innerWidth < 1024) {
+  const body = document.getElementById('order-summary-body');
+  if (body) { body.style.maxHeight = body.scrollHeight + 'px'; }
+}
+
+(function() {
+  const page = location.pathname.split('/').pop() || 'index.html';
+  document.querySelectorAll('nav a').forEach(el => {
+    const href = el.getAttribute('href') || '';
+    if (href && page === href.split('/').pop()) { el.classList.add('text-primary-600'); }
+  });
+})();
+</script>
+</body>
+</html>
