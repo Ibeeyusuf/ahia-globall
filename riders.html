@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Become a Rider — AhiaGlobal Delivery</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+tailwind.config={theme:{extend:{fontFamily:{heading:["Plus Jakarta Sans","sans-serif"],body:["Inter","sans-serif"]},colors:{primary:{50:"#fff7ed",100:"#ffedd5",200:"#fed7aa",300:"#fdba74",400:"#fb923c",500:"#f97316",600:"#ea580c",700:"#c2410c",800:"#9a3412",900:"#7c2d12"},neutral:{50:"#f8fafc",100:"#f1f5f9",200:"#e2e8f0",300:"#cbd5e1",400:"#94a3b8",500:"#64748b",600:"#475569",700:"#334155",800:"#1e293b",900:"#0f172a"}},boxShadow:{card:"0 4px 14px -3px rgba(15,23,42,.09)",hover:"0 12px 30px -5px rgba(15,23,42,.16)",modal:"0 24px 60px -8px rgba(15,23,42,.28)"},borderRadius:{xl2:"0.875rem",xl3:"1.25rem"}}}}
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+body{font-family:"Inter",sans-serif;background:#f8fafc;color:#0f172a}
+.field:focus-within label{color:#ea580c}
+.field:focus-within input,.field:focus-within select,.field:focus-within textarea{border-color:#ea580c;box-shadow:0 0 0 3px rgba(234,88,12,.12);outline:none}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes toastIn{from{opacity:0;transform:translateX(110%)}to{opacity:1;transform:translateX(0)}}
+@keyframes toastOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(110%)}}
+@keyframes countUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.afu{animation:fadeUp .6s ease both}
+.a1{animation-delay:.1s}.a2{animation-delay:.25s}.a3{animation-delay:.4s}.a4{animation-delay:.55s}
+.stat-card:hover{transform:translateY(-3px);box-shadow:0 12px 30px -5px rgba(15,23,42,.16)}
+.stat-card{transition:all .25s}
+.step-circle{width:48px;height:48px;border-radius:50%;background:#ea580c;color:#fff;font-weight:700;font-size:1.1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.scrolled{box-shadow:0 2px 20px -4px rgba(15,23,42,.12)}
+.vehicle-card{cursor:pointer;transition:all .2s}
+.vehicle-card:hover,.vehicle-card.selected{border-color:#ea580c;background:#fff7ed}
+.vehicle-card.selected .vehicle-icon{color:#ea580c}
+</style>
+</head>
+<body class="font-body">
+
+<div id="toast-stack" class="fixed top-20 right-3 z-[9999] flex flex-col gap-2 w-80 max-w-[calc(100vw-1.5rem)] pointer-events-none"></div>
+
+<!-- TOP BAR -->
+<div class="bg-neutral-900 text-neutral-400 py-1.5 px-4 text-xs hidden md:block">
+  <div class="max-w-7xl mx-auto flex items-center justify-between">
+    <div class="flex items-center gap-5">
+      <a href="tel:+2348001234567" class="flex items-center gap-1.5 hover:text-primary-400 transition-colors"><i data-lucide="phone" class="w-3 h-3"></i>+234 800 AHIA GLOBAL</a>
+      <a href="mailto:riders@ahiaglobal.com" class="flex items-center gap-1.5 hover:text-primary-400 transition-colors"><i data-lucide="mail" class="w-3 h-3"></i>riders@ahiaglobal.com</a>
+    </div>
+    <div class="flex items-center gap-4">
+      <a href="index.html" class="hover:text-primary-400 transition-colors">Back to Shop</a>
+      <div class="h-3 w-px bg-neutral-700"></div>
+      <a href="sell.html" class="hover:text-primary-400 transition-colors">Become a Seller</a>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header id="main-header" class="sticky top-0 z-[200] bg-white border-b border-neutral-200 transition-shadow">
+  <div class="max-w-7xl mx-auto px-5 py-4 flex items-center justify-between gap-4">
+    <a href="index.html" class="flex items-center gap-2">
+      <div class="w-9 h-9 bg-primary-600 rounded-lg flex items-center justify-center text-white font-heading font-bold text-lg">A</div>
+      <span class="font-heading font-bold text-xl md:text-2xl text-neutral-900 tracking-tight">Ahia<span class="text-primary-600">Global</span> <span class="text-sm font-medium text-neutral-500 hidden sm:inline">Delivery</span></span>
+    </a>
+    <div class="flex items-center gap-3">
+      <a href="index.html" class="hidden md:flex items-center gap-1.5 text-sm text-neutral-600 hover:text-primary-600 transition-colors"><i data-lucide="shopping-bag" class="w-4 h-4"></i>Shop</a>
+      <a href="sell.html" class="hidden md:flex items-center gap-1.5 text-sm text-neutral-600 hover:text-primary-600 transition-colors"><i data-lucide="store" class="w-4 h-4"></i>Sell</a>
+      <button onclick="document.getElementById('apply-section').scrollIntoView({behavior:'smooth'})" class="flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all">
+        Apply Now <i data-lucide="arrow-right" class="w-4 h-4"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 text-white py-16 md:py-24 relative overflow-hidden">
+  <div class="absolute inset-0 opacity-10" style="background:radial-gradient(circle at 70% 50%,#ea580c,transparent 55%)"></div>
+  <div class="max-w-7xl mx-auto px-5 relative z-10">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div>
+        <span class="inline-flex items-center gap-2 px-4 py-1.5 bg-primary-600/20 border border-primary-500/30 text-primary-400 text-xs font-bold rounded-full mb-5 uppercase tracking-wider afu a1"><i data-lucide="bike" class="w-3.5 h-3.5"></i>Now Hiring — Delivery Riders</span>
+        <h1 class="font-heading text-4xl md:text-5xl lg:text-6xl font-bold mb-5 leading-tight afu a2">Ride. Earn.<br><span class="text-primary-500">Grow.</span></h1>
+        <p class="text-neutral-300 text-base md:text-lg mb-8 max-w-lg leading-relaxed afu a3">Join thousands of AhiaGlobal delivery riders earning ₦3,000–₦15,000 daily. Set your own hours. Work in your city. Get paid weekly.</p>
+        <div class="flex flex-wrap gap-3 afu a4">
+          <button onclick="document.getElementById('apply-section').scrollIntoView({behavior:'smooth'})" class="flex items-center gap-2 px-8 py-3.5 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-full transition-all shadow-lg text-sm">
+            Start Earning Today <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+          <button onclick="document.getElementById('how-it-works').scrollIntoView({behavior:'smooth'})" class="px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full border border-white/20 transition-all text-sm">
+            How It Works
+          </button>
+        </div>
+        <!-- Quick stats -->
+        <div class="flex flex-wrap gap-6 mt-10 afu a4">
+          <div><p class="font-heading text-3xl font-bold text-primary-400">5,000+</p><p class="text-xs text-neutral-500 mt-0.5">Active Riders</p></div>
+          <div class="w-px bg-white/10"></div>
+          <div><p class="font-heading text-3xl font-bold text-white">₦15k</p><p class="text-xs text-neutral-500 mt-0.5">Max Daily Earnings</p></div>
+          <div class="w-px bg-white/10"></div>
+          <div><p class="font-heading text-3xl font-bold text-white">24h</p><p class="text-xs text-neutral-500 mt-0.5">To Get Started</p></div>
+          <div class="w-px bg-white/10"></div>
+          <div><p class="font-heading text-3xl font-bold text-green-400">Weekly</p><p class="text-xs text-neutral-500 mt-0.5">Pay Schedule</p></div>
+        </div>
+      </div>
+      <!-- Earnings calculator -->
+      <div class="hidden lg:block">
+        <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl3 p-7">
+          <h3 class="font-heading font-bold text-white text-lg mb-5 flex items-center gap-2"><i data-lucide="calculator" class="w-5 h-5 text-primary-500"></i>Earnings Calculator</h3>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-neutral-300 mb-2">Deliveries per day</label>
+              <input type="range" id="del-slider" min="5" max="40" value="15" oninput="calcEarnings()" class="w-full accent-orange-500">
+              <div class="flex justify-between text-xs text-neutral-500 mt-1"><span>5</span><span>40</span></div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-neutral-300 mb-2">Days per week</label>
+              <div class="flex gap-2">
+                <button onclick="setDays(3,this)" class="flex-1 py-2 rounded-lg border border-white/20 text-xs font-semibold text-neutral-300 hover:border-primary-500 hover:text-primary-400 transition-all">3 days</button>
+                <button onclick="setDays(5,this)" class="flex-1 py-2 rounded-lg border border-primary-500 bg-primary-600/20 text-xs font-semibold text-primary-400 transition-all days-btn active">5 days</button>
+                <button onclick="setDays(7,this)" class="flex-1 py-2 rounded-lg border border-white/20 text-xs font-semibold text-neutral-300 hover:border-primary-500 hover:text-primary-400 transition-all">7 days</button>
+              </div>
+            </div>
+          </div>
+          <div class="mt-6 pt-5 border-t border-white/10 space-y-3">
+            <div class="flex justify-between items-center"><span class="text-sm text-neutral-400">Per delivery</span><span class="text-sm font-semibold text-white">₦<span id="per-del">500</span></span></div>
+            <div class="flex justify-between items-center"><span class="text-sm text-neutral-400">Daily earnings</span><span class="text-sm font-semibold text-white">₦<span id="daily-earn">7,500</span></span></div>
+            <div class="flex justify-between items-center pt-2 border-t border-white/10"><span class="text-base font-bold text-white">Weekly earnings</span><span class="text-2xl font-heading font-bold text-primary-400">₦<span id="weekly-earn">37,500</span></span></div>
+            <div class="flex justify-between items-center"><span class="text-sm text-neutral-400">Monthly estimate</span><span class="text-sm font-bold text-green-400">₦<span id="monthly-earn">150,000</span></span></div>
+          </div>
+          <button onclick="document.getElementById('apply-section').scrollIntoView({behavior:'smooth'})" class="w-full mt-5 bg-primary-600 hover:bg-primary-700 text-white py-3 rounded-full font-semibold text-sm transition-all">
+            Apply Now — Start Earning
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section class="py-14 bg-white">
+  <div class="max-w-6xl mx-auto px-5">
+    <div class="text-center mb-10">
+      <h2 class="font-heading text-3xl md:text-4xl font-bold text-neutral-900 mb-3">Why Ride with AhiaGlobal?</h2>
+      <p class="text-neutral-500">Everything you need to earn well and work smart.</p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+      <div class="stat-card bg-neutral-50 rounded-xl2 border border-neutral-100 p-6">
+        <div class="w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center mb-4"><i data-lucide="clock" class="w-6 h-6 text-primary-600"></i></div>
+        <h3 class="font-heading font-bold text-neutral-900 mb-2">Flexible Hours</h3>
+        <p class="text-sm text-neutral-500 leading-relaxed">Work whenever you want. Morning, evening or weekends — you decide your schedule. No minimum hours.</p>
+      </div>
+      <div class="stat-card bg-neutral-50 rounded-xl2 border border-neutral-100 p-6">
+        <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mb-4"><i data-lucide="banknote" class="w-6 h-6 text-green-600"></i></div>
+        <h3 class="font-heading font-bold text-neutral-900 mb-2">Weekly Pay</h3>
+        <p class="text-sm text-neutral-500 leading-relaxed">Get paid every Friday directly to your bank or mobile money. No waiting 30 days — we pay on time, every time.</p>
+      </div>
+      <div class="stat-card bg-neutral-50 rounded-xl2 border border-neutral-100 p-6">
+        <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-4"><i data-lucide="map-pin" class="w-6 h-6 text-blue-600"></i></div>
+        <h3 class="font-heading font-bold text-neutral-900 mb-2">Work in Your Area</h3>
+        <p class="text-sm text-neutral-500 leading-relaxed">Only deliver within your zone. No long-distance routes. Operate in your neighbourhood, save fuel costs.</p>
+      </div>
+      <div class="stat-card bg-neutral-50 rounded-xl2 border border-neutral-100 p-6">
+        <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center mb-4"><i data-lucide="trending-up" class="w-6 h-6 text-amber-600"></i></div>
+        <h3 class="font-heading font-bold text-neutral-900 mb-2">Earn More with Bonuses</h3>
+        <p class="text-sm text-neutral-500 leading-relaxed">Earn daily delivery bonuses, peak-hour multipliers (1.5×–2×) and monthly performance rewards up to ₦50,000.</p>
+      </div>
+      <div class="stat-card bg-neutral-50 rounded-xl2 border border-neutral-100 p-6">
+        <div class="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center mb-4"><i data-lucide="shield-check" class="w-6 h-6 text-purple-600"></i></div>
+        <h3 class="font-heading font-bold text-neutral-900 mb-2">Insurance Cover</h3>
+        <p class="text-sm text-neutral-500 leading-relaxed">All active riders get accident cover while on delivery. Your safety is our priority — ride with peace of mind.</p>
+      </div>
+      <div class="stat-card bg-neutral-50 rounded-xl2 border border-neutral-100 p-6">
+        <div class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center mb-4"><i data-lucide="headphones" class="w-6 h-6 text-red-500"></i></div>
+        <h3 class="font-heading font-bold text-neutral-900 mb-2">24/7 Rider Support</h3>
+        <p class="text-sm text-neutral-500 leading-relaxed">Dedicated rider support team available round the clock via phone, WhatsApp and the AhiaRider app.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EARNINGS BREAKDOWN -->
+<section class="py-14 bg-neutral-50">
+  <div class="max-w-5xl mx-auto px-5">
+    <div class="text-center mb-10">
+      <h2 class="font-heading text-3xl font-bold text-neutral-900 mb-3">How Much Can You Earn?</h2>
+      <p class="text-neutral-500">Transparent pricing — no hidden cuts.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div class="bg-white rounded-xl2 border border-neutral-200 p-6 text-center hover:border-primary-300 hover:shadow-hover transition-all">
+        <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="bike" class="w-8 h-8 text-blue-600"></i></div>
+        <h3 class="font-heading font-bold text-neutral-900 text-lg mb-1">Bicycle</h3>
+        <p class="text-3xl font-heading font-bold text-primary-600 mb-1">₦300–₦500</p>
+        <p class="text-sm text-neutral-500 mb-4">per delivery</p>
+        <ul class="text-sm text-neutral-600 space-y-1.5 text-left">
+          <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500 flex-shrink-0"></i>Short-distance routes (0–3km)</li>
+          <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500 flex-shrink-0"></i>Low fuel cost</li>
+          <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500 flex-shrink-0"></i>Best for dense areas</li>
+        </ul>
+      </div>
+      <div class="bg-white rounded-xl2 border-2 border-primary-600 p-6 text-center relative shadow-hover">
+        <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary-600 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">Most Popular</div>
+        <div class="w-16 h-16 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="bike" class="w-8 h-8 text-primary-600"></i></div>
+        <h3 class="font-heading font-bold text-neutral-900 text-lg mb-1">Motorcycle</h3>
+        <p class="text-3xl font-heading font-bold text-primary-600 mb-1">₦500–₦800</p>
+        <p class="text-sm text-neutral-500 mb-4">per delivery</p>
+        <ul class="text-sm text-neutral-600 space-y-1.5 text-left">
+          <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500 flex-shrink-0"></i>Medium routes (3–10km)</li>
+          <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500 flex-shrink-0"></i>Higher order volume</li>
+          <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500 flex-shrink-0"></i>Peak-hour bonuses 1.5×</li>
+          <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500 flex-shrink-0"></i>Earn up to ₦15,000/day</li>
+        </ul>
+      </div>
+      <div class="bg-white rounded-xl2 border border-neutral-200 p-6 text-center hover:border-primary-300 hover:shadow-hover transition-all">
+        <div class="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="car" class="w-8 h-8 text-neutral-600"></i></div>
+        <h3 class="font-heading font-bold text-neutral-900 text-lg mb-1">Car / Van</h3>
+        <p class="text-3xl font-heading font-bold text-primary-600 mb-1">₦800–₦2,000</p>
+        <p class="text-sm text-neutral-500 mb-4">per delivery</p>
+        <ul class="text-sm text-neutral-600 space-y-1.5 text-left">
+          <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500 flex-shrink-0"></i>Bulky & fragile items</li>
+          <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500 flex-shrink-0"></i>Multi-drop routes</li>
+          <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500 flex-shrink-0"></i>Enterprise contracts available</li>
+        </ul>
+      </div>
+    </div>
+    <!-- Bonus table -->
+    <div class="mt-8 bg-white rounded-xl2 border border-neutral-100 overflow-hidden shadow-card">
+      <div class="px-5 py-3.5 bg-neutral-50 border-b border-neutral-100">
+        <h3 class="font-heading font-bold text-sm text-neutral-900 flex items-center gap-2"><i data-lucide="zap" class="w-4 h-4 text-primary-600"></i>Bonus & Incentive Structure</h3>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead><tr class="bg-neutral-50 text-left"><th class="px-5 py-3 text-xs font-bold text-neutral-500 uppercase tracking-wide">Bonus Type</th><th class="px-5 py-3 text-xs font-bold text-neutral-500 uppercase tracking-wide">Trigger</th><th class="px-5 py-3 text-xs font-bold text-neutral-500 uppercase tracking-wide">Reward</th></tr></thead>
+          <tbody class="divide-y divide-neutral-50">
+            <tr class="hover:bg-neutral-50"><td class="px-5 py-3.5 font-medium text-neutral-900">Peak Hours Bonus</td><td class="px-5 py-3.5 text-neutral-500">Deliver 7am–9am or 5pm–8pm</td><td class="px-5 py-3.5 font-bold text-green-600">1.5× per delivery</td></tr>
+            <tr class="hover:bg-neutral-50"><td class="px-5 py-3.5 font-medium text-neutral-900">Weekend Warrior</td><td class="px-5 py-3.5 text-neutral-500">Complete 20+ deliveries on Saturday</td><td class="px-5 py-3.5 font-bold text-green-600">+ ₦5,000 bonus</td></tr>
+            <tr class="hover:bg-neutral-50"><td class="px-5 py-3.5 font-medium text-neutral-900">Star Rating Bonus</td><td class="px-5 py-3.5 text-neutral-500">Maintain 4.8+ rating for 30 days</td><td class="px-5 py-3.5 font-bold text-green-600">+ ₦10,000/month</td></tr>
+            <tr class="hover:bg-neutral-50"><td class="px-5 py-3.5 font-medium text-neutral-900">Referral Bonus</td><td class="px-5 py-3.5 text-neutral-500">Refer a rider who completes 50 trips</td><td class="px-5 py-3.5 font-bold text-green-600">₦3,000 per referral</td></tr>
+            <tr class="hover:bg-neutral-50"><td class="px-5 py-3.5 font-medium text-neutral-900">Top Rider Award</td><td class="px-5 py-3.5 text-neutral-500">Top 10 riders in your zone/month</td><td class="px-5 py-3.5 font-bold text-green-600">₦50,000 + trophy</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how-it-works" class="py-14 bg-white">
+  <div class="max-w-5xl mx-auto px-5">
+    <div class="text-center mb-10">
+      <h2 class="font-heading text-3xl font-bold text-neutral-900 mb-3">Get Started in 4 Simple Steps</h2>
+      <p class="text-neutral-500">From sign-up to first delivery in as little as 24 hours.</p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+      <div class="flex flex-col items-center text-center gap-4">
+        <div class="step-circle">1</div>
+        <div class="w-14 h-14 bg-primary-50 rounded-xl2 flex items-center justify-center"><i data-lucide="clipboard-list" class="w-7 h-7 text-primary-600"></i></div>
+        <h3 class="font-heading font-bold text-neutral-900">Apply Online</h3>
+        <p class="text-sm text-neutral-500 leading-relaxed">Fill in the form below with your details and vehicle information.</p>
+      </div>
+      <div class="flex flex-col items-center text-center gap-4">
+        <div class="step-circle">2</div>
+        <div class="w-14 h-14 bg-blue-50 rounded-xl2 flex items-center justify-center"><i data-lucide="file-check" class="w-7 h-7 text-blue-600"></i></div>
+        <h3 class="font-heading font-bold text-neutral-900">Verification</h3>
+        <p class="text-sm text-neutral-500 leading-relaxed">Submit your ID, licence and vehicle documents. Approved within 24hrs.</p>
+      </div>
+      <div class="flex flex-col items-center text-center gap-4">
+        <div class="step-circle">3</div>
+        <div class="w-14 h-14 bg-green-50 rounded-xl2 flex items-center justify-center"><i data-lucide="smartphone" class="w-7 h-7 text-green-600"></i></div>
+        <h3 class="font-heading font-bold text-neutral-900">Get the App</h3>
+        <p class="text-sm text-neutral-500 leading-relaxed">Download the AhiaRider app, complete a short online training and activate your account.</p>
+      </div>
+      <div class="flex flex-col items-center text-center gap-4">
+        <div class="step-circle">4</div>
+        <div class="w-14 h-14 bg-amber-50 rounded-xl2 flex items-center justify-center"><i data-lucide="banknote" class="w-7 h-7 text-amber-600"></i></div>
+        <h3 class="font-heading font-bold text-neutral-900">Start Earning</h3>
+        <p class="text-sm text-neutral-500 leading-relaxed">Accept orders on the app and earn from your very first delivery. Weekly payouts.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REQUIREMENTS -->
+<section class="py-14 bg-neutral-50">
+  <div class="max-w-5xl mx-auto px-5">
+    <div class="text-center mb-10">
+      <h2 class="font-heading text-3xl font-bold text-neutral-900 mb-3">What You Need to Join</h2>
+      <p class="text-neutral-500">Minimal requirements — we focus on dependability and attitude.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="bg-white rounded-xl2 border border-neutral-100 p-6 shadow-card">
+        <h3 class="font-heading font-bold text-neutral-900 mb-4 flex items-center gap-2"><i data-lucide="user-check" class="w-5 h-5 text-primary-600"></i>Personal Requirements</h3>
+        <ul class="space-y-3 text-sm text-neutral-600">
+          <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5"></i>Age 18 years or older</li>
+          <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5"></i>Valid National ID or NIN (BVN acceptable)</li>
+          <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5"></i>Smartphone (Android 8.0+ or iOS 13+)</li>
+          <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5"></i>Bank account or registered mobile money wallet</li>
+          <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5"></i>Good knowledge of local roads and areas</li>
+        </ul>
+      </div>
+      <div class="bg-white rounded-xl2 border border-neutral-100 p-6 shadow-card">
+        <h3 class="font-heading font-bold text-neutral-900 mb-4 flex items-center gap-2"><i data-lucide="bike" class="w-5 h-5 text-primary-600"></i>Vehicle Requirements</h3>
+        <ul class="space-y-3 text-sm text-neutral-600">
+          <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5"></i>Working bicycle, motorcycle or car/van</li>
+          <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5"></i>Valid vehicle registration documents</li>
+          <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5"></i>Valid motorcycle/driving licence (for motorized vehicles)</li>
+          <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5"></i>Third-party vehicle insurance</li>
+          <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5"></i>Delivery bag or box (we provide on request)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="mt-5 bg-primary-50 border border-primary-100 rounded-xl2 p-4 flex items-start gap-3">
+      <i data-lucide="info" class="w-5 h-5 text-primary-600 flex-shrink-0 mt-0.5"></i>
+      <p class="text-sm text-primary-700"><strong>No vehicle?</strong> We have partnerships with motorcycle leasing companies. Ask about our Rider Starter Programme — ride with a leased bike and pay back from earnings with zero upfront cost.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="py-14 bg-white">
+  <div class="max-w-5xl mx-auto px-5">
+    <div class="text-center mb-10">
+      <h2 class="font-heading text-3xl font-bold text-neutral-900 mb-3">Riders Love Working With Us</h2>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div class="bg-neutral-50 rounded-xl2 border border-neutral-100 p-5">
+        <div class="flex items-center gap-1 mb-3">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+        </div>
+        <p class="text-sm text-neutral-600 italic mb-4">"I started with AhiaGlobal 6 months ago while studying at UNILAG. I earn ₦60,000–₦80,000 monthly just doing weekends and evenings. Best decision I ever made."</p>
+        <div class="flex items-center gap-2.5"><div class="w-9 h-9 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-bold text-sm">AO</div><div><p class="text-sm font-semibold text-neutral-900">Adewale Okafor</p><p class="text-xs text-neutral-500">Motorcycle Rider · Lagos Island</p></div></div>
+      </div>
+      <div class="bg-neutral-50 rounded-xl2 border border-neutral-100 p-5">
+        <div class="flex items-center gap-1 mb-3">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+        </div>
+        <p class="text-sm text-neutral-600 italic mb-4">"Weekly pay is what sold me. Before, I worked for a delivery company that paid monthly and always delayed. AhiaGlobal pays on Friday, every Friday without fail. Respect."</p>
+        <div class="flex items-center gap-2.5"><div class="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-bold text-sm">CI</div><div><p class="text-sm font-semibold text-neutral-900">Chidinma Ike</p><p class="text-xs text-neutral-500">Bicycle Rider · Surulere, Lagos</p></div></div>
+      </div>
+      <div class="bg-neutral-50 rounded-xl2 border border-neutral-100 p-5">
+        <div class="flex items-center gap-1 mb-3">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#e2e8f0"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+        </div>
+        <p class="text-sm text-neutral-600 italic mb-4">"Been driving with AhiaGlobal for 8 months using my car for bulky deliveries. The enterprise contracts are gold — same clients, regular routes, solid income of ₦200k+ monthly."</p>
+        <div class="flex items-center gap-2.5"><div class="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-sm">EB</div><div><p class="text-sm font-semibold text-neutral-900">Emeka Balogun</p><p class="text-xs text-neutral-500">Car Rider · Victoria Island, Lagos</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APPLICATION FORM -->
+<section id="apply-section" class="py-14 bg-neutral-50">
+  <div class="max-w-2xl mx-auto px-5">
+    <div class="text-center mb-8">
+      <h2 class="font-heading text-3xl font-bold text-neutral-900 mb-3">Apply to Become a Rider</h2>
+      <p class="text-neutral-500">Takes 3 minutes. Our team will contact you within 24 hours.</p>
+    </div>
+
+    <div id="rider-form-wrap" class="bg-white rounded-xl3 shadow-card border border-neutral-100 p-6 md:p-8">
+      <!-- Vehicle type selector -->
+      <div class="mb-5">
+        <label class="block text-sm font-semibold text-neutral-700 mb-3">Select your vehicle type</label>
+        <div class="grid grid-cols-3 gap-3">
+          <div class="vehicle-card selected border-2 border-primary-600 bg-primary-50 rounded-xl2 p-4 text-center" onclick="selectVehicle(this,'bicycle')">
+            <i data-lucide="bike" class="vehicle-icon w-7 h-7 text-primary-600 mx-auto mb-2"></i>
+            <p class="text-xs font-bold text-neutral-800">Bicycle</p>
+            <p class="text-[10px] text-neutral-500 mt-0.5">₦300–₦500/del</p>
+            <input type="radio" name="vehicle" value="bicycle" checked class="sr-only">
+          </div>
+          <div class="vehicle-card border-2 border-neutral-200 rounded-xl2 p-4 text-center" onclick="selectVehicle(this,'motorcycle')">
+            <i data-lucide="bike" class="vehicle-icon w-7 h-7 text-neutral-400 mx-auto mb-2"></i>
+            <p class="text-xs font-bold text-neutral-800">Motorcycle</p>
+            <p class="text-[10px] text-neutral-500 mt-0.5">₦500–₦800/del</p>
+            <input type="radio" name="vehicle" value="motorcycle" class="sr-only">
+          </div>
+          <div class="vehicle-card border-2 border-neutral-200 rounded-xl2 p-4 text-center" onclick="selectVehicle(this,'car')">
+            <i data-lucide="car" class="vehicle-icon w-7 h-7 text-neutral-400 mx-auto mb-2"></i>
+            <p class="text-xs font-bold text-neutral-800">Car / Van</p>
+            <p class="text-[10px] text-neutral-500 mt-0.5">₦800–₦2,000/del</p>
+            <input type="radio" name="vehicle" value="car" class="sr-only">
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1.5">Full Name <span class="text-red-500">*</span></label><input id="r-name" type="text" placeholder="e.g. Emeka Okafor" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"></div>
+        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1.5">Phone Number <span class="text-red-500">*</span></label><input id="r-phone" type="tel" placeholder="+234 800 000 0000" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"></div>
+        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1.5">Email Address</label><input id="r-email" type="email" placeholder="you@example.com" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"></div>
+        <div class="field">
+          <label class="block text-sm font-medium text-neutral-700 mb-1.5">City / State <span class="text-red-500">*</span></label>
+          <div class="relative">
+            <select id="r-city" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 appearance-none transition-all">
+              <option value="">Select your city</option>
+              <option>Lagos</option><option>Abuja</option><option>Port Harcourt</option><option>Kano</option>
+              <option>Ibadan</option><option>Enugu</option><option>Benin City</option><option>Warri</option>
+              <option>Owerri</option><option>Calabar</option><option>Kaduna</option><option>Other</option>
+            </select>
+            <i data-lucide="chevron-down" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none"></i>
+          </div>
+        </div>
+        <div class="field">
+          <label class="block text-sm font-medium text-neutral-700 mb-1.5">Available Hours</label>
+          <div class="relative">
+            <select id="r-hours" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 appearance-none transition-all">
+              <option>Morning (6am–12pm)</option>
+              <option>Afternoon (12pm–6pm)</option>
+              <option selected>Full Day (6am–8pm)</option>
+              <option>Evenings only</option>
+              <option>Weekends only</option>
+            </select>
+            <i data-lucide="chevron-down" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none"></i>
+          </div>
+        </div>
+        <div class="field">
+          <label class="block text-sm font-medium text-neutral-700 mb-1.5">Experience</label>
+          <div class="relative">
+            <select id="r-exp" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 appearance-none transition-all">
+              <option>No delivery experience</option>
+              <option>Less than 1 year</option>
+              <option>1–2 years</option>
+              <option>3+ years</option>
+            </select>
+            <i data-lucide="chevron-down" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none"></i>
+          </div>
+        </div>
+        <div class="sm:col-span-2"><label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" id="r-agree" class="w-4 h-4 mt-0.5 accent-orange-600 rounded flex-shrink-0"><span class="text-xs text-neutral-500">I confirm the information provided is accurate and I agree to AhiaGlobal's <a href="#" class="text-primary-600 hover:underline">Rider Terms of Service</a>.</span></label></div>
+      </div>
+      <button onclick="submitRiderForm()" class="w-full mt-5 bg-primary-600 hover:bg-primary-700 text-white py-4 rounded-full font-bold text-base transition-all shadow-card hover:shadow-hover flex items-center justify-center gap-2">
+        <i data-lucide="send" class="w-5 h-5"></i>Submit Application — It's Free!
+      </button>
+    </div>
+
+    <!-- Thank you state -->
+    <div id="rider-thanks" class="hidden bg-white rounded-xl3 shadow-card border border-neutral-100 p-10 text-center">
+      <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5"><i data-lucide="check-circle" class="w-8 h-8 text-green-600"></i></div>
+      <h2 class="font-heading text-2xl font-bold text-neutral-900 mb-3">Application Received! 🎉</h2>
+      <p class="text-neutral-500 mb-2">Thanks for applying to ride with AhiaGlobal.</p>
+      <p class="text-neutral-500 mb-6">Our rider operations team will call you at <strong id="thanks-phone" class="text-neutral-900">your number</strong> within <strong>24 hours</strong> to complete verification.</p>
+      <div class="bg-primary-50 rounded-xl2 border border-primary-100 p-4 mb-6 text-left">
+        <p class="text-sm font-bold text-primary-900 mb-2">What to prepare for your call:</p>
+        <ul class="text-sm text-primary-700 space-y-1">
+          <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5"></i>Your National ID or NIN</li>
+          <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5"></i>Vehicle registration papers</li>
+          <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5"></i>Bank account details for payouts</li>
+        </ul>
+      </div>
+      <div class="flex flex-col sm:flex-row justify-center gap-3">
+        <a href="index.html" class="flex items-center justify-center gap-2 px-7 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-full transition-all text-sm"><i data-lucide="shopping-bag" class="w-4 h-4"></i>Shop on AhiaGlobal</a>
+        <a href="faq.html" class="flex items-center justify-center gap-2 px-7 py-3 border border-neutral-300 text-neutral-700 font-semibold rounded-full hover:bg-neutral-50 transition-all text-sm"><i data-lucide="help-circle" class="w-4 h-4"></i>Rider FAQ</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="bg-neutral-900 text-neutral-400 py-10">
+  <div class="max-w-6xl mx-auto px-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-2"><div class="w-7 h-7 bg-primary-600 rounded-md flex items-center justify-center text-white font-bold text-sm">A</div><span class="font-heading font-bold text-white">Ahia<span class="text-primary-600">Global</span> <span class="text-neutral-400 font-normal text-sm">Delivery</span></span></div>
+    <p class="text-xs">© 2024 AhiaGlobal. All rights reserved.</p>
+    <div class="flex gap-4 text-xs"><a href="index.html" class="hover:text-primary-400">Shop</a><a href="sell.html" class="hover:text-primary-400">Sell</a><a href="faq.html" class="hover:text-primary-400">Help</a></div>
+  </div>
+</footer>
+
+<script src="shared.js"></script>
+<script>
+let selectedVehicle = 'bicycle';
+let daysPerWeek = 5;
+
+function selectVehicle(el, type) {
+  selectedVehicle = type;
+  document.querySelectorAll('.vehicle-card').forEach(c => {
+    c.classList.remove('selected','border-primary-600','bg-primary-50');
+    c.classList.add('border-neutral-200');
+    c.querySelector('.vehicle-icon').classList.remove('text-primary-600');
+    c.querySelector('.vehicle-icon').classList.add('text-neutral-400');
+  });
+  el.classList.add('selected','border-primary-600','bg-primary-50');
+  el.classList.remove('border-neutral-200');
+  el.querySelector('.vehicle-icon').classList.add('text-primary-600');
+  el.querySelector('.vehicle-icon').classList.remove('text-neutral-400');
+  lucide.createIcons();
+}
+
+function setDays(d, btn) {
+  daysPerWeek = d;
+  document.querySelectorAll('.days-btn').forEach(b => {
+    b.classList.remove('border-primary-500','bg-primary-600/20','text-primary-400');
+    b.classList.add('border-white/20','text-neutral-300');
+  });
+  btn.classList.add('border-primary-500','bg-primary-600/20','text-primary-400');
+  btn.classList.remove('border-white/20','text-neutral-300');
+  calcEarnings();
+}
+
+function calcEarnings() {
+  var dels = parseInt(document.getElementById('del-slider').value) || 15;
+  var rateMap = {bicycle:400, motorcycle:650, car:1400};
+  var rate = rateMap[selectedVehicle] || 650;
+  var daily = dels * rate;
+  var weekly = daily * daysPerWeek;
+  var monthly = weekly * 4;
+  document.getElementById('per-del').textContent = rate.toLocaleString();
+  document.getElementById('daily-earn').textContent = daily.toLocaleString();
+  document.getElementById('weekly-earn').textContent = weekly.toLocaleString();
+  document.getElementById('monthly-earn').textContent = monthly.toLocaleString();
+}
+
+function submitRiderForm() {
+  var name  = document.getElementById('r-name')?.value?.trim();
+  var phone = document.getElementById('r-phone')?.value?.trim();
+  var city  = document.getElementById('r-city')?.value;
+  var agree = document.getElementById('r-agree')?.checked;
+  if (!name)  { showToast('error','Required','Please enter your full name.'); return; }
+  if (!phone) { showToast('error','Required','Please enter your phone number.'); return; }
+  if (!city)  { showToast('error','Required','Please select your city.'); return; }
+  if (!agree) { showToast('error','Terms required','Please accept the Rider Terms of Service.'); return; }
+  document.getElementById('rider-form-wrap').classList.add('hidden');
+  document.getElementById('rider-thanks').classList.remove('hidden');
+  document.getElementById('thanks-phone').textContent = phone;
+  lucide.createIcons();
+}
+
+window.addEventListener('scroll', () => document.getElementById('main-header')?.classList.toggle('scrolled', window.scrollY > 10));
+document.addEventListener('DOMContentLoaded', () => { calcEarnings(); lucide.createIcons(); });
+</script>
+</body>
+</html>

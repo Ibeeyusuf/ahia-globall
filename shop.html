@@ -162,16 +162,25 @@ tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-s
   <nav class="hidden md:block border-t border-neutral-100 bg-white">
     <div class="max-w-7xl mx-auto px-4">
       <ul class="flex items-center text-sm font-medium text-neutral-600" style="overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none;white-space:nowrap">
-        <li><a href="index.html"                class="inline-flex items-center gap-1.5 py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-home"><i data-lucide="home" class="w-4 h-4"></i>Home</a></li>
+        <li class="relative group">
+          <a href="categories.html" class="inline-flex items-center gap-1.5 py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-home"><i data-lucide="layout-grid" class="w-4 h-4"></i>Categories<i data-lucide="chevron-down" class="w-3 h-3 ml-0.5"></i></a>
+          <!-- mega drop -->
+          <div class="hidden group-hover:grid absolute top-full left-0 z-50 bg-white border border-neutral-200 rounded-xl2 shadow-modal p-4 gap-4 mt-0" style="grid-template-columns:repeat(4,150px);min-width:620px">
+            <div><p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-2">Fashion</p><a href="shop.html?cat=fashion&sub=mens" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Men's Fashion</a><a href="shop.html?cat=fashion&sub=womens" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Women's Fashion</a><a href="shop.html?cat=fashion&sub=shoes" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Shoes & Sneakers</a><a href="shop.html?cat=fashion&sub=bags" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Bags & Accessories</a></div>
+            <div><p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-2">Phones</p><a href="shop.html?cat=phones&sub=smartphones" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Smartphones</a><a href="shop.html?cat=phones&sub=tablets" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Tablets</a><a href="shop.html?cat=phones&sub=smartwatches" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Smart Watches</a><a href="shop.html?cat=phones&sub=accessories" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Accessories</a></div>
+            <div><p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-2">Electronics</p><a href="shop.html?cat=electronics&sub=audio" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Audio & Headphones</a><a href="shop.html?cat=electronics&sub=gaming" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Gaming</a><a href="shop.html?cat=electronics&sub=peripherals" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Computer Accessories</a><a href="shop.html?cat=laptops" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Laptops</a></div>
+            <div><p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-2">More</p><a href="shop.html?cat=beauty" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Health & Beauty</a><a href="shop.html?cat=home" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Home & Living</a><a href="shop.html?cat=sports" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Sports & Fitness</a><a href="shop.html?cat=gifts" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Gifts & Artisan</a></div>
+          </div>
+        </li>
+        <li><a href="index.html"                class="inline-flex items-center gap-1.5 py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-home-page"><i data-lucide="home" class="w-4 h-4"></i>Home</a></li>
         <li><a href="shop.html"                 class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-shop">All Products</a></li>
         <li><a href="shop.html?cat=fashion"     class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-fashion">Fashion</a></li>
+        <li><a href="shop.html?cat=phones"      class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-phones">Phones</a></li>
         <li><a href="shop.html?cat=electronics" class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-electronics">Electronics</a></li>
-        <li><a href="shop.html?cat=phones"      class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-phones">Phones &amp; Tablets</a></li>
-        <li><a href="shop.html?cat=home"        class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-home-cat">Home &amp; Living</a></li>
         <li><a href="shop.html?cat=beauty"      class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-beauty">Beauty</a></li>
+        <li><a href="shop.html?cat=home"        class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-home-cat">Home</a></li>
         <li><a href="shop.html?cat=sports"      class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-sports">Sports</a></li>
-        <li><a href="shop.html?cat=gifts"       class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-gifts">Gifts</a></li>
-        <li><a href="shop.html?cat=laptops"     class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-laptops">Laptops</a></li>
+        <li><a href="riders.html"               class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-riders">Riders</a></li>
         <li class="ml-auto flex-shrink-0"><a href="shop.html?sale=1" class="inline-flex items-center gap-1 py-3 px-3 text-red-600 hover:text-red-700 font-semibold border-b-2 border-red-500" id="nav-sales"><i data-lucide="zap" class="w-3.5 h-3.5"></i>Flash Sales</a></li>
       </ul>
     </div>
@@ -290,6 +299,17 @@ tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-s
       </div>
     </aside>
 
+    
+      <!-- SUBCATEGORY SIDEBAR (desktop) -->
+      <div id="subcat-sidebar" class="hidden lg:block w-48 flex-shrink-0">
+        <div class="bg-white rounded-xl2 border border-neutral-100 shadow-card overflow-hidden sticky top-24">
+          <div class="px-4 py-3 border-b border-neutral-100 bg-neutral-50">
+            <p class="text-xs font-bold text-neutral-500 uppercase tracking-wider" id="subcat-heading">Sub-categories</p>
+          </div>
+          <nav id="subcat-list" class="p-2"></nav>
+        </div>
+      </div>
+
     <!-- PRODUCT GRID -->
     <div class="flex-1 min-w-0">
 
@@ -381,105 +401,105 @@ tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-s
 
 const ALL_PRODUCTS = [
   // ── FASHION (12 products) ────────────────────────────────────
-  {id:'fa1',name:'Ankara Print Blazer',price:72,orig:95,cat:'fashion',img:'https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=400&q=80',rating:4.7,reviews:83,disc:24,badge:'New'},
-  {id:'fa2',name:'Summer Floral Dress',price:45,orig:60,cat:'fashion',img:'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&q=80',rating:4.8,reviews:134,disc:25,badge:''},
-  {id:'fa3',name:'Urban Cotton T-Shirt',price:28,orig:35,cat:'fashion',img:'https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?w=400&q=80',rating:4.5,reviews:67,disc:20,badge:''},
-  {id:'fa4',name:'Boubou Traditional Set',price:95,orig:130,cat:'fashion',img:'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=400&q=80',rating:4.9,reviews:45,disc:27,badge:'Top Pick'},
-  {id:'fa5',name:'Linen Wide-Leg Trousers',price:49,orig:65,cat:'fashion',img:'https://images.unsplash.com/photo-1591195853828-11db59a44f43?w=400&q=80',rating:4.6,reviews:52,disc:25,badge:''},
-  {id:'fa6',name:'Adire Tie-Dye Top',price:34,orig:45,cat:'fashion',img:'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400&q=80',rating:4.4,reviews:29,disc:24,badge:'New'},
-  {id:'fa7',name:'Kente Print Sneakers',price:89,orig:120,cat:'fashion',img:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80',rating:4.7,reviews:98,disc:26,badge:''},
-  {id:'fa8',name:'Leather Belt Bag',price:38,orig:55,cat:'fashion',img:'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&q=80',rating:4.5,reviews:41,disc:31,badge:''},
-  {id:'fa9',name:'Beaded Statement Necklace',price:22,orig:30,cat:'fashion',img:'https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?w=400&q=80',rating:4.6,reviews:35,disc:27,badge:'New'},
-  {id:'fa10',name:'Woven Raffia Hat',price:27,orig:38,cat:'fashion',img:'https://images.unsplash.com/photo-1572307480813-ceb0e59d8325?w=400&q=80',rating:4.5,reviews:19,disc:29,badge:''},
-  {id:'fa11',name:'African Print Mini Skirt',price:35,orig:48,cat:'fashion',img:'https://images.unsplash.com/photo-1583846717393-dc2412c95ed7?w=400&q=80',rating:4.4,reviews:28,disc:27,badge:'New'},
-  {id:'fa12',name:'Handwoven Basket Bag',price:55,orig:75,cat:'fashion',img:'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400&q=80',rating:4.7,reviews:38,disc:27,badge:''},
+  {id:'fa1',subcat:'womens',name:'Ankara Print Blazer',price:72,orig:95,cat:'fashion',img:'https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=400&q=80',rating:4.7,reviews:83,disc:24,badge:'New'},
+  {id:'fa2',subcat:'womens',name:'Summer Floral Dress',price:45,orig:60,cat:'fashion',img:'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&q=80',rating:4.8,reviews:134,disc:25,badge:''},
+  {id:'fa3',subcat:'mens',name:'Urban Cotton T-Shirt',price:28,orig:35,cat:'fashion',img:'https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?w=400&q=80',rating:4.5,reviews:67,disc:20,badge:''},
+  {id:'fa4',subcat:'mens',name:'Boubou Traditional Set',price:95,orig:130,cat:'fashion',img:'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=400&q=80',rating:4.9,reviews:45,disc:27,badge:'Top Pick'},
+  {id:'fa5',subcat:'womens',name:'Linen Wide-Leg Trousers',price:49,orig:65,cat:'fashion',img:'https://images.unsplash.com/photo-1591195853828-11db59a44f43?w=400&q=80',rating:4.6,reviews:52,disc:25,badge:''},
+  {id:'fa6',subcat:'womens',name:'Adire Tie-Dye Top',price:34,orig:45,cat:'fashion',img:'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400&q=80',rating:4.4,reviews:29,disc:24,badge:'New'},
+  {id:'fa7',subcat:'shoes',name:'Kente Print Sneakers',price:89,orig:120,cat:'fashion',img:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80',rating:4.7,reviews:98,disc:26,badge:''},
+  {id:'fa8',subcat:'bags',name:'Leather Belt Bag',price:38,orig:55,cat:'fashion',img:'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&q=80',rating:4.5,reviews:41,disc:31,badge:''},
+  {id:'fa9',subcat:'jewellery',name:'Beaded Statement Necklace',price:22,orig:30,cat:'fashion',img:'https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?w=400&q=80',rating:4.6,reviews:35,disc:27,badge:'New'},
+  {id:'fa10',subcat:'accessories',name:'Woven Raffia Hat',price:27,orig:38,cat:'fashion',img:'https://images.unsplash.com/photo-1572307480813-ceb0e59d8325?w=400&q=80',rating:4.5,reviews:19,disc:29,badge:''},
+  {id:'fa11',subcat:'womens',name:'African Print Mini Skirt',price:35,orig:48,cat:'fashion',img:'https://images.unsplash.com/photo-1583846717393-dc2412c95ed7?w=400&q=80',rating:4.4,reviews:28,disc:27,badge:'New'},
+  {id:'fa12',subcat:'bags',name:'Handwoven Basket Bag',price:55,orig:75,cat:'fashion',img:'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400&q=80',rating:4.7,reviews:38,disc:27,badge:''},
 
   // ── ELECTRONICS (10 products) ─────────────────────────────────
-  {id:'el1',name:'Premium Wireless Headphones',price:129.99,orig:185,cat:'electronics',img:'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80',rating:4.8,reviews:124,disc:30,badge:'-30%'},
-  {id:'el2',name:'Wireless Earbuds Pro',price:89.99,orig:120,cat:'electronics',img:'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=400&q=80',rating:4.6,reviews:87,disc:25,badge:''},
-  {id:'el3',name:'Mechanical Keyboard RGB',price:79.99,orig:130,cat:'electronics',img:'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400&q=80',rating:4.7,reviews:63,disc:38,badge:'Sale'},
-  {id:'el4',name:'Portable BT Speaker',price:65,orig:90,cat:'electronics',img:'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=400&q=80',rating:4.5,reviews:55,disc:28,badge:''},
-  {id:'el5',name:'Ergonomic Wireless Mouse',price:45,orig:60,cat:'electronics',img:'https://images.unsplash.com/photo-1527814050087-3793815479db?w=400&q=80',rating:4.4,reviews:39,disc:25,badge:''},
-  {id:'el6',name:'USB-C Hub 7-in-1',price:49.99,orig:70,cat:'electronics',img:'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=400&q=80',rating:4.6,reviews:71,disc:29,badge:''},
-  {id:'el7',name:'Webcam HD 1080p',price:59.99,orig:85,cat:'electronics',img:'https://images.unsplash.com/photo-1587826080692-f439cd0b70da?w=400&q=80',rating:4.3,reviews:28,disc:29,badge:''},
-  {id:'el8',name:'Laptop Stand Aluminium',price:34.99,orig:50,cat:'electronics',img:'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400&q=80',rating:4.7,reviews:110,disc:30,badge:''},
-  {id:'el9',name:'Smart Watch Fitness Pro',price:199,orig:330,cat:'electronics',img:'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80',rating:4.6,reviews:88,disc:40,badge:'-40%'},
-  {id:'el10',name:'Sony WH-1000XM5',price:279,orig:399,cat:'electronics',img:'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=400&q=80',rating:4.9,reviews:445,disc:30,badge:'Top Pick'},
+  {id:'el1',subcat:'audio',name:'Premium Wireless Headphones',price:129.99,orig:185,cat:'electronics',img:'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80',rating:4.8,reviews:124,disc:30,badge:'-30%'},
+  {id:'el2',subcat:'audio',name:'Wireless Earbuds Pro',price:89.99,orig:120,cat:'electronics',img:'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=400&q=80',rating:4.6,reviews:87,disc:25,badge:''},
+  {id:'el3',subcat:'peripherals',name:'Mechanical Keyboard RGB',price:79.99,orig:130,cat:'electronics',img:'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400&q=80',rating:4.7,reviews:63,disc:38,badge:'Sale'},
+  {id:'el4',subcat:'audio',name:'Portable BT Speaker',price:65,orig:90,cat:'electronics',img:'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=400&q=80',rating:4.5,reviews:55,disc:28,badge:''},
+  {id:'el5',subcat:'peripherals',name:'Ergonomic Wireless Mouse',price:45,orig:60,cat:'electronics',img:'https://images.unsplash.com/photo-1527814050087-3793815479db?w=400&q=80',rating:4.4,reviews:39,disc:25,badge:''},
+  {id:'el6',subcat:'peripherals',name:'USB-C Hub 7-in-1',price:49.99,orig:70,cat:'electronics',img:'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=400&q=80',rating:4.6,reviews:71,disc:29,badge:''},
+  {id:'el7',subcat:'peripherals',name:'Webcam HD 1080p',price:59.99,orig:85,cat:'electronics',img:'https://images.unsplash.com/photo-1587826080692-f439cd0b70da?w=400&q=80',rating:4.3,reviews:28,disc:29,badge:''},
+  {id:'el8',subcat:'peripherals',name:'Laptop Stand Aluminium',price:34.99,orig:50,cat:'electronics',img:'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400&q=80',rating:4.7,reviews:110,disc:30,badge:''},
+  {id:'el9',subcat:'smart-home',name:'Smart Watch Fitness Pro',price:199,orig:330,cat:'electronics',img:'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80',rating:4.6,reviews:88,disc:40,badge:'-40%'},
+  {id:'el10',subcat:'audio',name:'Sony WH-1000XM5',price:279,orig:399,cat:'electronics',img:'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=400&q=80',rating:4.9,reviews:445,disc:30,badge:'Top Pick'},
 
   // ── PHONES & TABLETS (10 products) ───────────────────────────
-  {id:'ph1',name:'iPhone 15 Pro Max',price:1099,orig:1199,cat:'phones',img:'https://images.unsplash.com/photo-1696446702183-be88e4a4f4ab?w=400&q=80',rating:4.9,reviews:320,disc:8,badge:'Hot'},
-  {id:'ph2',name:'Samsung Galaxy S24',price:799,orig:899,cat:'phones',img:'https://images.unsplash.com/photo-1591337676887-a217a6970a8a?w=400&q=80',rating:4.8,reviews:210,disc:11,badge:''},
-  {id:'ph3',name:'Tecno Camon 20',price:189,orig:229,cat:'phones',img:'https://images.unsplash.com/photo-1556656793-08538906a9f8?w=400&q=80',rating:4.4,reviews:95,disc:17,badge:''},
-  {id:'ph4',name:'Infinix Note 30 Pro',price:149,orig:179,cat:'phones',img:'https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?w=400&q=80',rating:4.3,reviews:78,disc:17,badge:''},
-  {id:'ph5',name:'Google Pixel 8 Pro',price:799,orig:999,cat:'phones',img:'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=400&q=80',rating:4.7,reviews:145,disc:20,badge:''},
-  {id:'ph6',name:'OnePlus 12',price:549,orig:699,cat:'phones',img:'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&q=80',rating:4.6,reviews:88,disc:21,badge:''},
-  {id:'ph7',name:'Samsung Galaxy Tab S9',price:699,orig:799,cat:'phones',img:'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&q=80',rating:4.8,reviews:134,disc:13,badge:''},
-  {id:'ph8',name:'Xiaomi 14 Ultra',price:649,orig:749,cat:'phones',img:'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&q=80',rating:4.7,reviews:112,disc:13,badge:''},
-  {id:'ph9',name:'Nokia G60 5G',price:289,orig:349,cat:'phones',img:'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=400&q=80',rating:4.3,reviews:56,disc:17,badge:''},
-  {id:'ph10',name:'Oppo Reno 11 Pro',price:449,orig:549,cat:'phones',img:'https://images.unsplash.com/photo-1567581935884-3349723552ca?w=400&q=80',rating:4.5,reviews:77,disc:18,badge:''},
+  {id:'ph1',subcat:'smartphones',name:'iPhone 15 Pro Max',price:1099,orig:1199,cat:'phones',img:'https://images.unsplash.com/photo-1696446702183-be88e4a4f4ab?w=400&q=80',rating:4.9,reviews:320,disc:8,badge:'Hot'},
+  {id:'ph2',subcat:'smartphones',name:'Samsung Galaxy S24',price:799,orig:899,cat:'phones',img:'https://images.unsplash.com/photo-1591337676887-a217a6970a8a?w=400&q=80',rating:4.8,reviews:210,disc:11,badge:''},
+  {id:'ph3',subcat:'smartphones',name:'Tecno Camon 20',price:189,orig:229,cat:'phones',img:'https://images.unsplash.com/photo-1556656793-08538906a9f8?w=400&q=80',rating:4.4,reviews:95,disc:17,badge:''},
+  {id:'ph4',subcat:'smartphones',name:'Infinix Note 30 Pro',price:149,orig:179,cat:'phones',img:'https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?w=400&q=80',rating:4.3,reviews:78,disc:17,badge:''},
+  {id:'ph5',subcat:'smartphones',name:'Google Pixel 8 Pro',price:799,orig:999,cat:'phones',img:'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=400&q=80',rating:4.7,reviews:145,disc:20,badge:''},
+  {id:'ph6',subcat:'smartphones',name:'OnePlus 12',price:549,orig:699,cat:'phones',img:'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&q=80',rating:4.6,reviews:88,disc:21,badge:''},
+  {id:'ph7',subcat:'tablets',name:'Samsung Galaxy Tab S9',price:699,orig:799,cat:'phones',img:'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&q=80',rating:4.8,reviews:134,disc:13,badge:''},
+  {id:'ph8',subcat:'smartphones',name:'Xiaomi 14 Ultra',price:649,orig:749,cat:'phones',img:'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&q=80',rating:4.7,reviews:112,disc:13,badge:''},
+  {id:'ph9',subcat:'smartphones',name:'Nokia G60 5G',price:289,orig:349,cat:'phones',img:'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=400&q=80',rating:4.3,reviews:56,disc:17,badge:''},
+  {id:'ph10',subcat:'smartphones',name:'Oppo Reno 11 Pro',price:449,orig:549,cat:'phones',img:'https://images.unsplash.com/photo-1567581935884-3349723552ca?w=400&q=80',rating:4.5,reviews:77,disc:18,badge:''},
 
   // ── HOME & LIVING (10 products) ───────────────────────────────
-  {id:'ho1',name:'Ceramic Vase Set of 3',price:32,orig:45,cat:'home',img:'https://images.unsplash.com/photo-1629198688000-71f23e745b6e?w=400&q=80',rating:4.5,reviews:44,disc:29,badge:'New'},
-  {id:'ho2',name:'Macramé Wall Hanging',price:42,orig:60,cat:'home',img:'https://images.unsplash.com/photo-1513519245088-0e12902e35ca?w=400&q=80',rating:4.6,reviews:37,disc:30,badge:''},
-  {id:'ho3',name:'Teak Wood Serving Tray',price:38,orig:55,cat:'home',img:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&q=80',rating:4.4,reviews:29,disc:31,badge:''},
-  {id:'ho4',name:'African Print Throw Pillow',price:22,orig:30,cat:'home',img:'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&q=80',rating:4.5,reviews:53,disc:27,badge:''},
-  {id:'ho5',name:'Handmade Beeswax Candles',price:18,orig:25,cat:'home',img:'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=400&q=80',rating:4.8,reviews:82,disc:28,badge:'Best Seller'},
-  {id:'ho6',name:'Woven Cotton Throw Blanket',price:48,orig:65,cat:'home',img:'https://images.unsplash.com/photo-1567016432779-094069958ea5?w=400&q=80',rating:4.6,reviews:61,disc:26,badge:''},
-  {id:'ho7',name:'Bamboo Kitchen Utensil Set',price:24,orig:34,cat:'home',img:'https://images.unsplash.com/photo-1584990347449-a2d4c28a9765?w=400&q=80',rating:4.5,reviews:47,disc:29,badge:''},
-  {id:'ho8',name:'Linen Duvet Cover Set',price:65,orig:90,cat:'home',img:'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=400&q=80',rating:4.7,reviews:73,disc:28,badge:'New'},
-  {id:'ho9',name:'Rattan Storage Basket',price:28,orig:40,cat:'home',img:'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&q=80',rating:4.4,reviews:38,disc:30,badge:''},
-  {id:'ho10',name:'Scented Reed Diffuser',price:19.99,orig:28,cat:'home',img:'https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=400&q=80',rating:4.6,reviews:55,disc:29,badge:''},
+  {id:'ho1',subcat:'decor',name:'Ceramic Vase Set of 3',price:32,orig:45,cat:'home',img:'https://images.unsplash.com/photo-1629198688000-71f23e745b6e?w=400&q=80',rating:4.5,reviews:44,disc:29,badge:'New'},
+  {id:'ho2',subcat:'decor',name:'Macramé Wall Hanging',price:42,orig:60,cat:'home',img:'https://images.unsplash.com/photo-1513519245088-0e12902e35ca?w=400&q=80',rating:4.6,reviews:37,disc:30,badge:''},
+  {id:'ho3',subcat:'kitchen',name:'Teak Wood Serving Tray',price:38,orig:55,cat:'home',img:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&q=80',rating:4.4,reviews:29,disc:31,badge:''},
+  {id:'ho4',subcat:'decor',name:'African Print Throw Pillow',price:22,orig:30,cat:'home',img:'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&q=80',rating:4.5,reviews:53,disc:27,badge:''},
+  {id:'ho5',subcat:'candles',name:'Handmade Beeswax Candles',price:18,orig:25,cat:'home',img:'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=400&q=80',rating:4.8,reviews:82,disc:28,badge:'Best Seller'},
+  {id:'ho6',subcat:'bedding',name:'Woven Cotton Throw Blanket',price:48,orig:65,cat:'home',img:'https://images.unsplash.com/photo-1567016432779-094069958ea5?w=400&q=80',rating:4.6,reviews:61,disc:26,badge:''},
+  {id:'ho7',subcat:'kitchen',name:'Bamboo Kitchen Utensil Set',price:24,orig:34,cat:'home',img:'https://images.unsplash.com/photo-1584990347449-a2d4c28a9765?w=400&q=80',rating:4.5,reviews:47,disc:29,badge:''},
+  {id:'ho8',subcat:'bedding',name:'Linen Duvet Cover Set',price:65,orig:90,cat:'home',img:'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=400&q=80',rating:4.7,reviews:73,disc:28,badge:'New'},
+  {id:'ho9',subcat:'storage',name:'Rattan Storage Basket',price:28,orig:40,cat:'home',img:'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&q=80',rating:4.4,reviews:38,disc:30,badge:''},
+  {id:'ho10',subcat:'candles',name:'Scented Reed Diffuser',price:19.99,orig:28,cat:'home',img:'https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=400&q=80',rating:4.6,reviews:55,disc:29,badge:''},
 
   // ── BEAUTY (10 products) ──────────────────────────────────────
-  {id:'be1',name:'Shea Butter Body Cream',price:19.99,orig:28,cat:'beauty',img:'https://images.unsplash.com/photo-1596462502278-27bfdd403348?w=400&q=80',rating:4.8,reviews:145,disc:29,badge:'Best Seller'},
-  {id:'be2',name:'Black Soap Cleansing Bar',price:12.99,orig:18,cat:'beauty',img:'https://images.unsplash.com/photo-1584305574647-0cc949a2bb9f?w=400&q=80',rating:4.7,reviews:98,disc:28,badge:''},
-  {id:'be3',name:'Natural Hair Growth Oil',price:24.99,orig:35,cat:'beauty',img:'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=400&q=80',rating:4.6,reviews:113,disc:29,badge:''},
-  {id:'be4',name:'Vitamin C Serum 30ml',price:29.99,orig:45,cat:'beauty',img:'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&q=80',rating:4.7,reviews:87,disc:33,badge:'New'},
-  {id:'be5',name:'Argan Oil Face Moisturiser',price:22.99,orig:32,cat:'beauty',img:'https://images.unsplash.com/photo-1601049676869-702ea24cfd58?w=400&q=80',rating:4.5,reviews:64,disc:28,badge:''},
-  {id:'be6',name:'Natural Lip Balm Set x6',price:11.99,orig:18,cat:'beauty',img:'https://images.unsplash.com/photo-1586495777744-4e6232bf48e9?w=400&q=80',rating:4.6,reviews:112,disc:33,badge:''},
-  {id:'be7',name:'Turmeric Brightening Mask',price:16.99,orig:24,cat:'beauty',img:'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=400&q=80',rating:4.5,reviews:79,disc:29,badge:'New'},
-  {id:'be8',name:'Coconut Oil Hair Treatment',price:14.99,orig:20,cat:'beauty',img:'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&q=80',rating:4.7,reviews:134,disc:25,badge:''},
-  {id:'be9',name:'Rose Water Face Toner',price:13.99,orig:19,cat:'beauty',img:'https://images.unsplash.com/photo-1570194065650-d99fb4b63def?w=400&q=80',rating:4.4,reviews:58,disc:26,badge:''},
-  {id:'be10',name:'Charcoal Detox Face Scrub',price:17.99,orig:26,cat:'beauty',img:'https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=400&q=80',rating:4.5,reviews:67,disc:31,badge:''},
+  {id:'be1',subcat:'skincare',name:'Shea Butter Body Cream',price:19.99,orig:28,cat:'beauty',img:'https://images.unsplash.com/photo-1596462502278-27bfdd403348?w=400&q=80',rating:4.8,reviews:145,disc:29,badge:'Best Seller'},
+  {id:'be2',subcat:'skincare',name:'Black Soap Cleansing Bar',price:12.99,orig:18,cat:'beauty',img:'https://images.unsplash.com/photo-1584305574647-0cc949a2bb9f?w=400&q=80',rating:4.7,reviews:98,disc:28,badge:''},
+  {id:'be3',subcat:'haircare',name:'Natural Hair Growth Oil',price:24.99,orig:35,cat:'beauty',img:'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=400&q=80',rating:4.6,reviews:113,disc:29,badge:''},
+  {id:'be4',subcat:'skincare',name:'Vitamin C Serum 30ml',price:29.99,orig:45,cat:'beauty',img:'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&q=80',rating:4.7,reviews:87,disc:33,badge:'New'},
+  {id:'be5',subcat:'skincare',name:'Argan Oil Face Moisturiser',price:22.99,orig:32,cat:'beauty',img:'https://images.unsplash.com/photo-1601049676869-702ea24cfd58?w=400&q=80',rating:4.5,reviews:64,disc:28,badge:''},
+  {id:'be6',subcat:'skincare',name:'Natural Lip Balm Set x6',price:11.99,orig:18,cat:'beauty',img:'https://images.unsplash.com/photo-1586495777744-4e6232bf48e9?w=400&q=80',rating:4.6,reviews:112,disc:33,badge:''},
+  {id:'be7',subcat:'skincare',name:'Turmeric Brightening Mask',price:16.99,orig:24,cat:'beauty',img:'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=400&q=80',rating:4.5,reviews:79,disc:29,badge:'New'},
+  {id:'be8',subcat:'haircare',name:'Coconut Oil Hair Treatment',price:14.99,orig:20,cat:'beauty',img:'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&q=80',rating:4.7,reviews:134,disc:25,badge:''},
+  {id:'be9',subcat:'skincare',name:'Rose Water Face Toner',price:13.99,orig:19,cat:'beauty',img:'https://images.unsplash.com/photo-1570194065650-d99fb4b63def?w=400&q=80',rating:4.4,reviews:58,disc:26,badge:''},
+  {id:'be10',subcat:'skincare',name:'Charcoal Detox Face Scrub',price:17.99,orig:26,cat:'beauty',img:'https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=400&q=80',rating:4.5,reviews:67,disc:31,badge:''},
 
   // ── SPORTS & FITNESS (10 products) ───────────────────────────
-  {id:'sp1',name:'Pro Resistance Band Set',price:22.99,orig:35,cat:'sports',img:'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=400&q=80',rating:4.6,reviews:74,disc:34,badge:''},
-  {id:'sp2',name:'Yoga Mat Premium 6mm',price:34.99,orig:50,cat:'sports',img:'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&q=80',rating:4.8,reviews:132,disc:30,badge:'Top Pick'},
-  {id:'sp3',name:'Running Shoes Ultralight',price:89.99,orig:130,cat:'sports',img:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80',rating:4.7,reviews:89,disc:31,badge:''},
-  {id:'sp4',name:'Smart Water Bottle 1L',price:28.99,orig:40,cat:'sports',img:'https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?w=400&q=80',rating:4.5,reviews:56,disc:28,badge:''},
-  {id:'sp5',name:'Adjustable Dumbbell Set',price:79.99,orig:120,cat:'sports',img:'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&q=80',rating:4.7,reviews:98,disc:33,badge:''},
-  {id:'sp6',name:'Jump Rope Speed Cable',price:14.99,orig:22,cat:'sports',img:'https://images.unsplash.com/photo-1518644730709-0835105d9daa?w=400&q=80',rating:4.4,reviews:63,disc:32,badge:''},
-  {id:'sp7',name:'Gym Gloves Padded',price:18.99,orig:28,cat:'sports',img:'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=400&q=80',rating:4.5,reviews:47,disc:32,badge:''},
-  {id:'sp8',name:'Foam Roller Deep Tissue',price:24.99,orig:38,cat:'sports',img:'https://images.unsplash.com/photo-1510894347713-fc3dc6166086?w=400&q=80',rating:4.6,reviews:81,disc:34,badge:''},
-  {id:'sp9',name:'Protein Shaker Bottle',price:12.99,orig:18,cat:'sports',img:'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=400&q=80',rating:4.3,reviews:52,disc:28,badge:''},
-  {id:'sp10',name:'Compression Running Tights',price:39.99,orig:58,cat:'sports',img:'https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=400&q=80',rating:4.5,reviews:44,disc:31,badge:'New'},
+  {id:'sp1',subcat:'gym',name:'Pro Resistance Band Set',price:22.99,orig:35,cat:'sports',img:'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=400&q=80',rating:4.6,reviews:74,disc:34,badge:''},
+  {id:'sp2',subcat:'yoga',name:'Yoga Mat Premium 6mm',price:34.99,orig:50,cat:'sports',img:'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&q=80',rating:4.8,reviews:132,disc:30,badge:'Top Pick'},
+  {id:'sp3',subcat:'running',name:'Running Shoes Ultralight',price:89.99,orig:130,cat:'sports',img:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80',rating:4.7,reviews:89,disc:31,badge:''},
+  {id:'sp4',subcat:'gym',name:'Smart Water Bottle 1L',price:28.99,orig:40,cat:'sports',img:'https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?w=400&q=80',rating:4.5,reviews:56,disc:28,badge:''},
+  {id:'sp5',subcat:'gym',name:'Adjustable Dumbbell Set',price:79.99,orig:120,cat:'sports',img:'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&q=80',rating:4.7,reviews:98,disc:33,badge:''},
+  {id:'sp6',subcat:'gym',name:'Jump Rope Speed Cable',price:14.99,orig:22,cat:'sports',img:'https://images.unsplash.com/photo-1518644730709-0835105d9daa?w=400&q=80',rating:4.4,reviews:63,disc:32,badge:''},
+  {id:'sp7',subcat:'gym',name:'Gym Gloves Padded',price:18.99,orig:28,cat:'sports',img:'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=400&q=80',rating:4.5,reviews:47,disc:32,badge:''},
+  {id:'sp8',subcat:'gym',name:'Foam Roller Deep Tissue',price:24.99,orig:38,cat:'sports',img:'https://images.unsplash.com/photo-1510894347713-fc3dc6166086?w=400&q=80',rating:4.6,reviews:81,disc:34,badge:''},
+  {id:'sp9',subcat:'nutrition',name:'Protein Shaker Bottle',price:12.99,orig:18,cat:'sports',img:'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=400&q=80',rating:4.3,reviews:52,disc:28,badge:''},
+  {id:'sp10',subcat:'sportswear',name:'Compression Running Tights',price:39.99,orig:58,cat:'sports',img:'https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=400&q=80',rating:4.5,reviews:44,disc:31,badge:'New'},
 
   // ── GIFTS & ACCESSORIES (10 products) ────────────────────────
-  {id:'gi1',name:'African Art Print Set A3',price:35,orig:50,cat:'gifts',img:'https://images.unsplash.com/photo-1513519245088-0e12902e35ca?w=400&q=80',rating:4.8,reviews:42,disc:30,badge:'New'},
-  {id:'gi2',name:'Personalised Photo Mug',price:16.99,orig:24,cat:'gifts',img:'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=400&q=80',rating:4.6,reviews:89,disc:29,badge:''},
-  {id:'gi3',name:'Luxury Scented Candle Gift Set',price:42,orig:58,cat:'gifts',img:'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=400&q=80',rating:4.7,reviews:63,disc:28,badge:'Best Seller'},
-  {id:'gi4',name:'Kente Cloth Gift Wrap Bundle',price:12.99,orig:18,cat:'gifts',img:'https://images.unsplash.com/photo-1607478900766-efe13248b125?w=400&q=80',rating:4.5,reviews:37,disc:28,badge:''},
-  {id:'gi5',name:'Artisan Honey Gift Box',price:28,orig:40,cat:'gifts',img:'https://images.unsplash.com/photo-1471943038054-fd98a759579f?w=400&q=80',rating:4.9,reviews:55,disc:30,badge:''},
-  {id:'gi6',name:'Wooden Photo Frame Set',price:24.99,orig:35,cat:'gifts',img:'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&q=80',rating:4.5,reviews:48,disc:29,badge:'New'},
-  {id:'gi7',name:'Essential Oils Starter Kit',price:32,orig:45,cat:'gifts',img:'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=400&q=80',rating:4.6,reviews:71,disc:29,badge:''},
-  {id:'gi8',name:'Afrocentric Journal Notebook',price:14.99,orig:22,cat:'gifts',img:'https://images.unsplash.com/photo-1531346878377-a5be20888e57?w=400&q=80',rating:4.7,reviews:58,disc:32,badge:''},
-  {id:'gi9',name:'Gourmet Spice Gift Set',price:22.99,orig:32,cat:'gifts',img:'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80',rating:4.5,reviews:34,disc:28,badge:'New'},
-  {id:'gi10',name:'Silk Scarf Hand-Painted',price:38,orig:55,cat:'gifts',img:'https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?w=400&q=80',rating:4.8,reviews:29,disc:31,badge:''},
+  {id:'gi1',subcat:'art',name:'African Art Print Set A3',price:35,orig:50,cat:'gifts',img:'https://images.unsplash.com/photo-1513519245088-0e12902e35ca?w=400&q=80',rating:4.8,reviews:42,disc:30,badge:'New'},
+  {id:'gi2',subcat:'gift-sets',name:'Personalised Photo Mug',price:16.99,orig:24,cat:'gifts',img:'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=400&q=80',rating:4.6,reviews:89,disc:29,badge:''},
+  {id:'gi3',subcat:'gift-sets',name:'Luxury Scented Candle Gift Set',price:42,orig:58,cat:'gifts',img:'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=400&q=80',rating:4.7,reviews:63,disc:28,badge:'Best Seller'},
+  {id:'gi4',subcat:'gift-sets',name:'Kente Cloth Gift Wrap Bundle',price:12.99,orig:18,cat:'gifts',img:'https://images.unsplash.com/photo-1607478900766-efe13248b125?w=400&q=80',rating:4.5,reviews:37,disc:28,badge:''},
+  {id:'gi5',subcat:'food-gifts',name:'Artisan Honey Gift Box',price:28,orig:40,cat:'gifts',img:'https://images.unsplash.com/photo-1471943038054-fd98a759579f?w=400&q=80',rating:4.9,reviews:55,disc:30,badge:''},
+  {id:'gi6',subcat:'gift-sets',name:'Wooden Photo Frame Set',price:24.99,orig:35,cat:'gifts',img:'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&q=80',rating:4.5,reviews:48,disc:29,badge:'New'},
+  {id:'gi7',subcat:'gift-sets',name:'Essential Oils Starter Kit',price:32,orig:45,cat:'gifts',img:'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=400&q=80',rating:4.6,reviews:71,disc:29,badge:''},
+  {id:'gi8',subcat:'books',name:'Afrocentric Journal Notebook',price:14.99,orig:22,cat:'gifts',img:'https://images.unsplash.com/photo-1531346878377-a5be20888e57?w=400&q=80',rating:4.7,reviews:58,disc:32,badge:''},
+  {id:'gi9',subcat:'food-gifts',name:'Gourmet Spice Gift Set',price:22.99,orig:32,cat:'gifts',img:'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80',rating:4.5,reviews:34,disc:28,badge:'New'},
+  {id:'gi10',subcat:'crafts',name:'Silk Scarf Hand-Painted',price:38,orig:55,cat:'gifts',img:'https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?w=400&q=80',rating:4.8,reviews:29,disc:31,badge:''},
 
   // ── LAPTOPS & COMPUTERS (8 products) ─────────────────────────
-  {id:'la1',name:'Dell XPS 15 Laptop',price:1299,orig:1799,cat:'laptops',img:'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&q=80',rating:4.8,reviews:267,disc:28,badge:'-28%'},
-  {id:'la2',name:'MacBook Air M2',price:1099,orig:1299,cat:'laptops',img:'https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=400&q=80',rating:4.9,reviews:389,disc:15,badge:'Top Pick'},
-  {id:'la3',name:'HP Pavilion 15 Ryzen 7',price:699,orig:899,cat:'laptops',img:'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&q=80',rating:4.5,reviews:145,disc:22,badge:''},
-  {id:'la4',name:'Lenovo ThinkPad X1 Carbon',price:1199,orig:1599,cat:'laptops',img:'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=400&q=80',rating:4.7,reviews:201,disc:25,badge:''},
-  {id:'la5',name:'Acer Aspire 5 i5 11th Gen',price:499,orig:649,cat:'laptops',img:'https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?w=400&q=80',rating:4.4,reviews:112,disc:23,badge:''},
-  {id:'la6',name:'ASUS ROG Strix G15',price:1399,orig:1799,cat:'laptops',img:'https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=400&q=80',rating:4.8,reviews:178,disc:22,badge:'Gaming'},
-  {id:'la7',name:'Microsoft Surface Pro 9',price:999,orig:1299,cat:'laptops',img:'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&q=80',rating:4.6,reviews:134,disc:23,badge:''},
-  {id:'la8',name:'Samsung Chromebook 4',price:249,orig:329,cat:'laptops',img:'https://images.unsplash.com/photo-1561154464-82e9adf32764?w=400&q=80',rating:4.3,reviews:89,disc:24,badge:'Budget Pick'},
+  {id:'la1',subcat:'windows',name:'Dell XPS 15 Laptop',price:1299,orig:1799,cat:'laptops',img:'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&q=80',rating:4.8,reviews:267,disc:28,badge:'-28%'},
+  {id:'la2',subcat:'mac',name:'MacBook Air M2',price:1099,orig:1299,cat:'laptops',img:'https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=400&q=80',rating:4.9,reviews:389,disc:15,badge:'Top Pick'},
+  {id:'la3',subcat:'windows',name:'HP Pavilion 15 Ryzen 7',price:699,orig:899,cat:'laptops',img:'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&q=80',rating:4.5,reviews:145,disc:22,badge:''},
+  {id:'la4',subcat:'windows',name:'Lenovo ThinkPad X1 Carbon',price:1199,orig:1599,cat:'laptops',img:'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=400&q=80',rating:4.7,reviews:201,disc:25,badge:''},
+  {id:'la5',subcat:'windows',name:'Acer Aspire 5 i5 11th Gen',price:499,orig:649,cat:'laptops',img:'https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?w=400&q=80',rating:4.4,reviews:112,disc:23,badge:''},
+  {id:'la6',subcat:'gaming-laptops',name:'ASUS ROG Strix G15',price:1399,orig:1799,cat:'laptops',img:'https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=400&q=80',rating:4.8,reviews:178,disc:22,badge:'Gaming'},
+  {id:'la7',subcat:'2in1',name:'Microsoft Surface Pro 9',price:999,orig:1299,cat:'laptops',img:'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&q=80',rating:4.6,reviews:134,disc:23,badge:''},
+  {id:'la8',subcat:'chromebook',name:'Samsung Chromebook 4',price:249,orig:329,cat:'laptops',img:'https://images.unsplash.com/photo-1561154464-82e9adf32764?w=400&q=80',rating:4.3,reviews:89,disc:24,badge:'Budget Pick'},
 ];
 
 // ── State ─────────────────────────────────────────────────────
 let state = {
-  cat: 'all', search: '', sort: 'featured',
+  cat: 'all', subcat: '', search: '', sort: 'featured',
   maxPrice: 2000, minRating: 0, discounts: [],
   view: 'grid', page: 1, perPage: 12
 };
@@ -488,6 +508,7 @@ let state = {
 function getFiltered() {
   let p = [...ALL_PRODUCTS];
   if (state.cat !== 'all') p = p.filter(x => x.cat === state.cat);
+  if (state.subcat) p = p.filter(x => x.subcat === state.subcat);
   if (state.search) p = p.filter(x => x.name.toLowerCase().includes(state.search.toLowerCase()));
   p = p.filter(x => x.price <= state.maxPrice);
   if (state.minRating > 0) p = p.filter(x => x.rating >= state.minRating);
@@ -503,29 +524,109 @@ function getFiltered() {
 }
 
 function renderGrid() {
+  const grid    = document.getElementById('product-grid');
+  const noRes   = document.getElementById('shop-no-results');
+  const pagDiv  = document.getElementById('pagination');
+
+  // ── GROUPED ALL-PRODUCTS VIEW ─────────────────────────────
+  if (state.cat === 'all' && !state.search && !state.subcat) {
+    noRes.classList.add('hidden');
+    pagDiv.classList.add('hidden');
+    grid.className = '';
+
+    const CAT_META = [
+      {key:'fashion',    label:'Fashion',           icon:'shirt',     color:'from-pink-500 to-rose-600',   href:'shop.html?cat=fashion'},
+      {key:'phones',     label:'Phones & Tablets',  icon:'smartphone',color:'from-blue-500 to-blue-700',   href:'shop.html?cat=phones'},
+      {key:'electronics',label:'Electronics',       icon:'cpu',       color:'from-violet-500 to-purple-700',href:'shop.html?cat=electronics'},
+      {key:'laptops',    label:'Laptops & Computing',icon:'laptop',   color:'from-slate-600 to-slate-800',  href:'shop.html?cat=laptops'},
+      {key:'beauty',     label:'Health & Beauty',   icon:'sparkles',  color:'from-fuchsia-500 to-pink-600', href:'shop.html?cat=beauty'},
+      {key:'home',       label:'Home & Living',     icon:'home',      color:'from-teal-500 to-emerald-700', href:'shop.html?cat=home'},
+      {key:'sports',     label:'Sports & Fitness',  icon:'dumbbell',  color:'from-orange-500 to-red-600',   href:'shop.html?cat=sports'},
+      {key:'gifts',      label:'Gifts & Artisan',   icon:'gift',      color:'from-amber-500 to-orange-600', href:'shop.html?cat=gifts'},
+    ];
+
+    const starsHtml = (n) => Array.from({length:5},(_,i)=>`<svg width="9" height="9" viewBox="0 0 24 24" fill="${i<Math.floor(n)?'#facc15':'none'}" stroke="${i<Math.floor(n)?'#facc15':'#d1d5db'}" stroke-width="1"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>`).join('');
+
+    const cardHtml = (p) => `
+      <div class="bg-white rounded-xl border border-neutral-100 overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex-shrink-0" style="width:160px">
+        <a href="product.html?id=${p.id}" class="block relative" style="aspect-ratio:1;overflow:hidden;background:#f8fafc">
+          <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80'">
+          ${p.disc ? `<div class="absolute top-2 left-2 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md">-${p.disc}%</div>` : ''}
+        </a>
+        <div class="p-2.5">
+          <div class="flex gap-0.5 mb-1">${starsHtml(p.rating)}<span class="text-[9px] text-neutral-400 ml-0.5">(${p.reviews})</span></div>
+          <a href="product.html?id=${p.id}" class="block text-[11px] font-medium text-neutral-800 leading-tight mb-1.5 hover:text-primary-600 transition-colors" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${p.name}</a>
+          <div class="flex items-center justify-between gap-1">
+            <span class="font-bold text-primary-600 text-xs">$${p.price}</span>
+            <button onclick="addItem('${p.id}','${p.name}',${p.price},'${p.img}')" class="text-[10px] bg-neutral-900 hover:bg-primary-600 text-white px-2 py-1 rounded-lg font-semibold transition-colors">+Cart</button>
+          </div>
+        </div>
+      </div>`;
+
+    document.getElementById('result-count').textContent = ALL_PRODUCTS.length;
+
+    grid.innerHTML = CAT_META.map(cm => {
+      const items = ALL_PRODUCTS.filter(p => p.cat === cm.key).slice(0, 8);
+      if (!items.length) return '';
+      return `
+        <div class="mb-8">
+          <!-- Category header -->
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 bg-gradient-to-br ${cm.color} rounded-xl flex items-center justify-center flex-shrink-0">
+                <i data-lucide="${cm.icon}" class="w-4 h-4 text-white"></i>
+              </div>
+              <div>
+                <h2 class="font-heading font-bold text-neutral-900 text-base md:text-lg leading-tight">${cm.label}</h2>
+                <p class="text-xs text-neutral-400">${ALL_PRODUCTS.filter(p=>p.cat===cm.key).length} products</p>
+              </div>
+            </div>
+            <a href="${cm.href}" class="flex items-center gap-1 text-xs font-semibold text-primary-600 hover:text-primary-700 whitespace-nowrap">
+              View all <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </a>
+          </div>
+          <!-- Horizontal scroll row -->
+          <div class="flex gap-3 overflow-x-auto pb-2" style="-ms-overflow-style:none;scrollbar-width:none">
+            ${items.map(p => cardHtml(p)).join('')}
+            <!-- See all card -->
+            <a href="${cm.href}" class="flex-shrink-0 flex flex-col items-center justify-center gap-2 bg-neutral-50 border-2 border-dashed border-neutral-200 rounded-xl hover:border-primary-300 hover:bg-primary-50 transition-all" style="width:120px;min-height:200px">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 8 16 12 12 16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+              <span class="text-xs font-semibold text-primary-600 text-center px-2">See all<br>${cm.label}</span>
+            </a>
+          </div>
+          <div class="mt-4 border-b border-neutral-100"></div>
+        </div>`;
+    }).join('');
+
+    // Re-init lucide icons in new HTML
+    setTimeout(() => lucide && lucide.createIcons(), 50);
+    return;
+  }
+
+  // ── FILTERED VIEW (specific cat or search) ────────────────
   const filtered = getFiltered();
   const start = (state.page - 1) * state.perPage;
   const page = filtered.slice(start, start + state.perPage);
-  const grid = document.getElementById('product-grid');
-  const noRes = document.getElementById('shop-no-results');
 
   document.getElementById('result-count').textContent = filtered.length;
 
   if (!page.length) {
     grid.innerHTML = '';
     noRes.classList.remove('hidden');
-    document.getElementById('pagination').classList.add('hidden');
+    pagDiv.classList.add('hidden');
     return;
   }
   noRes.classList.add('hidden');
-  document.getElementById('pagination').classList.remove('hidden');
+  pagDiv.classList.remove('hidden');
+
+  const starsHtml = (n) => Array.from({length:5},(_,i)=>`<svg width="10" height="10" viewBox="0 0 24 24" fill="${i<Math.floor(n)?'#facc15':'none'}" stroke="${i<Math.floor(n)?'#facc15':'#d1d5db'}" stroke-width="1"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>`).join('');
 
   if (state.view === 'grid') {
     grid.className = 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4';
     grid.innerHTML = page.map((p, i) => `
       <div class="prod-card bg-white rounded-xl2 border border-neutral-100 overflow-hidden card-anim" style="animation-delay:${i*0.04}s">
         <div class="relative aspect-square overflow-hidden bg-neutral-50">
-          <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80'">
+          <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80'">
           ${p.disc ? `<div class="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md">-${p.disc}%</div>` : ''}
           ${p.badge && !p.disc ? `<div class="absolute top-2 left-2 bg-white/90 text-neutral-800 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase">${p.badge}</div>` : ''}
           <button onclick="toggleWishlist(this,'${p.name}')" class="wish-btn absolute top-2 right-2 p-1.5 bg-white/80 backdrop-blur-sm rounded-full text-neutral-400 hover:text-red-500 transition-colors">
@@ -536,10 +637,7 @@ function renderGrid() {
           </div>
         </div>
         <div class="p-3">
-          <div class="flex items-center gap-0.5 mb-1">
-            ${Array.from({length:5},(_,i)=>`<svg width="10" height="10" viewBox="0 0 24 24" fill="${i<Math.floor(p.rating)?'#facc15':'none'}" stroke="${i<Math.floor(p.rating)?'#facc15':'#d1d5db'}" stroke-width="1"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>`).join('')}
-            <span class="text-[10px] text-neutral-400 ml-0.5">(${p.reviews})</span>
-          </div>
+          <div class="flex items-center gap-0.5 mb-1">${starsHtml(p.rating)}<span class="text-[10px] text-neutral-400 ml-0.5">(${p.reviews})</span></div>
           <a href="product.html?id=${p.id}" class="text-xs font-medium text-neutral-800 line-clamp-2 mb-1.5 hover:text-primary-600 transition-colors block">${p.name}</a>
           <div class="flex items-center gap-1.5">
             <span class="font-bold text-primary-600 text-sm">$${p.price}</span>
@@ -548,7 +646,6 @@ function renderGrid() {
         </div>
       </div>`).join('');
   } else {
-    // list view
     grid.className = 'space-y-3';
     grid.innerHTML = page.map((p,i) => `
       <div class="prod-card bg-white rounded-xl2 border border-neutral-100 overflow-hidden flex gap-4 p-4 card-anim" style="animation-delay:${i*0.04}s">
@@ -558,12 +655,9 @@ function renderGrid() {
         </div>
         <div class="flex-1 min-w-0 flex flex-col justify-between">
           <div>
-            <div class="flex items-center gap-0.5 mb-1">
-              ${Array.from({length:5},(_,i)=>`<svg width="11" height="11" viewBox="0 0 24 24" fill="${i<Math.floor(p.rating)?'#facc15':'none'}" stroke="${i<Math.floor(p.rating)?'#facc15':'#d1d5db'}" stroke-width="1"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>`).join('')}
-              <span class="text-xs text-neutral-400 ml-1">${p.rating} (${p.reviews})</span>
-            </div>
+            <div class="flex items-center gap-0.5 mb-1">${starsHtml(p.rating)}<span class="text-xs text-neutral-400 ml-1">${p.rating} (${p.reviews})</span></div>
             <a href="product.html?id=${p.id}" class="font-semibold text-neutral-900 hover:text-primary-600 transition-colors text-sm md:text-base line-clamp-2">${p.name}</a>
-            <p class="text-xs text-neutral-500 mt-1 capitalize">${p.cat}</p>
+            <p class="text-xs text-neutral-500 mt-0.5 capitalize">${p.cat}</p>
           </div>
           <div class="flex items-center justify-between mt-3 flex-wrap gap-2">
             <div class="flex items-center gap-2"><span class="font-bold text-primary-600 text-lg">$${p.price}</span>${p.orig > p.price ? `<span class="text-sm text-neutral-400 line-through">$${p.orig}</span>` : ''}</div>
@@ -577,8 +671,9 @@ function renderGrid() {
   }
 
   renderPagination(filtered.length);
-  lucide.createIcons();
+  lucide && lucide.createIcons();
 }
+
 
 function renderPagination(total) {
   const pages = Math.ceil(total / state.perPage);
@@ -598,12 +693,13 @@ function changePage(d) { goPage(state.page + d); }
 
 // ── Controls ──────────────────────────────────────────────────
 function setCat(cat, btn) {
-  state.cat = cat; state.page = 1;
+  state.cat = cat; state.subcat = ''; state.page = 1;
   document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   const labels = {all:'All Products',fashion:'Fashion',electronics:'Electronics',phones:'Phones & Tablets',home:'Home & Living',beauty:'Beauty',sports:'Sports',gifts:'Gifts & Accessories',laptops:'Laptops & Computers'};
   document.getElementById('page-title').textContent = labels[cat] || cat;
   document.getElementById('breadcrumb-label').textContent = labels[cat] || cat;
+  renderSubcatSidebar(cat, '');
   renderGrid();
 }
 
@@ -621,9 +717,10 @@ function setView(v) {
 }
 
 function clearAllFilters() {
-  state = {...state, cat:'all', search:'', maxPrice:2000, minRating:0, discounts:[], page:1};
+  state = {...state, cat:'all', subcat:'', search:'', maxPrice:2000, minRating:0, discounts:[], page:1};
   document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
   document.querySelector('.cat-pill').classList.add('active');
+  renderSubcatSidebar('all', '');
   document.getElementById('price-slider').value = 2000;
   document.getElementById('price-label').textContent = '$2,000';
   document.querySelectorAll('input[name="rating"]')[0].checked = true;
@@ -637,6 +734,38 @@ function openFilterDrawer() { document.getElementById('filter-drawer').classList
 function closeFilterDrawer() { document.getElementById('filter-drawer').classList.remove('open'); document.getElementById('filter-overlay').classList.remove('open'); document.body.style.overflow = ''; }
 
 // ── URL param handling ────────────────────────────────────────
+const CAT_SUBCATS = {
+  fashion: [['mens',"Men's Fashion"],['womens',"Women's Fashion"],['shoes','Shoes & Sneakers'],['bags','Bags & Accessories'],['jewellery','Jewellery & Watches']],
+  phones:  [['smartphones','Smartphones'],['tablets','Tablets'],['accessories','Phone Accessories'],['smartwatches','Smart Watches']],
+  electronics: [['audio','Audio & Headphones'],['peripherals','Computer Accessories'],['cameras','Cameras & Drones'],['gaming','Gaming'],['tv','TVs & Monitors']],
+  laptops: [['windows','Windows Laptops'],['mac','MacBooks'],['gaming-laptops','Gaming Laptops'],['chromebook','Chromebooks'],['2in1','2-in-1 Devices']],
+  beauty:  [['skincare','Skincare'],['haircare','Hair Care'],['fragrances','Fragrances'],['makeup','Make-up'],['mens-grooming',"Men's Grooming"]],
+  home:    [['decor','Furniture & Decor'],['kitchen','Kitchen & Dining'],['bedding','Bedding & Bath'],['candles','Candles & Fragrance'],['storage','Storage & Organisation']],
+  sports:  [['gym','Gym Equipment'],['sportswear','Sportswear'],['yoga','Yoga & Wellness'],['running','Running & Cycling'],['nutrition','Sports Nutrition']],
+  gifts:   [['gift-sets','Gift Sets'],['art','Art & Collectibles'],['books','Books & Stationery'],['crafts','African Crafts'],['food-gifts','Food & Gourmet']],
+};
+
+function renderSubcatSidebar(cat, activeSub) {
+  var sidebar = document.getElementById('subcat-sidebar');
+  var list = document.getElementById('subcat-list');
+  var heading = document.getElementById('subcat-heading');
+  if (!sidebar || !list) return;
+  var subs = CAT_SUBCATS[cat];
+  if (!subs || cat === 'all') { sidebar.classList.add('hidden'); return; }
+  sidebar.classList.remove('hidden');
+  if (heading) heading.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+  list.innerHTML = '<button onclick="setSubcat(\'\',this)" class="subcat-btn w-full text-left px-3 py-2 text-sm rounded-lg transition-colors ' + (!activeSub ? 'bg-primary-50 text-primary-600 font-semibold' : 'text-neutral-600 hover:bg-neutral-50') + '">All ' + (document.getElementById('page-title')?.textContent || cat) + '</button>' +
+    subs.map(function(s){ return '<button onclick="setSubcat(\''+s[0]+'\',this)" class="subcat-btn w-full text-left px-3 py-2 text-sm rounded-lg transition-colors ' + (activeSub === s[0] ? 'bg-primary-50 text-primary-600 font-semibold' : 'text-neutral-600 hover:bg-neutral-50') + '">' + s[1] + '</button>'; }).join('');
+}
+
+function setSubcat(sub, btn) {
+  state.subcat = sub;
+  state.page = 1;
+  document.querySelectorAll('.subcat-btn').forEach(function(b){ b.className = b.className.replace('bg-primary-50 text-primary-600 font-semibold','text-neutral-600 hover:bg-neutral-50'); });
+  if (btn) { btn.className = btn.className.replace('text-neutral-600 hover:bg-neutral-50','bg-primary-50 text-primary-600 font-semibold'); }
+  renderGrid();
+}
+
 function readURLParams() {
   const params = new URLSearchParams(window.location.search);
   const LABELS = {all:'All Products',fashion:'Fashion',electronics:'Electronics',phones:'Phones & Tablets',home:'Home & Living',beauty:'Beauty',sports:'Sports',gifts:'Gifts & Accessories',laptops:'Laptops & Computers'};
@@ -654,6 +783,10 @@ function readURLParams() {
     document.getElementById('page-title').textContent = 'All Products';
     document.getElementById('breadcrumb-label').textContent = 'All Products';
   }
+  var sub = params.get('sub') || '';
+  if (sub) { state.subcat = sub; }
+  // render subcategory sidebar after cat is set
+  setTimeout(function(){ renderSubcatSidebar(state.cat, state.subcat); }, 0);
   if (params.get('sale')) {
     state.sort = 'discount';
     const sel = document.getElementById('sort-select');
