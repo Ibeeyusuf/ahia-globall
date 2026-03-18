@@ -80,7 +80,12 @@ tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-s
 <!-- HEADER -->
 <header id="main-header" class="sticky top-0 z-[200] bg-white border-b border-neutral-200 transition-shadow">
   <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
-    <a href="index.html" class="flex items-center gap-2 flex-shrink-0"><div class="w-9 h-9 bg-primary-600 rounded-lg flex items-center justify-center text-white font-heading font-bold text-lg">A</div><span class="font-heading font-bold text-lg md:text-2xl text-neutral-900 tracking-tight">Ahia<span class="text-primary-600">Global</span></span></a>
+    <a href="index.html" class="flex items-center flex-shrink-0">
+          <img src="image.png" alt="Ahia Global" class="h-14 md:h-16 w-auto object-contain">
+          <span style="margin-left: -10px;"
+            class="font-heading font-bold text-xl md:text-2xl text-neutral-900 tracking-tight leading-none">ahia<span
+              class="text-primary-600">global</span></span>
+        </a>
     <div class="flex items-center gap-1.5 ml-auto">
       <button onclick="openAuth('login')" id="header-auth-btn" class="hidden md:flex items-center gap-2 px-4 py-2 rounded-full border border-neutral-200 hover:border-primary-300 hover:bg-orange-50 text-sm font-medium text-neutral-700"><i data-lucide="user" class="w-4 h-4"></i><span id="header-auth-label">Sign In</span></button>
       <a href="checkout.html" class="flex items-center gap-2 bg-neutral-900 text-white px-3 md:px-4 py-2 md:py-2.5 rounded-full hover:bg-neutral-800 transition-all">

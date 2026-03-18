@@ -1,617 +1,1436 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AhiaGlobal — Shop African Elegance</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/lucide@latest"></script>
-<script>
-tailwind.config = {
-  theme: { extend: {
-    fontFamily: { heading:['Plus Jakarta Sans','sans-serif'], body:['Inter','sans-serif'] },
-    colors: {
-      primary:{50:'#fff7ed',100:'#ffedd5',200:'#fed7aa',300:'#fdba74',400:'#fb923c',500:'#f97316',600:'#ea580c',700:'#c2410c',800:'#9a3412',900:'#7c2d12'},
-      neutral:{50:'#f8fafc',100:'#f1f5f9',200:'#e2e8f0',300:'#cbd5e1',400:'#94a3b8',500:'#64748b',600:'#475569',700:'#334155',800:'#1e293b',900:'#0f172a'}
-    },
-    boxShadow:{card:'0 2px 12px -2px rgba(15,23,42,.10)',hover:'0 10px 28px -4px rgba(15,23,42,.18)',modal:'0 24px 60px -8px rgba(15,23,42,.30)'},
-    borderRadius:{xl2:'0.875rem',xl3:'1.25rem'}
-  }}
-}
-</script>
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
-body{font-family:'Inter',sans-serif;background:#f8fafc;color:#0f172a}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AhiaGlobal — Shop African Elegance</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { heading: ['Plus Jakarta Sans', 'sans-serif'], body: ['Inter', 'sans-serif'] },
+          colors: {
+            primary: { 50: '#fff7ed', 100: '#ffedd5', 200: '#fed7aa', 300: '#fdba74', 400: '#fb923c', 500: '#f97316', 600: '#ea580c', 700: '#c2410c', 800: '#9a3412', 900: '#7c2d12' },
+            neutral: { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' }
+          },
+          boxShadow: { card: '0 2px 12px -2px rgba(15,23,42,.10)', hover: '0 10px 28px -4px rgba(15,23,42,.18)', modal: '0 24px 60px -8px rgba(15,23,42,.30)' },
+          borderRadius: { xl2: '0.875rem', xl3: '1.25rem' }
+        }
+      }
+    }
+  </script>
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
 
-/* === BANNER: translate-based, no overlap === */
-#banner-wrapper{overflow:hidden;position:relative}
-#banner-track{display:flex;width:300%;transition:transform 0.55s cubic-bezier(0.77,0,0.175,1)}
-.bslide{flex:0 0 calc(100%/3);min-height:420px;position:relative;display:flex;align-items:center}
-@media(min-width:768px){.bslide{min-height:520px}}
+    html {
+      scroll-behavior: smooth;
+      -webkit-tap-highlight-color: transparent
+    }
 
-/* === HORIZONTAL PRODUCT SCROLL === */
-.pscroll{display:flex;gap:14px;overflow-x:auto;padding-bottom:10px;scroll-snap-type:x mandatory;-ms-overflow-style:none;scrollbar-width:none}
-.pscroll::-webkit-scrollbar{display:none}
-.pcard{flex:0 0 175px;scroll-snap-align:start}
-@media(min-width:480px){.pcard{flex-basis:195px}}
-@media(min-width:768px){.pcard{flex-basis:210px}}
-@media(min-width:1024px){.pcard{flex-basis:225px}}
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      color: #0f172a
+    }
 
-/* card hover */
-.pcard-inner{transition:box-shadow .22s,transform .22s;background:#fff;border-radius:0.875rem;border:1px solid #f1f5f9;overflow:hidden}
-.pcard:hover .pcard-inner{box-shadow:0 10px 28px -4px rgba(15,23,42,.18);transform:translateY(-2px)}
-.padd{transform:translateY(110%);transition:transform .26s ease}
-.pcard:hover .padd{transform:translateY(0)}
-.pwish{opacity:0;transition:opacity .18s}
-.pcard:hover .pwish{opacity:1}
-.pwish.wished{opacity:1!important;color:#ef4444}
-.pwish.wished svg{fill:currentColor}
+    /* === BANNER: translate-based, no overlap === */
+    #banner-wrapper {
+      overflow: hidden;
+      position: relative
+    }
 
-/* === AUTH MODAL === */
-#auth-modal{opacity:0;pointer-events:none;transition:opacity .25s}
-#auth-modal.open{opacity:1;pointer-events:auto}
-#auth-box{transform:translateY(14px) scale(.96);opacity:0;transition:transform .28s cubic-bezier(.34,1.56,.64,1),opacity .25s}
-#auth-modal.open #auth-box{transform:none;opacity:1}
+    #banner-track {
+      display: flex;
+      width: 300%;
+      transition: transform 0.55s cubic-bezier(0.77, 0, 0.175, 1)
+    }
 
-/* === MOBILE DRAWER === */
-#mobile-menu{transform:translateX(-100%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
-#mobile-menu.open{transform:translateX(0)}
-#menu-overlay{opacity:0;pointer-events:none;transition:opacity .3s}
-#menu-overlay.open{opacity:1;pointer-events:auto}
+    .bslide {
+      flex: 0 0 calc(100%/3);
+      min-height: 420px;
+      position: relative;
+      display: flex;
+      align-items: center
+    }
 
-/* === NOTIF PANEL === */
-#notif-panel{transform:translateY(-8px);opacity:0;pointer-events:none;transition:all .2s ease}
-#notif-panel.open{transform:translateY(0);opacity:1;pointer-events:auto}
+    @media(min-width:768px) {
+      .bslide {
+        min-height: 520px
+      }
+    }
 
-/* === SEARCH DROP === */
-#search-drop{display:none}
-#search-drop.open{display:block}
+    /* === HORIZONTAL PRODUCT SCROLL === */
+    .pscroll {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+      scroll-snap-type: x mandatory;
+      -ms-overflow-style: none;
+      scrollbar-width: none
+    }
 
-/* === HEADER SHADOW === */
-.scrolled{box-shadow:0 2px 20px -4px rgba(15,23,42,.12)}
+    .pscroll::-webkit-scrollbar {
+      display: none
+    }
 
-/* === FORM FOCUS === */
-.field:focus-within label{color:#ea580c}
-.field:focus-within input{border-color:#ea580c;box-shadow:0 0 0 3px rgba(234,88,12,.12);outline:none}
+    .pcard {
+      flex: 0 0 175px;
+      scroll-snap-align: start
+    }
 
-/* === ANIMATIONS === */
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-@keyframes toastIn{from{opacity:0;transform:translateX(110%)}to{opacity:1;transform:translateX(0)}}
-@keyframes toastOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(110%)}}
+    @media(min-width:480px) {
+      .pcard {
+        flex-basis: 195px
+      }
+    }
 
-@keyframes toastSlideIn{from{opacity:0;transform:translateX(110%)}to{opacity:1;transform:translateX(0)}}
-@keyframes toastSlideOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(110%)}}
-@keyframes cartBounce{0%{transform:scale(1)}50%{transform:scale(1.5)}100%{transform:scale(1)}}
-.afu{animation:fadeUp .55s ease both}
-.cart-badge.pop{animation:cartBounce .3s ease}
+    @media(min-width:768px) {
+      .pcard {
+        flex-basis: 210px
+      }
+    }
 
-/* scroll section arrows */
-.scroll-wrap{position:relative}
-.scroll-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:10;width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid #e2e8f0;box-shadow:0 2px 8px rgba(15,23,42,.12);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:#334155}
-.scroll-arrow:hover{background:#0f172a;color:#fff;border-color:#0f172a;box-shadow:0 4px 14px rgba(15,23,42,.2)}
-.scroll-arrow.left{left:-14px}
-.scroll-arrow.right{right:-14px}
-@media(max-width:640px){.scroll-arrow{display:none}}
-</style>
+    @media(min-width:1024px) {
+      .pcard {
+        flex-basis: 225px
+      }
+    }
+
+    /* card hover */
+    .pcard-inner {
+      transition: box-shadow .22s, transform .22s;
+      background: #fff;
+      border-radius: 0.875rem;
+      border: 1px solid #f1f5f9;
+      overflow: hidden
+    }
+
+    .pcard:hover .pcard-inner {
+      box-shadow: 0 10px 28px -4px rgba(15, 23, 42, .18);
+      transform: translateY(-2px)
+    }
+
+    .padd {
+      transform: translateY(110%);
+      transition: transform .26s ease
+    }
+
+    .pcard:hover .padd {
+      transform: translateY(0)
+    }
+
+    .pwish {
+      opacity: 0;
+      transition: opacity .18s
+    }
+
+    .pcard:hover .pwish {
+      opacity: 1
+    }
+
+    .pwish.wished {
+      opacity: 1 !important;
+      color: #ef4444
+    }
+
+    .pwish.wished svg {
+      fill: currentColor
+    }
+
+    /* === AUTH MODAL === */
+    #auth-modal {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s
+    }
+
+    #auth-modal.open {
+      opacity: 1;
+      pointer-events: auto
+    }
+
+    #auth-box {
+      transform: translateY(14px) scale(.96);
+      opacity: 0;
+      transition: transform .28s cubic-bezier(.34, 1.56, .64, 1), opacity .25s
+    }
+
+    #auth-modal.open #auth-box {
+      transform: none;
+      opacity: 1
+    }
+
+    /* === MOBILE DRAWER === */
+    #mobile-menu {
+      transform: translateX(-100%);
+      transition: transform .3s cubic-bezier(.4, 0, .2, 1)
+    }
+
+    #mobile-menu.open {
+      transform: translateX(0)
+    }
+
+    #menu-overlay {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s
+    }
+
+    #menu-overlay.open {
+      opacity: 1;
+      pointer-events: auto
+    }
+
+    /* === NOTIF PANEL === */
+    #notif-panel {
+      transform: translateY(-8px);
+      opacity: 0;
+      pointer-events: none;
+      transition: all .2s ease
+    }
+
+    #notif-panel.open {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto
+    }
+
+    /* === SEARCH DROP === */
+    #search-drop {
+      display: none
+    }
+
+    #search-drop.open {
+      display: block
+    }
+
+    /* === HEADER SHADOW === */
+    .scrolled {
+      box-shadow: 0 2px 20px -4px rgba(15, 23, 42, .12)
+    }
+
+    /* === FORM FOCUS === */
+    .field:focus-within label {
+      color: #ea580c
+    }
+
+    .field:focus-within input {
+      border-color: #ea580c;
+      box-shadow: 0 0 0 3px rgba(234, 88, 12, .12);
+      outline: none
+    }
+
+    /* === ANIMATIONS === */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateX(110%)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0)
+      }
+    }
+
+    @keyframes toastOut {
+      from {
+        opacity: 1;
+        transform: translateX(0)
+      }
+
+      to {
+        opacity: 0;
+        transform: translateX(110%)
+      }
+    }
+
+    @keyframes toastSlideIn {
+      from {
+        opacity: 0;
+        transform: translateX(110%)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0)
+      }
+    }
+
+    @keyframes toastSlideOut {
+      from {
+        opacity: 1;
+        transform: translateX(0)
+      }
+
+      to {
+        opacity: 0;
+        transform: translateX(110%)
+      }
+    }
+
+    @keyframes cartBounce {
+      0% {
+        transform: scale(1)
+      }
+
+      50% {
+        transform: scale(1.5)
+      }
+
+      100% {
+        transform: scale(1)
+      }
+    }
+
+    .afu {
+      animation: fadeUp .55s ease both
+    }
+
+    .cart-badge.pop {
+      animation: cartBounce .3s ease
+    }
+
+    /* scroll section arrows */
+    .scroll-wrap {
+      position: relative
+    }
+
+    .scroll-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, .12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all .2s;
+      color: #334155
+    }
+
+    .scroll-arrow:hover {
+      background: #0f172a;
+      color: #fff;
+      border-color: #0f172a;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, .2)
+    }
+
+    .scroll-arrow.left {
+      left: -14px
+    }
+
+    .scroll-arrow.right {
+      right: -14px
+    }
+
+    @media(max-width:640px) {
+      .scroll-arrow {
+        display: none
+      }
+    }
+  </style>
 </head>
+
 <body class="font-body">
 
-<div id="toast-stack" class="fixed top-20 right-3 z-[9999] flex flex-col gap-2 w-80 max-w-[calc(100vw-1.5rem)] pointer-events-none"></div>
+  <div id="toast-stack"
+    class="fixed top-20 right-3 z-[9999] flex flex-col gap-2 w-80 max-w-[calc(100vw-1.5rem)] pointer-events-none"></div>
 
-<!-- AUTH MODAL -->
-<div id="auth-modal" class="fixed inset-0 z-[500] flex items-center justify-center p-4" style="background:rgba(15,23,42,.6);backdrop-filter:blur(6px)">
-  <div id="auth-box" class="bg-white rounded-xl3 shadow-modal w-full max-w-[420px] relative overflow-hidden max-h-[90vh] overflow-y-auto">
-    <button onclick="closeAuth()" class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center transition-colors"><i data-lucide="x" class="w-4 h-4 text-neutral-600"></i></button>
-    <div class="flex border-b border-neutral-100">
-      <button id="tab-login"  onclick="switchAuth('login')"  class="flex-1 py-4 text-sm font-semibold text-primary-600 border-b-2 border-primary-600">Sign In</button>
-      <button id="tab-signup" onclick="switchAuth('signup')" class="flex-1 py-4 text-sm font-semibold text-neutral-400 border-b-2 border-transparent hover:text-neutral-700">Create Account</button>
-    </div>
-    <div id="panel-login" class="p-6">
-      <div class="text-center mb-5"><div class="w-12 h-12 bg-primary-600 rounded-xl flex items-center justify-center text-white font-heading font-bold text-xl mx-auto mb-3">A</div><h2 class="font-heading text-xl font-bold">Welcome back</h2><p class="text-sm text-neutral-500 mt-1">Sign in to your AhiaGlobal account</p></div>
-      <div class="grid grid-cols-2 gap-2 mb-4">
-        <button onclick="handleSocialAuth('Google')" class="flex items-center justify-center gap-2 px-3 py-2.5 border border-neutral-200 rounded-lg text-sm font-medium text-neutral-700 hover:bg-neutral-50"><svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>Google</button>
-        <button onclick="handleSocialAuth('Facebook')" class="flex items-center justify-center gap-2 px-3 py-2.5 border border-neutral-200 rounded-lg text-sm font-medium text-neutral-700 hover:bg-neutral-50"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>Facebook</button>
+  <!-- AUTH MODAL -->
+  <div id="auth-modal" class="fixed inset-0 z-[500] flex items-center justify-center p-4"
+    style="background:rgba(15,23,42,.6);backdrop-filter:blur(6px)">
+    <div id="auth-box"
+      class="bg-white rounded-xl3 shadow-modal w-full max-w-[420px] relative overflow-hidden max-h-[90vh] overflow-y-auto">
+      <button onclick="closeAuth()"
+        class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center transition-colors"><i
+          data-lucide="x" class="w-4 h-4 text-neutral-600"></i></button>
+      <div class="flex border-b border-neutral-100">
+        <button id="tab-login" onclick="switchAuth('login')"
+          class="flex-1 py-4 text-sm font-semibold text-primary-600 border-b-2 border-primary-600">Sign In</button>
+        <button id="tab-signup" onclick="switchAuth('signup')"
+          class="flex-1 py-4 text-sm font-semibold text-neutral-400 border-b-2 border-transparent hover:text-neutral-700">Create
+          Account</button>
       </div>
-      <div class="flex items-center gap-3 mb-4"><div class="flex-1 h-px bg-neutral-100"></div><span class="text-xs text-neutral-400">OR</span><div class="flex-1 h-px bg-neutral-100"></div></div>
-      <div class="space-y-3">
-        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Email</label><input id="login-email" type="email" placeholder="you@example.com" class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"></div>
-        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Password</label><div class="relative"><input id="login-pw" type="password" placeholder="••••••••" class="w-full px-4 py-2.5 pr-10 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"><button type="button" onclick="togglePw('login-pw',this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"><i data-lucide="eye" class="w-4 h-4"></i></button></div></div>
-        <div class="flex items-center justify-between text-sm"><label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="w-4 h-4 accent-orange-600 rounded"><span class="text-neutral-600">Remember me</span></label><button class="text-primary-600 font-medium hover:underline">Forgot?</button></div>
-        <button onclick="handleLogin()" class="w-full bg-primary-600 hover:bg-primary-700 text-white py-3 rounded-full font-semibold text-sm flex items-center justify-center gap-2">Sign In <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
-      </div>
-      <p class="text-center text-sm text-neutral-500 mt-4">No account? <button onclick="switchAuth('signup')" class="text-primary-600 font-semibold hover:underline">Create one free</button></p>
-    </div>
-    <div id="panel-signup" class="p-6 hidden">
-      <div class="text-center mb-5"><div class="w-12 h-12 bg-primary-600 rounded-xl flex items-center justify-center text-white font-heading font-bold text-xl mx-auto mb-3">A</div><h2 class="font-heading text-xl font-bold">Create account</h2><p class="text-sm text-neutral-500 mt-1">Join millions on AhiaGlobal</p></div>
-      <div class="space-y-3">
-        <div class="grid grid-cols-2 gap-3">
-          <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">First name</label><input id="signup-firstname" type="text" placeholder="John" class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50"></div>
-          <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Last name</label><input id="signup-lastname" type="text" placeholder="Doe" class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50"></div>
+      <div id="panel-login" class="p-6">
+        <div class="text-center mb-5">
+          <div
+            class="w-12 h-12 bg-primary-600 rounded-xl flex items-center justify-center text-white font-heading font-bold text-xl mx-auto mb-3">
+            A</div>
+          <h2 class="font-heading text-xl font-bold">Welcome back</h2>
+          <p class="text-sm text-neutral-500 mt-1">Sign in to your AhiaGlobal account</p>
         </div>
-        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Email</label><input id="signup-email" type="email" placeholder="you@example.com" class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50"></div>
-        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Password</label><div class="relative"><input id="signup-pw" type="password" placeholder="Min. 8 characters" class="w-full px-4 py-2.5 pr-10 border border-neutral-200 rounded-lg text-sm bg-neutral-50"><button type="button" onclick="togglePw('signup-pw',this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400"><i data-lucide="eye" class="w-4 h-4"></i></button></div></div>
-        <label class="flex items-start gap-2 cursor-pointer"><input id="signup-agree" type="checkbox" class="w-4 h-4 mt-0.5 accent-orange-600 rounded flex-shrink-0"><span class="text-xs text-neutral-500">I agree to <a href="#" class="text-primary-600">Terms</a> &amp; <a href="#" class="text-primary-600">Privacy</a></span></label>
-        <button onclick="handleSignup()" class="w-full bg-primary-600 hover:bg-primary-700 text-white py-3 rounded-full font-semibold text-sm flex items-center justify-center gap-2">Create Account <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+        <div class="grid grid-cols-2 gap-2 mb-4">
+          <button onclick="handleSocialAuth('Google')"
+            class="flex items-center justify-center gap-2 px-3 py-2.5 border border-neutral-200 rounded-lg text-sm font-medium text-neutral-700 hover:bg-neutral-50"><svg
+              class="w-4 h-4" viewBox="0 0 24 24">
+              <path fill="#4285F4"
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+              <path fill="#34A853"
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+              <path fill="#FBBC05"
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" />
+              <path fill="#EA4335"
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+            </svg>Google</button>
+          <button onclick="handleSocialAuth('Facebook')"
+            class="flex items-center justify-center gap-2 px-3 py-2.5 border border-neutral-200 rounded-lg text-sm font-medium text-neutral-700 hover:bg-neutral-50"><svg
+              class="w-4 h-4" viewBox="0 0 24 24" fill="#1877F2">
+              <path
+                d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+            </svg>Facebook</button>
+        </div>
+        <div class="flex items-center gap-3 mb-4">
+          <div class="flex-1 h-px bg-neutral-100"></div><span class="text-xs text-neutral-400">OR</span>
+          <div class="flex-1 h-px bg-neutral-100"></div>
+        </div>
+        <div class="space-y-3">
+          <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Email</label><input
+              id="login-email" type="email" placeholder="you@example.com"
+              class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all">
+          </div>
+          <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Password</label>
+            <div class="relative"><input id="login-pw" type="password" placeholder="••••••••"
+                class="w-full px-4 py-2.5 pr-10 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"><button
+                type="button" onclick="togglePw('login-pw',this)"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"><i
+                  data-lucide="eye" class="w-4 h-4"></i></button></div>
+          </div>
+          <div class="flex items-center justify-between text-sm"><label
+              class="flex items-center gap-2 cursor-pointer"><input type="checkbox"
+                class="w-4 h-4 accent-orange-600 rounded"><span class="text-neutral-600">Remember
+                me</span></label><button class="text-primary-600 font-medium hover:underline">Forgot?</button></div>
+          <button onclick="handleLogin()"
+            class="w-full bg-primary-600 hover:bg-primary-700 text-white py-3 rounded-full font-semibold text-sm flex items-center justify-center gap-2">Sign
+            In <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+        </div>
+        <p class="text-center text-sm text-neutral-500 mt-4">No account? <button onclick="switchAuth('signup')"
+            class="text-primary-600 font-semibold hover:underline">Create one free</button></p>
       </div>
-      <p class="text-center text-sm text-neutral-500 mt-4">Have an account? <button onclick="switchAuth('login')" class="text-primary-600 font-semibold hover:underline">Sign in</button></p>
+      <div id="panel-signup" class="p-6 hidden">
+        <div class="text-center mb-5">
+          <div
+            class="w-12 h-12 bg-primary-600 rounded-xl flex items-center justify-center text-white font-heading font-bold text-xl mx-auto mb-3">
+            A</div>
+          <h2 class="font-heading text-xl font-bold">Create account</h2>
+          <p class="text-sm text-neutral-500 mt-1">Join millions on AhiaGlobal</p>
+        </div>
+        <div class="space-y-3">
+          <div class="grid grid-cols-2 gap-3">
+            <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">First name</label><input
+                id="signup-firstname" type="text" placeholder="John"
+                class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50"></div>
+            <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Last name</label><input
+                id="signup-lastname" type="text" placeholder="Doe"
+                class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50"></div>
+          </div>
+          <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Email</label><input
+              id="signup-email" type="email" placeholder="you@example.com"
+              class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50"></div>
+          <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Password</label>
+            <div class="relative"><input id="signup-pw" type="password" placeholder="Min. 8 characters"
+                class="w-full px-4 py-2.5 pr-10 border border-neutral-200 rounded-lg text-sm bg-neutral-50"><button
+                type="button" onclick="togglePw('signup-pw',this)"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400"><i data-lucide="eye"
+                  class="w-4 h-4"></i></button></div>
+          </div>
+          <label class="flex items-start gap-2 cursor-pointer"><input id="signup-agree" type="checkbox"
+              class="w-4 h-4 mt-0.5 accent-orange-600 rounded flex-shrink-0"><span class="text-xs text-neutral-500">I
+              agree to <a href="#" class="text-primary-600">Terms</a> &amp; <a href="#"
+                class="text-primary-600">Privacy</a></span></label>
+          <button onclick="handleSignup()"
+            class="w-full bg-primary-600 hover:bg-primary-700 text-white py-3 rounded-full font-semibold text-sm flex items-center justify-center gap-2">Create
+            Account <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+        </div>
+        <p class="text-center text-sm text-neutral-500 mt-4">Have an account? <button onclick="switchAuth('login')"
+            class="text-primary-600 font-semibold hover:underline">Sign in</button></p>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- MOBILE DRAWER OVERLAY -->
-<div id="menu-overlay" onclick="closeMobileMenu()" class="fixed inset-0 z-[300]" style="background:rgba(15,23,42,.5);backdrop-filter:blur(3px)"></div>
-<div id="mobile-menu" class="fixed top-0 left-0 h-full w-72 max-w-[85vw] bg-white z-[400] flex flex-col shadow-modal overflow-y-auto">
-  <div class="flex items-center justify-between p-4 border-b border-neutral-100">
-    <div class="flex items-center gap-2"><div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center text-white font-heading font-bold">A</div><span class="font-heading font-bold text-lg text-neutral-900">Ahia<span class="text-primary-600">Global</span></span></div>
-    <button onclick="closeMobileMenu()" class="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center hover:bg-neutral-200"><i data-lucide="x" class="w-4 h-4 text-neutral-600"></i></button>
-  </div>
-  <div class="p-4 border-b border-neutral-100 bg-neutral-50">
-    <div id="mob-guest"><p class="text-xs text-neutral-500 mb-3">Sign in for the best deals.</p><div class="flex gap-2"><button onclick="closeMobileMenu();openAuth('login')" class="flex-1 py-2.5 bg-primary-600 text-white text-sm font-semibold rounded-full hover:bg-primary-700">Sign In</button><button onclick="closeMobileMenu();openAuth('signup')" class="flex-1 py-2.5 border border-neutral-300 text-neutral-700 text-sm font-semibold rounded-full hover:bg-neutral-100">Register</button></div></div>
-    <div id="mob-loggedin" class="hidden flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center font-bold text-primary-700" id="mob-avatar">JD</div><div><p class="text-sm font-semibold text-neutral-900" id="mob-name">John Doe</p><p class="text-xs text-neutral-500">View profile</p></div></div>
-  </div>
-  <nav class="flex-1 p-3 space-y-0.5">
-    <a href="index.html"    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-primary-600 bg-primary-50"><i data-lucide="home"          class="w-4 h-4"></i>Home</a>
-    <a href="shop.html"     class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:text-primary-600 transition-colors"><i data-lucide="shopping-bag"  class="w-4 h-4"></i>Shop</a>
-    <a href="checkout.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:text-primary-600 transition-colors"><i data-lucide="shopping-cart" class="w-4 h-4"></i>Cart <span id="mob-cart-badge" class="ml-auto w-5 h-5 bg-primary-600 text-white text-[10px] font-bold flex items-center justify-center rounded-full cart-count-badge">0</span></a>
-    <a href="account.html"  class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:text-primary-600 transition-colors"><i data-lucide="user"           class="w-4 h-4"></i>My Account</a>
-    <a href="faq.html"      class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:text-primary-600 transition-colors"><i data-lucide="help-circle"   class="w-4 h-4"></i>Help Center</a>
-    <a href="categories.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:text-primary-600 transition-colors"><i data-lucide="layout-grid" class="w-4 h-4"></i>Categories</a>
-    <a href="riders.html"     class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:text-primary-600 transition-colors"><i data-lucide="bike"          class="w-4 h-4"></i>Become a Rider</a>
-    <a href="sell.html"       class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:text-primary-600 transition-colors"><i data-lucide="store"         class="w-4 h-4"></i>Sell on Ahia</a>
-  </nav>
-  <div class="p-3 border-t border-neutral-100"><button id="mob-logout-btn" onclick="doLogout()" class="hidden w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50"><i data-lucide="log-out" class="w-4 h-4"></i>Sign Out</button></div>
-</div>
-
-<!-- TOP BAR -->
-<div class="bg-neutral-900 text-neutral-400 py-1.5 px-4 text-xs hidden md:block">
-  <div class="max-w-7xl mx-auto flex items-center justify-between">
-    <div class="flex items-center gap-5">
-      <a href="tel:+2348001234567" class="flex items-center gap-1.5 hover:text-primary-400 transition-colors"><i data-lucide="phone" class="w-3 h-3"></i>+234 800 AHIA GLOBAL</a>
-      <a href="mailto:support@ahiaglobal.com" class="flex items-center gap-1.5 hover:text-primary-400 transition-colors"><i data-lucide="mail" class="w-3 h-3"></i>support@ahiaglobal.com</a>
+  <!-- MOBILE DRAWER OVERLAY -->
+  <div id="menu-overlay" onclick="closeMobileMenu()" class="fixed inset-0 z-[300]"
+    style="background:rgba(15,23,42,.5);backdrop-filter:blur(3px)"></div>
+  <div id="mobile-menu"
+    class="fixed top-0 left-0 h-full w-72 max-w-[85vw] bg-white z-[400] flex flex-col shadow-modal overflow-y-auto">
+    <div class="flex items-center justify-between p-4 border-b border-neutral-100">
+      <div class="flex items-center gap-2">
+        <div
+          class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center text-white font-heading font-bold">A
+        </div><span class="font-heading font-bold text-lg text-neutral-900">Ahia<span
+            class="text-primary-600">Global</span></span>
+      </div>
+      <button onclick="closeMobileMenu()"
+        class="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center hover:bg-neutral-200"><i
+          data-lucide="x" class="w-4 h-4 text-neutral-600"></i></button>
     </div>
-    <div class="flex items-center gap-4">
-      <a href="riders.html" class="hover:text-primary-400 transition-colors">Become a Rider</a><div class="h-3 w-px bg-neutral-700"></div><a href="sell.html" class="hover:text-primary-400 transition-colors">Sell on Ahia</a>
-      <div class="h-3 w-px bg-neutral-700"></div>
-      <a href="confirmation.html" class="hover:text-primary-400 transition-colors">Track Order</a>
-      <div class="h-3 w-px bg-neutral-700"></div>
-      <div class="relative">
-        <button id="lang-btn" onclick="toggleLang()" class="flex items-center gap-1 hover:text-primary-400 transition-colors"><i data-lucide="globe" class="w-3 h-3"></i><span id="lang-label">EN / NGN</span><i data-lucide="chevron-down" class="w-3 h-3"></i></button>
-        <div id="lang-panel" class="hidden absolute right-0 top-full mt-1 bg-white text-neutral-800 rounded-xl shadow-modal py-1.5 w-36 z-50 border border-neutral-200">
-          <button onclick="setLang('EN','NGN')" class="w-full text-left px-3 py-2 text-xs hover:bg-neutral-50">🇳🇬 EN / NGN</button>
-          <button onclick="setLang('EN','USD')" class="w-full text-left px-3 py-2 text-xs hover:bg-neutral-50">🇺🇸 EN / USD</button>
-          <button onclick="setLang('EN','GBP')" class="w-full text-left px-3 py-2 text-xs hover:bg-neutral-50">🇬🇧 EN / GBP</button>
-          <button onclick="setLang('FR','XOF')" class="w-full text-left px-3 py-2 text-xs hover:bg-neutral-50">🇫🇷 FR / XOF</button>
+    <div class="p-4 border-b border-neutral-100 bg-neutral-50">
+      <div id="mob-guest">
+        <p class="text-xs text-neutral-500 mb-3">Sign in for the best deals.</p>
+        <div class="flex gap-2"><button onclick="closeMobileMenu();openAuth('login')"
+            class="flex-1 py-2.5 bg-primary-600 text-white text-sm font-semibold rounded-full hover:bg-primary-700">Sign
+            In</button><button onclick="closeMobileMenu();openAuth('signup')"
+            class="flex-1 py-2.5 border border-neutral-300 text-neutral-700 text-sm font-semibold rounded-full hover:bg-neutral-100">Register</button>
+        </div>
+      </div>
+      <div id="mob-loggedin" class="hidden flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center font-bold text-primary-700"
+          id="mob-avatar">JD</div>
+        <div>
+          <p class="text-sm font-semibold text-neutral-900" id="mob-name">John Doe</p>
+          <p class="text-xs text-neutral-500">View profile</p>
         </div>
       </div>
     </div>
+    <nav class="flex-1 p-3 space-y-0.5">
+      <a href="index.html"
+        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-primary-600 bg-primary-50"><i
+          data-lucide="home" class="w-4 h-4"></i>Home</a>
+      <a href="shop.html"
+        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:text-primary-600 transition-colors"><i
+          data-lucide="shopping-bag" class="w-4 h-4"></i>Shop</a>
+      <a href="checkout.html"
+        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:text-primary-600 transition-colors"><i
+          data-lucide="shopping-cart" class="w-4 h-4"></i>Cart <span id="mob-cart-badge"
+          class="ml-auto w-5 h-5 bg-primary-600 text-white text-[10px] font-bold flex items-center justify-center rounded-full cart-count-badge">0</span></a>
+      <a href="account.html"
+        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:text-primary-600 transition-colors"><i
+          data-lucide="user" class="w-4 h-4"></i>My Account</a>
+      <a href="faq.html"
+        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:text-primary-600 transition-colors"><i
+          data-lucide="help-circle" class="w-4 h-4"></i>Help Center</a>
+      <a href="categories.html"
+        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:text-primary-600 transition-colors"><i
+          data-lucide="layout-grid" class="w-4 h-4"></i>Categories</a>
+      <a href="riders.html"
+        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:text-primary-600 transition-colors"><i
+          data-lucide="bike" class="w-4 h-4"></i>Become a Rider</a>
+      <a href="sell.html"
+        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:text-primary-600 transition-colors"><i
+          data-lucide="store" class="w-4 h-4"></i>Sell on Ahia</a>
+    </nav>
+    <div class="p-3 border-t border-neutral-100"><button id="mob-logout-btn" onclick="doLogout()"
+        class="hidden w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50"><i
+          data-lucide="log-out" class="w-4 h-4"></i>Sign Out</button></div>
   </div>
-</div>
 
-<!-- MAIN HEADER -->
-<header id="main-header" class="sticky top-0 z-[200] bg-white border-b border-neutral-200 transition-shadow">
-  <div class="max-w-7xl mx-auto px-4">
-    <!-- Row 1 -->
-    <div class="flex items-center gap-3 py-3">
-      <button onclick="openMobileMenu()" class="md:hidden flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl hover:bg-neutral-100"><i data-lucide="menu" class="w-5 h-5 text-neutral-700"></i></button>
-      <a href="index.html" class="flex items-center flex-shrink-0">
-        <img src="image.png" 
-             alt="Ahia Global" 
-             class="h-14 md:h-16 w-auto object-contain">
-        <span style="margin-left: -10px;" class="font-heading font-bold text-xl md:text-2xl text-neutral-900 tracking-tight leading-none">Ahia<span class="text-primary-600">global</span></span>
-      </a>
-      <!-- Search desktop -->
-      <div class="hidden md:flex flex-1 max-w-xl relative mx-4">
-        <input id="desktop-search" type="text" placeholder="Search products, brands, categories…" onfocus="document.getElementById('search-drop').classList.add('open')" class="w-full pl-10 pr-28 py-2.5 bg-neutral-50 border border-neutral-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all">
-        <i data-lucide="search" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400 w-4 h-4 pointer-events-none"></i>
-        <button onclick="doSearch()" class="absolute right-1.5 top-1/2 -translate-y-1/2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-1.5 rounded-full text-xs font-semibold transition-colors">Search</button>
-        <div id="search-drop" class="absolute top-full left-0 right-0 mt-1 bg-white border border-neutral-200 rounded-xl shadow-modal z-50 py-2">
-          <p class="px-4 py-1 text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Trending</p>
-          <button onclick="fillSearch('Wireless Headphones')" class="w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 flex items-center gap-2"><i data-lucide="trending-up" class="w-3.5 h-3.5 text-primary-500"></i>Wireless Headphones</button>
-          <button onclick="fillSearch('African Print Dress')" class="w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 flex items-center gap-2"><i data-lucide="trending-up" class="w-3.5 h-3.5 text-primary-500"></i>African Print Dress</button>
-          <button onclick="fillSearch('iPhone 15')"           class="w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 flex items-center gap-2"><i data-lucide="trending-up" class="w-3.5 h-3.5 text-primary-500"></i>iPhone 15</button>
-          <button onclick="fillSearch('Nike Sneakers')"       class="w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 flex items-center gap-2"><i data-lucide="trending-up" class="w-3.5 h-3.5 text-primary-500"></i>Nike Sneakers</button>
-        </div>
+  <!-- TOP BAR -->
+  <div class="bg-neutral-900 text-neutral-400 py-1.5 px-4 text-xs hidden md:block">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-5">
+        <a href="tel:+2348001234567" class="flex items-center gap-1.5 hover:text-primary-400 transition-colors"><i
+            data-lucide="phone" class="w-3 h-3"></i>+234 800 AHIA GLOBAL</a>
+        <a href="mailto:support@ahiaglobal.com"
+          class="flex items-center gap-1.5 hover:text-primary-400 transition-colors"><i data-lucide="mail"
+            class="w-3 h-3"></i>support@ahiaglobal.com</a>
       </div>
-      <!-- Actions -->
-      <div class="flex items-center gap-1.5 ml-auto md:ml-0">
-        <button class="md:hidden w-9 h-9 flex items-center justify-center rounded-xl hover:bg-neutral-100"><i data-lucide="search" class="w-5 h-5 text-neutral-600"></i></button>
-        <!-- Notifications -->
-        <div class="relative hidden md:block">
-          <button onclick="document.getElementById('notif-panel').classList.toggle('open')" class="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-neutral-100 relative">
-            <i data-lucide="bell" class="w-5 h-5 text-neutral-600"></i>
-            <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-          </button>
-          <div id="notif-panel" class="absolute right-0 top-full mt-2 w-80 bg-white border border-neutral-200 rounded-xl shadow-modal z-50 overflow-hidden">
-            <div class="flex items-center justify-between px-4 py-3 border-b border-neutral-100"><h4 class="font-heading font-bold text-sm text-neutral-900">Notifications</h4><button class="text-xs text-primary-600 font-medium hover:underline">Mark all read</button></div>
-            <div class="divide-y divide-neutral-50">
-              <div class="flex gap-3 px-4 py-3 hover:bg-neutral-50 cursor-pointer"><div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0"><i data-lucide="package" class="w-4 h-4 text-primary-600"></i></div><div><p class="text-sm font-medium text-neutral-900">Order shipped!</p><p class="text-xs text-neutral-500">Order #AH-88291 is on its way.</p><p class="text-[10px] text-neutral-400 mt-0.5">2 hours ago</p></div></div>
-              <div class="flex gap-3 px-4 py-3 hover:bg-neutral-50 cursor-pointer"><div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0"><i data-lucide="zap" class="w-4 h-4 text-red-500"></i></div><div><p class="text-sm font-medium text-neutral-900">Flash Sale live now!</p><p class="text-xs text-neutral-500">Up to 40% off electronics.</p><p class="text-[10px] text-neutral-400 mt-0.5">5 hours ago</p></div></div>
-            </div>
-            <div class="px-4 py-3 border-t border-neutral-100 text-center"><button class="text-sm text-primary-600 font-medium hover:underline">View all</button></div>
+      <div class="flex items-center gap-4">
+        <a href="riders.html" class="hover:text-primary-400 transition-colors">Become a Rider</a>
+        <div class="h-3 w-px bg-neutral-700"></div><a href="sell.html"
+          class="hover:text-primary-400 transition-colors">Sell on Ahia</a>
+        <div class="h-3 w-px bg-neutral-700"></div>
+        <a href="confirmation.html" class="hover:text-primary-400 transition-colors">Track Order</a>
+        <div class="h-3 w-px bg-neutral-700"></div>
+        <div class="relative">
+          <button id="lang-btn" onclick="toggleLang()"
+            class="flex items-center gap-1 hover:text-primary-400 transition-colors"><i data-lucide="globe"
+              class="w-3 h-3"></i><span id="lang-label">EN / NGN</span><i data-lucide="chevron-down"
+              class="w-3 h-3"></i></button>
+          <div id="lang-panel"
+            class="hidden absolute right-0 top-full mt-1 bg-white text-neutral-800 rounded-xl shadow-modal py-1.5 w-36 z-50 border border-neutral-200">
+            <button onclick="setLang('EN','NGN')" class="w-full text-left px-3 py-2 text-xs hover:bg-neutral-50">🇳🇬 EN
+              / NGN</button>
+            <button onclick="setLang('EN','USD')" class="w-full text-left px-3 py-2 text-xs hover:bg-neutral-50">🇺🇸 EN
+              / USD</button>
+            <button onclick="setLang('EN','GBP')" class="w-full text-left px-3 py-2 text-xs hover:bg-neutral-50">🇬🇧 EN
+              / GBP</button>
+            <button onclick="setLang('FR','XOF')" class="w-full text-left px-3 py-2 text-xs hover:bg-neutral-50">🇫🇷 FR
+              / XOF</button>
           </div>
         </div>
-        <button class="hidden md:flex w-9 h-9 items-center justify-center rounded-xl hover:bg-neutral-100"><i data-lucide="heart" class="w-5 h-5 text-neutral-600"></i></button>
-        <button onclick="openAuth('login')" id="header-auth-btn" class="hidden md:flex items-center gap-2 px-4 py-2 rounded-full border border-neutral-200 hover:border-primary-300 hover:bg-orange-50 transition-all text-sm font-medium text-neutral-700 flex-shrink-0 whitespace-nowrap">
-          <i data-lucide="user" class="w-4 h-4"></i><span id="header-auth-label">Sign In</span>
-        </button>
-        <a href="checkout.html" class="flex items-center gap-2 bg-neutral-900 hover:bg-neutral-800 text-white px-3 md:px-4 py-2.5 rounded-full transition-all flex-shrink-0">
-          <div class="relative"><i data-lucide="shopping-cart" class="w-4 h-4 md:w-5 md:h-5"></i><span id="header-cart-count" class="cart-count-badge cart-badge absolute -top-2.5 -right-2.5 w-5 h-5 bg-primary-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-neutral-900">0</span></div>
-          <span class="hidden lg:block text-sm font-medium cart-total-label">$0.00</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN HEADER -->
+  <header id="main-header" class="sticky top-0 z-[200] bg-white border-b border-neutral-200 transition-shadow">
+    <div class="max-w-7xl mx-auto px-4">
+      <!-- Row 1 -->
+      <div class="flex items-center gap-3 py-3">
+        <button onclick="openMobileMenu()"
+          class="md:hidden flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl hover:bg-neutral-100"><i
+            data-lucide="menu" class="w-5 h-5 text-neutral-700"></i></button>
+        <a href="index.html" class="flex items-center flex-shrink-0">
+          <img src="image.png" alt="Ahia Global" class="h-14 md:h-16 w-auto object-contain">
+          <span style="margin-left: -10px;"
+            class="font-heading font-bold text-xl md:text-2xl text-neutral-900 tracking-tight leading-none">ahia<span
+              class="text-primary-600">global</span></span>
+        </a>
+        <!-- Search desktop -->
+        <div class="hidden md:flex flex-1 max-w-xl relative mx-4">
+          <input id="desktop-search" type="text" placeholder="Search products, brands, categories…"
+            onfocus="document.getElementById('search-drop').classList.add('open')"
+            class="w-full pl-10 pr-28 py-2.5 bg-neutral-50 border border-neutral-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all">
+          <i data-lucide="search"
+            class="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400 w-4 h-4 pointer-events-none"></i>
+          <button onclick="doSearch()"
+            class="absolute right-1.5 top-1/2 -translate-y-1/2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-1.5 rounded-full text-xs font-semibold transition-colors">Search</button>
+          <div id="search-drop"
+            class="absolute top-full left-0 right-0 mt-1 bg-white border border-neutral-200 rounded-xl shadow-modal z-50 py-2">
+            <p class="px-4 py-1 text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Trending</p>
+            <button onclick="fillSearch('Wireless Headphones')"
+              class="w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 flex items-center gap-2"><i
+                data-lucide="trending-up" class="w-3.5 h-3.5 text-primary-500"></i>Wireless Headphones</button>
+            <button onclick="fillSearch('African Print Dress')"
+              class="w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 flex items-center gap-2"><i
+                data-lucide="trending-up" class="w-3.5 h-3.5 text-primary-500"></i>African Print Dress</button>
+            <button onclick="fillSearch('iPhone 15')"
+              class="w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 flex items-center gap-2"><i
+                data-lucide="trending-up" class="w-3.5 h-3.5 text-primary-500"></i>iPhone 15</button>
+            <button onclick="fillSearch('Nike Sneakers')"
+              class="w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 flex items-center gap-2"><i
+                data-lucide="trending-up" class="w-3.5 h-3.5 text-primary-500"></i>Nike Sneakers</button>
+          </div>
+        </div>
+        <!-- Actions -->
+        <div class="flex items-center gap-1.5 ml-auto md:ml-0">
+          <button class="md:hidden w-9 h-9 flex items-center justify-center rounded-xl hover:bg-neutral-100"><i
+              data-lucide="search" class="w-5 h-5 text-neutral-600"></i></button>
+          <!-- Notifications -->
+          <div class="relative hidden md:block">
+            <button onclick="document.getElementById('notif-panel').classList.toggle('open')"
+              class="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-neutral-100 relative">
+              <i data-lucide="bell" class="w-5 h-5 text-neutral-600"></i>
+              <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+            </button>
+            <div id="notif-panel"
+              class="absolute right-0 top-full mt-2 w-80 bg-white border border-neutral-200 rounded-xl shadow-modal z-50 overflow-hidden">
+              <div class="flex items-center justify-between px-4 py-3 border-b border-neutral-100">
+                <h4 class="font-heading font-bold text-sm text-neutral-900">Notifications</h4><button
+                  class="text-xs text-primary-600 font-medium hover:underline">Mark all read</button>
+              </div>
+              <div class="divide-y divide-neutral-50">
+                <div class="flex gap-3 px-4 py-3 hover:bg-neutral-50 cursor-pointer">
+                  <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0"><i
+                      data-lucide="package" class="w-4 h-4 text-primary-600"></i></div>
+                  <div>
+                    <p class="text-sm font-medium text-neutral-900">Order shipped!</p>
+                    <p class="text-xs text-neutral-500">Order #AH-88291 is on its way.</p>
+                    <p class="text-[10px] text-neutral-400 mt-0.5">2 hours ago</p>
+                  </div>
+                </div>
+                <div class="flex gap-3 px-4 py-3 hover:bg-neutral-50 cursor-pointer">
+                  <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0"><i
+                      data-lucide="zap" class="w-4 h-4 text-red-500"></i></div>
+                  <div>
+                    <p class="text-sm font-medium text-neutral-900">Flash Sale live now!</p>
+                    <p class="text-xs text-neutral-500">Up to 40% off electronics.</p>
+                    <p class="text-[10px] text-neutral-400 mt-0.5">5 hours ago</p>
+                  </div>
+                </div>
+              </div>
+              <div class="px-4 py-3 border-t border-neutral-100 text-center"><button
+                  class="text-sm text-primary-600 font-medium hover:underline">View all</button></div>
+            </div>
+          </div>
+          <button class="hidden md:flex w-9 h-9 items-center justify-center rounded-xl hover:bg-neutral-100"><i
+              data-lucide="heart" class="w-5 h-5 text-neutral-600"></i></button>
+          <button onclick="openAuth('login')" id="header-auth-btn"
+            class="hidden md:flex items-center gap-2 px-4 py-2 rounded-full border border-neutral-200 hover:border-primary-300 hover:bg-orange-50 transition-all text-sm font-medium text-neutral-700 flex-shrink-0 whitespace-nowrap">
+            <i data-lucide="user" class="w-4 h-4"></i><span id="header-auth-label">Sign In</span>
+          </button>
+          <a href="checkout.html"
+            class="flex items-center gap-2 bg-neutral-900 hover:bg-neutral-800 text-white px-3 md:px-4 py-2.5 rounded-full transition-all flex-shrink-0">
+            <div class="relative"><i data-lucide="shopping-cart" class="w-4 h-4 md:w-5 md:h-5"></i><span
+                id="header-cart-count"
+                class="cart-count-badge cart-badge absolute -top-2.5 -right-2.5 w-5 h-5 bg-primary-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-neutral-900">0</span>
+            </div>
+            <span class="hidden lg:block text-sm font-medium cart-total-label">$0.00</span>
+          </a>
+        </div>
+      </div>
+      <!-- Row 2: mobile search -->
+      <div class="md:hidden pb-3 relative">
+        <input type="text" placeholder="Search products, brands…"
+          class="w-full pl-9 pr-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all">
+        <i data-lucide="search"
+          class="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 w-4 h-4 pointer-events-none"></i>
+      </div>
+    </div>
+    <!-- Row 3: desktop nav strip -->
+    <nav class="hidden md:block border-t border-neutral-100 bg-white">
+      <div class="max-w-7xl mx-auto px-4">
+        <ul class="flex items-center text-sm font-medium text-neutral-600"
+          style="overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none;white-space:nowrap">
+          <li class="relative group">
+            <a href="categories.html"
+              class="inline-flex items-center gap-1.5 py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all"
+              id="nav-home"><i data-lucide="layout-grid" class="w-4 h-4"></i>Categories<i data-lucide="chevron-down"
+                class="w-3 h-3 ml-0.5"></i></a>
+            <!-- mega drop -->
+            <div
+              class="hidden group-hover:grid absolute top-full left-0 z-50 bg-white border border-neutral-200 rounded-xl2 shadow-modal p-4 gap-4 mt-0"
+              style="grid-template-columns:repeat(4,150px);min-width:620px">
+              <div>
+                <p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-2">Fashion</p><a
+                  href="shop.html?cat=fashion&sub=mens"
+                  class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Men's Fashion</a><a
+                  href="shop.html?cat=fashion&sub=womens"
+                  class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Women's Fashion</a><a
+                  href="shop.html?cat=fashion&sub=shoes"
+                  class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Shoes & Sneakers</a><a
+                  href="shop.html?cat=fashion&sub=bags"
+                  class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Bags & Accessories</a>
+              </div>
+              <div>
+                <p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-2">Phones</p><a
+                  href="shop.html?cat=phones&sub=smartphones"
+                  class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Smartphones</a><a
+                  href="shop.html?cat=phones&sub=tablets"
+                  class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Tablets</a><a
+                  href="shop.html?cat=phones&sub=smartwatches"
+                  class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Smart Watches</a><a
+                  href="shop.html?cat=phones&sub=accessories"
+                  class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Accessories</a>
+              </div>
+              <div>
+                <p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-2">Electronics</p><a
+                  href="shop.html?cat=electronics&sub=audio"
+                  class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Audio & Headphones</a><a
+                  href="shop.html?cat=electronics&sub=gaming"
+                  class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Gaming</a><a
+                  href="shop.html?cat=electronics&sub=peripherals"
+                  class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Computer Accessories</a><a
+                  href="shop.html?cat=laptops"
+                  class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Laptops</a>
+              </div>
+              <div>
+                <p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-2">More</p><a
+                  href="shop.html?cat=beauty" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Health
+                  & Beauty</a><a href="shop.html?cat=home"
+                  class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Home & Living</a><a
+                  href="shop.html?cat=sports" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Sports
+                  & Fitness</a><a href="shop.html?cat=gifts"
+                  class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Gifts & Artisan</a>
+              </div>
+            </div>
+          </li>
+          <li><a href="index.html"
+              class="inline-flex items-center gap-1.5 py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all"
+              id="nav-home-page"><i data-lucide="home" class="w-4 h-4"></i>Home</a></li>
+          <li><a href="shop.html"
+              class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all"
+              id="nav-shop">All Products</a></li>
+          <li><a href="shop.html?cat=fashion"
+              class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all"
+              id="nav-fashion">Fashion</a></li>
+          <li><a href="shop.html?cat=phones"
+              class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all"
+              id="nav-phones">Phones</a></li>
+          <li><a href="shop.html?cat=electronics"
+              class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all"
+              id="nav-electronics">Electronics</a></li>
+          <li><a href="shop.html?cat=beauty"
+              class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all"
+              id="nav-beauty">Beauty</a></li>
+          <li><a href="shop.html?cat=home"
+              class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all"
+              id="nav-home-cat">Home</a></li>
+          <li><a href="shop.html?cat=sports"
+              class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all"
+              id="nav-sports">Sports</a></li>
+          <li><a href="riders.html"
+              class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all"
+              id="nav-riders">Riders</a></li>
+          <li class="ml-auto flex-shrink-0"><a href="shop.html?sale=1"
+              class="inline-flex items-center gap-1 py-3 px-3 text-red-600 hover:text-red-700 font-semibold border-b-2 border-red-500"
+              id="nav-sales"><i data-lucide="zap" class="w-3.5 h-3.5"></i>Flash Sales</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ====================================================== -->
+  <!--  BANNER CAROUSEL  (translate-X — no overlapping)        -->
+  <!-- ====================================================== -->
+  <div id="banner-wrapper">
+    <div id="banner-track">
+
+      <!-- Slide 1 -->
+      <div class="bslide">
+        <img src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=1800&q=80" alt=""
+          class="absolute inset-0 w-full h-full object-cover opacity-35">
+        <div class="absolute inset-0 bg-gradient-to-r from-neutral-900 via-neutral-900/70 to-transparent"></div>
+        <div class="relative z-10 max-w-7xl mx-auto px-5 py-16 w-full">
+          <div class="max-w-xl afu">
+            <span
+              class="inline-block px-4 py-1.5 rounded-full bg-primary-600/20 text-primary-400 text-xs font-bold mb-4 border border-primary-600/30 uppercase tracking-wider">New
+              Collection 2024</span>
+            <h1
+              class="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-4">
+              Discover Authentic<br><span class="text-primary-500">African Elegance</span></h1>
+            <p class="text-sm md:text-base text-neutral-300 mb-7 max-w-md leading-relaxed">Curated marketplace
+              connecting global trends with rich cultural heritage.</p>
+            <div class="flex flex-wrap gap-3">
+              <a href="shop.html"
+                class="flex items-center gap-2 px-7 py-3.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-full transition-all shadow-lg text-sm">Shop
+                Now <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+              <a href="shop.html?cat=fashion"
+                class="px-7 py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full border border-white/20 transition-all text-sm">View
+                Lookbook</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2 -->
+      <div class="bslide">
+        <img src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=1800&q=80" alt=""
+          class="absolute inset-0 w-full h-full object-cover opacity-30">
+        <div class="absolute inset-0 bg-gradient-to-r from-neutral-900 via-neutral-900/70 to-transparent"></div>
+        <div class="relative z-10 max-w-7xl mx-auto px-5 py-16 w-full">
+          <div class="max-w-xl">
+            <span
+              class="inline-block px-4 py-1.5 rounded-full bg-red-600/20 text-red-400 text-xs font-bold mb-4 border border-red-600/30 uppercase tracking-wider">Flash
+              Sale Live</span>
+            <h1
+              class="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-4">
+              Up to <span class="text-red-400">40% Off</span><br>Electronics</h1>
+            <p class="text-sm md:text-base text-neutral-300 mb-7 max-w-md">Grab the best deals on phones, laptops &amp;
+              headphones. Limited time!</p>
+            <a href="shop.html?sale=1"
+              class="inline-flex items-center gap-2 px-7 py-3.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-full transition-all shadow-lg text-sm">Shop
+              Flash Sales <i data-lucide="zap" class="w-4 h-4"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3 -->
+      <div class="bslide">
+        <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1800&q=80" alt=""
+          class="absolute inset-0 w-full h-full object-cover opacity-30">
+        <div class="absolute inset-0 bg-gradient-to-r from-neutral-900 via-neutral-900/70 to-transparent"></div>
+        <div class="relative z-10 max-w-7xl mx-auto px-5 py-16 w-full">
+          <div class="max-w-xl">
+            <span
+              class="inline-block px-4 py-1.5 rounded-full bg-green-600/20 text-green-400 text-xs font-bold mb-4 border border-green-600/30 uppercase tracking-wider">Free
+              Shipping Week</span>
+            <h1
+              class="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-4">
+              Shop More,<br><span class="text-green-400">Pay Less Shipping</span></h1>
+            <p class="text-sm md:text-base text-neutral-300 mb-7 max-w-md">Free standard shipping on all orders over
+              &#x20A6;25,000 this week.</p>
+            <a href="shop.html"
+              class="inline-flex items-center gap-2 px-7 py-3.5 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-full transition-all shadow-lg text-sm">Start
+              Shopping <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /banner-track -->
+    <!-- Dots -->
+    <div class="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex gap-2" style="pointer-events:auto">
+      <button onclick="goSlide(0)" id="dot-0" class="h-1.5 rounded-full bg-white transition-all duration-300"
+        style="width:24px"></button>
+      <button onclick="goSlide(1)" id="dot-1" class="h-1.5 rounded-full bg-white/40 transition-all duration-300"
+        style="width:8px"></button>
+      <button onclick="goSlide(2)" id="dot-2" class="h-1.5 rounded-full bg-white/40 transition-all duration-300"
+        style="width:8px"></button>
+    </div>
+    <button onclick="prevSlide()"
+      class="absolute left-3 md:left-5 top-1/2 -translate-y-1/2 z-20 w-9 h-9 bg-white/20 hover:bg-white/40 backdrop-blur-sm rounded-full flex items-center justify-center text-white transition-all"><i
+        data-lucide="chevron-left" class="w-5 h-5"></i></button>
+    <button onclick="nextSlide()"
+      class="absolute right-3 md:right-5 top-1/2 -translate-y-1/2 z-20 w-9 h-9 bg-white/20 hover:bg-white/40 backdrop-blur-sm rounded-full flex items-center justify-center text-white transition-all"><i
+        data-lucide="chevron-right" class="w-5 h-5"></i></button>
+  </div>
+
+  <!-- TRUST STRIP -->
+  <section class="bg-white border-b border-neutral-100">
+    <div class="max-w-7xl mx-auto px-5 py-5">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 rounded-full bg-primary-50 flex items-center justify-center flex-shrink-0 text-primary-600">
+            <i data-lucide="truck" class="w-5 h-5"></i></div>
+          <div>
+            <p class="font-heading font-semibold text-neutral-900 text-sm">Global Shipping</p>
+            <p class="text-xs text-neutral-500">Fast worldwide</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 rounded-full bg-green-50  flex items-center justify-center flex-shrink-0 text-green-600"><i
+              data-lucide="shield-check" class="w-5 h-5"></i></div>
+          <div>
+            <p class="font-heading font-semibold text-neutral-900 text-sm">Secure Payments</p>
+            <p class="text-xs text-neutral-500">100% protected</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-pink-50   flex items-center justify-center flex-shrink-0 text-pink-600">
+            <i data-lucide="refresh-cw" class="w-5 h-5"></i></div>
+          <div>
+            <p class="font-heading font-semibold text-neutral-900 text-sm">Easy Returns</p>
+            <p class="text-xs text-neutral-500">30-day policy</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center flex-shrink-0 text-neutral-600">
+            <i data-lucide="headphones" class="w-5 h-5"></i></div>
+          <div>
+            <p class="font-heading font-semibold text-neutral-900 text-sm">24/7 Support</p>
+            <p class="text-xs text-neutral-500">Always here</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATEGORIES -->
+  <section class="py-10 md:py-14 bg-neutral-50">
+    <div class="max-w-7xl mx-auto px-5">
+      <div class="flex items-end justify-between mb-6">
+        <div>
+          <h2 class="font-heading text-2xl md:text-3xl font-bold text-neutral-900">Shop by Category</h2>
+          <p class="text-sm text-neutral-500 mt-1">Explore our wide range</p>
+        </div><a href="shop.html"
+          class="hidden md:flex items-center gap-1 text-sm text-primary-600 font-semibold hover:text-primary-700">View
+          All <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+      </div>
+      <div class="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-8 gap-3">
+        <a href="shop.html?cat=fashion" class="group flex flex-col items-center gap-2">
+          <div
+            class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white border border-neutral-200 shadow-card overflow-hidden flex items-center justify-center group-hover:shadow-hover group-hover:scale-110 transition-all duration-300">
+            <img src="https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=200&q=80"
+              alt="Fashion" loading="lazy" class="w-full h-full object-cover"></div><span
+            class="text-xs font-medium text-neutral-700 group-hover:text-primary-600 transition-colors text-center">Fashion</span>
+        </a>
+        <a href="shop.html?cat=electronics" class="group flex flex-col items-center gap-2">
+          <div
+            class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white border border-neutral-200 shadow-card overflow-hidden flex items-center justify-center group-hover:shadow-hover group-hover:scale-110 transition-all duration-300">
+            <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=200&q=80"
+              alt="Electronics" loading="lazy" class="w-full h-full object-cover"></div><span
+            class="text-xs font-medium text-neutral-700 group-hover:text-primary-600 transition-colors text-center">Electronics</span>
+        </a>
+        <a href="shop.html?cat=phones" class="group flex flex-col items-center gap-2">
+          <div
+            class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white border border-neutral-200 shadow-card overflow-hidden flex items-center justify-center group-hover:shadow-hover group-hover:scale-110 transition-all duration-300">
+            <img src="https://images.unsplash.com/photo-1591337676887-a217a6970a8a?auto=format&fit=crop&w=200&q=80"
+              alt="Phones" loading="lazy" class="w-full h-full object-cover"></div><span
+            class="text-xs font-medium text-neutral-700 group-hover:text-primary-600 transition-colors text-center">Phones</span>
+        </a>
+        <a href="shop.html?cat=beauty" class="group flex flex-col items-center gap-2">
+          <div
+            class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white border border-neutral-200 shadow-card overflow-hidden flex items-center justify-center group-hover:shadow-hover group-hover:scale-110 transition-all duration-300">
+            <img src="https://images.unsplash.com/photo-1596462502278-27bfdd403348?auto=format&fit=crop&w=200&q=80"
+              alt="Beauty" loading="lazy" class="w-full h-full object-cover"></div><span
+            class="text-xs font-medium text-neutral-700 group-hover:text-primary-600 transition-colors text-center">Beauty</span>
+        </a>
+        <a href="shop.html?cat=home" class="group flex flex-col items-center gap-2">
+          <div
+            class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white border border-neutral-200 shadow-card overflow-hidden flex items-center justify-center group-hover:shadow-hover group-hover:scale-110 transition-all duration-300">
+            <img src="https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?auto=format&fit=crop&w=200&q=80"
+              alt="Home" loading="lazy" class="w-full h-full object-cover"></div><span
+            class="text-xs font-medium text-neutral-700 group-hover:text-primary-600 transition-colors text-center">Home</span>
+        </a>
+        <a href="shop.html?cat=sports" class="group flex flex-col items-center gap-2">
+          <div
+            class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white border border-neutral-200 shadow-card overflow-hidden flex items-center justify-center group-hover:shadow-hover group-hover:scale-110 transition-all duration-300">
+            <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=200&q=80"
+              alt="Sports" loading="lazy" class="w-full h-full object-cover"></div><span
+            class="text-xs font-medium text-neutral-700 group-hover:text-primary-600 transition-colors text-center">Sports</span>
+        </a>
+        <a href="shop.html?cat=gifts" class="group flex flex-col items-center gap-2">
+          <div
+            class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white border border-neutral-200 shadow-card overflow-hidden flex items-center justify-center group-hover:shadow-hover group-hover:scale-110 transition-all duration-300">
+            <img src="https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&w=200&q=80"
+              alt="Gifts" loading="lazy" class="w-full h-full object-cover"></div><span
+            class="text-xs font-medium text-neutral-700 group-hover:text-primary-600 transition-colors text-center">Gifts</span>
+        </a>
+        <a href="shop.html?cat=laptops" class="group flex flex-col items-center gap-2">
+          <div
+            class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white border border-neutral-200 shadow-card overflow-hidden flex items-center justify-center group-hover:shadow-hover group-hover:scale-110 transition-all duration-300">
+            <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=200&q=80"
+              alt="Laptops" loading="lazy" class="w-full h-full object-cover"></div><span
+            class="text-xs font-medium text-neutral-700 group-hover:text-primary-600 transition-colors text-center">Laptops</span>
         </a>
       </div>
     </div>
-    <!-- Row 2: mobile search -->
-    <div class="md:hidden pb-3 relative">
-      <input type="text" placeholder="Search products, brands…" class="w-full pl-9 pr-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all">
-      <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 w-4 h-4 pointer-events-none"></i>
+  </section>
+
+  <!-- FLASH SALES -->
+  <section class="py-10 md:py-14 bg-white">
+    <div class="max-w-7xl mx-auto px-5">
+      <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+        <div class="flex items-center gap-3 flex-wrap">
+          <h2 class="font-heading text-2xl md:text-3xl font-bold text-neutral-900">⚡ Flash Sales</h2>
+          <div
+            class="flex items-center gap-2 bg-red-50 text-red-600 px-3 py-1.5 rounded-lg border border-red-100 font-mono font-bold text-sm">
+            <i data-lucide="timer" class="w-4 h-4"></i><span id="flash-timer">05:23:45</span></div>
+        </div>
+        <a href="shop.html?sale=1"
+          class="text-sm text-primary-600 font-semibold hover:text-primary-700 flex items-center gap-1">See all <i
+            data-lucide="arrow-right" class="w-4 h-4"></i></a>
+      </div>
+      <div class="scroll-wrap">
+        <button class="scroll-arrow left" onclick="scrollSection('flash-scroll',-1)" aria-label="Scroll left">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </button>
+        <div class="pscroll" id="flash-scroll"></div>
+        <button class="scroll-arrow right" onclick="scrollSection('flash-scroll',1)" aria-label="Scroll right">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </button>
+      </div>
     </div>
-  </div>
-  <!-- Row 3: desktop nav strip -->
-  <nav class="hidden md:block border-t border-neutral-100 bg-white">
-    <div class="max-w-7xl mx-auto px-4">
-      <ul class="flex items-center text-sm font-medium text-neutral-600" style="overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none;white-space:nowrap">
-        <li class="relative group">
-          <a href="categories.html" class="inline-flex items-center gap-1.5 py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-home"><i data-lucide="layout-grid" class="w-4 h-4"></i>Categories<i data-lucide="chevron-down" class="w-3 h-3 ml-0.5"></i></a>
-          <!-- mega drop -->
-          <div class="hidden group-hover:grid absolute top-full left-0 z-50 bg-white border border-neutral-200 rounded-xl2 shadow-modal p-4 gap-4 mt-0" style="grid-template-columns:repeat(4,150px);min-width:620px">
-            <div><p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-2">Fashion</p><a href="shop.html?cat=fashion&sub=mens" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Men's Fashion</a><a href="shop.html?cat=fashion&sub=womens" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Women's Fashion</a><a href="shop.html?cat=fashion&sub=shoes" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Shoes & Sneakers</a><a href="shop.html?cat=fashion&sub=bags" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Bags & Accessories</a></div>
-            <div><p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-2">Phones</p><a href="shop.html?cat=phones&sub=smartphones" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Smartphones</a><a href="shop.html?cat=phones&sub=tablets" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Tablets</a><a href="shop.html?cat=phones&sub=smartwatches" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Smart Watches</a><a href="shop.html?cat=phones&sub=accessories" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Accessories</a></div>
-            <div><p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-2">Electronics</p><a href="shop.html?cat=electronics&sub=audio" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Audio & Headphones</a><a href="shop.html?cat=electronics&sub=gaming" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Gaming</a><a href="shop.html?cat=electronics&sub=peripherals" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Computer Accessories</a><a href="shop.html?cat=laptops" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Laptops</a></div>
-            <div><p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-2">More</p><a href="shop.html?cat=beauty" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Health & Beauty</a><a href="shop.html?cat=home" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Home & Living</a><a href="shop.html?cat=sports" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Sports & Fitness</a><a href="shop.html?cat=gifts" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Gifts & Artisan</a></div>
+  </section>
+
+  <!-- PHONES & TABLETS -->
+  <section class="py-10 md:py-14 bg-neutral-50">
+    <div class="max-w-7xl mx-auto px-5">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h2 class="font-heading text-xl md:text-3xl font-bold text-neutral-900">📱 Phones &amp; Tablets</h2>
+          <p class="text-sm text-neutral-500 mt-0.5">Latest mobile devices</p>
+        </div><a href="shop.html?cat=phones" class="text-sm text-primary-600 font-semibold flex items-center gap-1">View
+          all <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+      </div>
+      <div class="scroll-wrap">
+        <button class="scroll-arrow left" onclick="scrollSection('phones-scroll',-1)" aria-label="Scroll left">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </button>
+        <div class="pscroll" id="phones-scroll"></div>
+        <button class="scroll-arrow right" onclick="scrollSection('phones-scroll',1)" aria-label="Scroll right">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROMO BANNERS -->
+  <section class="py-8 bg-white">
+    <div class="max-w-7xl mx-auto px-5">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div
+          class="relative rounded-xl2 overflow-hidden bg-gradient-to-br from-orange-600 to-orange-800 p-6 min-h-[160px] flex flex-col justify-between">
+          <div>
+            <p class="text-orange-200 text-xs font-bold uppercase tracking-widest mb-1">Latest Offers</p>
+            <h3 class="font-heading text-white font-bold text-xl leading-tight">Up to 30% Off<br>Fashion Picks</h3>
+          </div><a href="shop.html?cat=fashion"
+            class="inline-flex items-center gap-1 mt-4 bg-white text-orange-700 text-xs font-bold px-4 py-2 rounded-full hover:bg-orange-50 w-fit">Shop
+            Now <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></a><img
+            src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=300&q=80" alt=""
+            class="absolute right-0 bottom-0 h-full w-36 object-cover opacity-20 pointer-events-none">
+        </div>
+        <div
+          class="relative rounded-xl2 overflow-hidden bg-gradient-to-br from-blue-700 to-blue-900 p-6 min-h-[160px] flex flex-col justify-between">
+          <div>
+            <p class="text-blue-200 text-xs font-bold uppercase tracking-widest mb-1">Mega Deals</p>
+            <h3 class="font-heading text-white font-bold text-xl leading-tight">Electronics<br>from $29</h3>
+          </div><a href="shop.html?cat=electronics"
+            class="inline-flex items-center gap-1 mt-4 bg-white text-blue-700 text-xs font-bold px-4 py-2 rounded-full hover:bg-blue-50 w-fit">Grab
+            Deal <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></a>
+        </div>
+        <div
+          class="relative rounded-xl2 overflow-hidden bg-gradient-to-br from-green-600 to-emerald-800 p-6 min-h-[160px] flex flex-col justify-between">
+          <div>
+            <p class="text-green-200 text-xs font-bold uppercase tracking-widest mb-1">Free Shipping</p>
+            <h3 class="font-heading text-white font-bold text-xl leading-tight">Orders Over<br>&#x20A6;25,000</h3>
+          </div><a href="shop.html"
+            class="inline-flex items-center gap-1 mt-4 bg-white text-green-700 text-xs font-bold px-4 py-2 rounded-full hover:bg-green-50 w-fit">Shop
+            Now <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DAILY ESSENTIALS -->
+  <section class="py-10 md:py-14 bg-neutral-50">
+    <div class="max-w-7xl mx-auto px-5">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h2 class="font-heading text-xl md:text-3xl font-bold text-neutral-900">🛒 Daily Essentials</h2>
+          <p class="text-sm text-neutral-500 mt-0.5">Everyday must-haves</p>
+        </div><a href="shop.html" class="text-sm text-primary-600 font-semibold flex items-center gap-1">View all <i
+            data-lucide="arrow-right" class="w-4 h-4"></i></a>
+      </div>
+      <div class="scroll-wrap">
+        <button class="scroll-arrow left" onclick="scrollSection('essentials-scroll',-1)" aria-label="Scroll left">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </button>
+        <div class="pscroll" id="essentials-scroll"></div>
+        <button class="scroll-arrow right" onclick="scrollSection('essentials-scroll',1)" aria-label="Scroll right">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEW ARRIVALS -->
+  <section class="py-10 md:py-14 bg-white">
+    <div class="max-w-7xl mx-auto px-5">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h2 class="font-heading text-xl md:text-3xl font-bold text-neutral-900">✨ New Arrivals</h2>
+          <p class="text-sm text-neutral-500 mt-0.5">Fresh styles just dropped</p>
+        </div><a href="shop.html" class="text-sm text-primary-600 font-semibold flex items-center gap-1">View all <i
+            data-lucide="arrow-right" class="w-4 h-4"></i></a>
+      </div>
+      <div class="scroll-wrap">
+        <button class="scroll-arrow left" onclick="scrollSection('arrivals-scroll',-1)" aria-label="Scroll left">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </button>
+        <div class="pscroll" id="arrivals-scroll"></div>
+        <button class="scroll-arrow right" onclick="scrollSection('arrivals-scroll',1)" aria-label="Scroll right">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MEGA DEALS -->
+  <section class="py-10 md:py-14 bg-neutral-50">
+    <div class="max-w-7xl mx-auto px-5">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h2 class="font-heading text-xl md:text-3xl font-bold text-neutral-900">🔥 Mega Deals</h2>
+          <p class="text-sm text-neutral-500 mt-0.5">Biggest discounts of the week</p>
+        </div><a href="shop.html?sale=1" class="text-sm text-primary-600 font-semibold flex items-center gap-1">View all
+          <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+      </div>
+      <div class="scroll-wrap">
+        <button class="scroll-arrow left" onclick="scrollSection('mega-scroll',-1)" aria-label="Scroll left">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </button>
+        <div class="pscroll" id="mega-scroll"></div>
+        <button class="scroll-arrow right" onclick="scrollSection('mega-scroll',1)" aria-label="Scroll right">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- BRAND VIDEO -->
+  <section class="py-12 md:py-16 bg-neutral-900 relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10"
+      style="background:radial-gradient(circle at 30% 50%,#ea580c,transparent 60%)"></div>
+    <div class="max-w-7xl mx-auto px-5 relative z-10">
+      <div class="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+        <div class="text-white max-w-md text-center lg:text-left">
+          <span
+            class="inline-block px-3 py-1 bg-primary-600/20 border border-primary-500/30 text-primary-400 text-xs font-bold uppercase tracking-wider rounded-full mb-4">Watch
+            Our Story</span>
+          <h2 class="font-heading text-3xl md:text-4xl font-bold mb-4 leading-tight">Experience the <span
+              class="text-primary-500">AhiaGlobal</span> Difference</h2>
+          <p class="text-neutral-300 text-sm md:text-base mb-6 leading-relaxed">From handpicked artisan crafts to global
+            electronics — discover how we connect Africa's finest products to the world.</p>
+          <div class="flex flex-wrap gap-3 justify-center lg:justify-start"><a href="shop.html"
+              class="flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-full transition-all text-sm"><i
+                data-lucide="shopping-bag" class="w-4 h-4"></i>Start Shopping</a><a href="shop.html?cat=fashion"
+              class="px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full border border-white/20 transition-all text-sm">Explore
+              Collections</a></div>
+        </div>
+        <div class="flex-1 w-full max-w-2xl">
+          <div id="video-container"
+            class="relative rounded-xl2 overflow-hidden shadow-2xl bg-neutral-800 cursor-pointer group"
+            style="padding-bottom:56.25%" onclick="playVideo()">
+            <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=900&q=80"
+              alt="Video thumbnail" class="absolute inset-0 w-full h-full object-cover opacity-70">
+            <div class="absolute inset-0 bg-neutral-900/30"></div>
+            <div class="absolute inset-0 flex items-center justify-center z-10">
+              <div
+                class="w-16 h-16 bg-white/90 group-hover:bg-white rounded-full flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform duration-300">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="#ea580c">
+                  <polygon points="5,3 19,12 5,21" />
+                </svg></div>
+            </div>
+            <p class="absolute bottom-4 inset-x-0 text-center text-white text-sm font-semibold z-10 drop-shadow">Watch:
+              The AhiaGlobal Story</p>
           </div>
-        </li>
-        <li><a href="index.html"                class="inline-flex items-center gap-1.5 py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-home-page"><i data-lucide="home" class="w-4 h-4"></i>Home</a></li>
-        <li><a href="shop.html"                 class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-shop">All Products</a></li>
-        <li><a href="shop.html?cat=fashion"     class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-fashion">Fashion</a></li>
-        <li><a href="shop.html?cat=phones"      class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-phones">Phones</a></li>
-        <li><a href="shop.html?cat=electronics" class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-electronics">Electronics</a></li>
-        <li><a href="shop.html?cat=beauty"      class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-beauty">Beauty</a></li>
-        <li><a href="shop.html?cat=home"        class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-home-cat">Home</a></li>
-        <li><a href="shop.html?cat=sports"      class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-sports">Sports</a></li>
-        <li><a href="riders.html"               class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-riders">Riders</a></li>
-        <li class="ml-auto flex-shrink-0"><a href="shop.html?sale=1" class="inline-flex items-center gap-1 py-3 px-3 text-red-600 hover:text-red-700 font-semibold border-b-2 border-red-500" id="nav-sales"><i data-lucide="zap" class="w-3.5 h-3.5"></i>Flash Sales</a></li>
-      </ul>
-    </div>
-  </nav>
-</header>
-
-<!-- ====================================================== -->
-<!--  BANNER CAROUSEL  (translate-X — no overlapping)        -->
-<!-- ====================================================== -->
-<div id="banner-wrapper">
-  <div id="banner-track">
-
-    <!-- Slide 1 -->
-    <div class="bslide">
-      <img src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=1800&q=80" alt="" class="absolute inset-0 w-full h-full object-cover opacity-35">
-      <div class="absolute inset-0 bg-gradient-to-r from-neutral-900 via-neutral-900/70 to-transparent"></div>
-      <div class="relative z-10 max-w-7xl mx-auto px-5 py-16 w-full">
-        <div class="max-w-xl afu">
-          <span class="inline-block px-4 py-1.5 rounded-full bg-primary-600/20 text-primary-400 text-xs font-bold mb-4 border border-primary-600/30 uppercase tracking-wider">New Collection 2024</span>
-          <h1 class="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-4">Discover Authentic<br><span class="text-primary-500">African Elegance</span></h1>
-          <p class="text-sm md:text-base text-neutral-300 mb-7 max-w-md leading-relaxed">Curated marketplace connecting global trends with rich cultural heritage.</p>
-          <div class="flex flex-wrap gap-3">
-            <a href="shop.html" class="flex items-center gap-2 px-7 py-3.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-full transition-all shadow-lg text-sm">Shop Now <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
-            <a href="shop.html?cat=fashion" class="px-7 py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full border border-white/20 transition-all text-sm">View Lookbook</a>
+          <div class="grid grid-cols-3 gap-4 mt-5 text-center">
+            <div>
+              <p class="font-heading text-2xl font-bold text-white">50K+</p>
+              <p class="text-xs text-neutral-400 mt-0.5">Happy Customers</p>
+            </div>
+            <div>
+              <p class="font-heading text-2xl font-bold text-primary-500">500+</p>
+              <p class="text-xs text-neutral-400 mt-0.5">African Brands</p>
+            </div>
+            <div>
+              <p class="font-heading text-2xl font-bold text-white">50+</p>
+              <p class="text-xs text-neutral-400 mt-0.5">Countries Served</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
+  </section>
 
-    <!-- Slide 2 -->
-    <div class="bslide">
-      <img src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=1800&q=80" alt="" class="absolute inset-0 w-full h-full object-cover opacity-30">
-      <div class="absolute inset-0 bg-gradient-to-r from-neutral-900 via-neutral-900/70 to-transparent"></div>
-      <div class="relative z-10 max-w-7xl mx-auto px-5 py-16 w-full">
-        <div class="max-w-xl">
-          <span class="inline-block px-4 py-1.5 rounded-full bg-red-600/20 text-red-400 text-xs font-bold mb-4 border border-red-600/30 uppercase tracking-wider">Flash Sale Live</span>
-          <h1 class="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-4">Up to <span class="text-red-400">40% Off</span><br>Electronics</h1>
-          <p class="text-sm md:text-base text-neutral-300 mb-7 max-w-md">Grab the best deals on phones, laptops &amp; headphones. Limited time!</p>
-          <a href="shop.html?sale=1" class="inline-flex items-center gap-2 px-7 py-3.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-full transition-all shadow-lg text-sm">Shop Flash Sales <i data-lucide="zap" class="w-4 h-4"></i></a>
+  <!-- NEWSLETTER -->
+  <section class="py-12 md:py-16 bg-white border-t border-neutral-100">
+    <div class="max-w-7xl mx-auto px-5">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+        <div class="text-center md:text-left max-w-lg">
+          <h2 class="font-heading text-2xl md:text-3xl font-bold text-neutral-900 mb-2">Join the AhiaGlobal Community
+          </h2>
+          <p class="text-neutral-500 text-sm md:text-base">Subscribe for exclusive offers, new arrivals &amp; cultural
+            stories.</p>
+        </div>
+        <div class="w-full md:w-auto flex-1 max-w-md">
+          <div id="nl-form">
+            <div class="flex flex-col sm:flex-row gap-2"><input id="nl-email" type="email"
+                placeholder="Enter your email address"
+                class="flex-1 px-4 py-3 rounded-lg border border-neutral-200 text-sm bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-primary-500"><button
+                onclick="subscribeNL()"
+                class="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition-colors text-sm whitespace-nowrap">Subscribe
+                Now</button></div>
+            <p class="text-[11px] text-neutral-400 mt-2">By subscribing, you agree to our <a href="#"
+                class="underline">Terms</a> &amp; <a href="#" class="underline">Privacy</a>.</p>
+          </div>
+          <div id="nl-thanks" class="hidden text-center py-4">
+            <div class="w-11 h-11 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2"><i
+                data-lucide="check" class="w-6 h-6 text-green-600"></i></div>
+            <p class="font-heading font-bold text-neutral-900">Subscribed! &#127881;</p>
+            <p class="text-sm text-neutral-500 mt-1">Welcome to the AhiaGlobal community.</p>
+          </div>
         </div>
       </div>
     </div>
+  </section>
 
-    <!-- Slide 3 -->
-    <div class="bslide">
-      <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1800&q=80" alt="" class="absolute inset-0 w-full h-full object-cover opacity-30">
-      <div class="absolute inset-0 bg-gradient-to-r from-neutral-900 via-neutral-900/70 to-transparent"></div>
-      <div class="relative z-10 max-w-7xl mx-auto px-5 py-16 w-full">
-        <div class="max-w-xl">
-          <span class="inline-block px-4 py-1.5 rounded-full bg-green-600/20 text-green-400 text-xs font-bold mb-4 border border-green-600/30 uppercase tracking-wider">Free Shipping Week</span>
-          <h1 class="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-4">Shop More,<br><span class="text-green-400">Pay Less Shipping</span></h1>
-          <p class="text-sm md:text-base text-neutral-300 mb-7 max-w-md">Free standard shipping on all orders over &#x20A6;25,000 this week.</p>
-          <a href="shop.html" class="inline-flex items-center gap-2 px-7 py-3.5 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-full transition-all shadow-lg text-sm">Start Shopping <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+  <!-- FOOTER -->
+  <footer class="bg-neutral-900 text-neutral-400 pt-12 pb-24 md:pb-10">
+    <div class="max-w-7xl mx-auto px-5">
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-10">
+        <div class="col-span-2">
+          <div class="flex items-center gap-2 mb-4">
+            <a href="index.html" class="flex items-center gap-3 flex-shrink-0">
+              <img src="image.png" 
+                   alt="Ahia Global" 
+                   class="h-14 md:h-16 w-auto object-contain">
+              <span class="font-heading font-bold text-xl md:text-2xl text-neutral-900 tracking-tight leading-none">ahia<span class="text-primary-600">global</span></span>
+            </a>
+          </div>
+          <p class="text-sm text-neutral-500 mb-5 max-w-xs leading-relaxed">Connecting the world to authentic African
+            products through a seamless, modern shopping experience.</p>
+          <div class="flex gap-2.5"><button
+              class="w-9 h-9 rounded-full bg-neutral-800 flex items-center justify-center hover:bg-primary-600 hover:text-white transition-all"><i
+                data-lucide="facebook" class="w-4 h-4"></i></button><button
+              class="w-9 h-9 rounded-full bg-neutral-800 flex items-center justify-center hover:bg-primary-600 hover:text-white transition-all"><i
+                data-lucide="instagram" class="w-4 h-4"></i></button><button
+              class="w-9 h-9 rounded-full bg-neutral-800 flex items-center justify-center hover:bg-primary-600 hover:text-white transition-all"><i
+                data-lucide="twitter" class="w-4 h-4"></i></button><button
+              class="w-9 h-9 rounded-full bg-neutral-800 flex items-center justify-center hover:bg-primary-600 hover:text-white transition-all"><i
+                data-lucide="youtube" class="w-4 h-4"></i></button></div>
+        </div>
+        <div>
+          <h4 class="font-heading font-bold text-white mb-3 text-sm">Shop</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="shop.html" class="hover:text-primary-400">New Arrivals</a></li>
+            <li><a href="shop.html" class="hover:text-primary-400">Best Sellers</a></li>
+            <li><a href="shop.html?sale=1" class="hover:text-primary-400">Flash Sales</a></li>
+            <li><a href="shop.html" class="hover:text-primary-400">Gift Cards</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-heading font-bold text-white mb-3 text-sm">Support</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="faq.html" class="hover:text-primary-400">Help Center</a></li>
+            <li><a href="confirmation.html" class="hover:text-primary-400">Track Order</a></li>
+            <li><a href="faq.html" class="hover:text-primary-400">Returns</a></li>
+            <li><a href="faq.html" class="hover:text-primary-400">Contact Us</a></li>
+            <li><a href="sizeguide.html" class="hover:text-primary-400">Size Guide</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-heading font-bold text-white mb-3 text-sm">Company</h4>
+          <ul class="space-y-2 text-sm">
+            <li><button class="hover:text-primary-400">About Us</button></li>
+            <li><a href="sell.html" class="hover:text-primary-400">Sell on Ahia</a></li>
+            <li><button class="hover:text-primary-400">Careers</button></li>
+            <li><button class="hover:text-primary-400">Blog</button></li>
+          </ul>
         </div>
       </div>
-    </div>
-
-  </div><!-- /banner-track -->
-  <!-- Dots -->
-  <div class="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex gap-2" style="pointer-events:auto">
-    <button onclick="goSlide(0)" id="dot-0" class="h-1.5 rounded-full bg-white transition-all duration-300" style="width:24px"></button>
-    <button onclick="goSlide(1)" id="dot-1" class="h-1.5 rounded-full bg-white/40 transition-all duration-300" style="width:8px"></button>
-    <button onclick="goSlide(2)" id="dot-2" class="h-1.5 rounded-full bg-white/40 transition-all duration-300" style="width:8px"></button>
-  </div>
-  <button onclick="prevSlide()" class="absolute left-3 md:left-5 top-1/2 -translate-y-1/2 z-20 w-9 h-9 bg-white/20 hover:bg-white/40 backdrop-blur-sm rounded-full flex items-center justify-center text-white transition-all"><i data-lucide="chevron-left"  class="w-5 h-5"></i></button>
-  <button onclick="nextSlide()" class="absolute right-3 md:right-5 top-1/2 -translate-y-1/2 z-20 w-9 h-9 bg-white/20 hover:bg-white/40 backdrop-blur-sm rounded-full flex items-center justify-center text-white transition-all"><i data-lucide="chevron-right" class="w-5 h-5"></i></button>
-</div>
-
-<!-- TRUST STRIP -->
-<section class="bg-white border-b border-neutral-100">
-  <div class="max-w-7xl mx-auto px-5 py-5">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
-      <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-primary-50 flex items-center justify-center flex-shrink-0 text-primary-600"><i data-lucide="truck"        class="w-5 h-5"></i></div><div><p class="font-heading font-semibold text-neutral-900 text-sm">Global Shipping</p><p class="text-xs text-neutral-500">Fast worldwide</p></div></div>
-      <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-green-50  flex items-center justify-center flex-shrink-0 text-green-600"><i  data-lucide="shield-check" class="w-5 h-5"></i></div><div><p class="font-heading font-semibold text-neutral-900 text-sm">Secure Payments</p><p class="text-xs text-neutral-500">100% protected</p></div></div>
-      <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-pink-50   flex items-center justify-center flex-shrink-0 text-pink-600"><i   data-lucide="refresh-cw"  class="w-5 h-5"></i></div><div><p class="font-heading font-semibold text-neutral-900 text-sm">Easy Returns</p><p class="text-xs text-neutral-500">30-day policy</p></div></div>
-      <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center flex-shrink-0 text-neutral-600"><i data-lucide="headphones" class="w-5 h-5"></i></div><div><p class="font-heading font-semibold text-neutral-900 text-sm">24/7 Support</p><p class="text-xs text-neutral-500">Always here</p></div></div>
-    </div>
-  </div>
-</section>
-
-<!-- CATEGORIES -->
-<section class="py-10 md:py-14 bg-neutral-50">
-  <div class="max-w-7xl mx-auto px-5">
-    <div class="flex items-end justify-between mb-6"><div><h2 class="font-heading text-2xl md:text-3xl font-bold text-neutral-900">Shop by Category</h2><p class="text-sm text-neutral-500 mt-1">Explore our wide range</p></div><a href="shop.html" class="hidden md:flex items-center gap-1 text-sm text-primary-600 font-semibold hover:text-primary-700">View All <i data-lucide="arrow-right" class="w-4 h-4"></i></a></div>
-    <div class="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-8 gap-3">
-      <a href="shop.html?cat=fashion"     class="group flex flex-col items-center gap-2"><div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white border border-neutral-200 shadow-card overflow-hidden flex items-center justify-center group-hover:shadow-hover group-hover:scale-110 transition-all duration-300"><img src="https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=200&q=80"    alt="Fashion"    loading="lazy" class="w-full h-full object-cover"></div><span class="text-xs font-medium text-neutral-700 group-hover:text-primary-600 transition-colors text-center">Fashion</span></a>
-      <a href="shop.html?cat=electronics" class="group flex flex-col items-center gap-2"><div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white border border-neutral-200 shadow-card overflow-hidden flex items-center justify-center group-hover:shadow-hover group-hover:scale-110 transition-all duration-300"><img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=200&q=80"   alt="Electronics" loading="lazy" class="w-full h-full object-cover"></div><span class="text-xs font-medium text-neutral-700 group-hover:text-primary-600 transition-colors text-center">Electronics</span></a>
-      <a href="shop.html?cat=phones"      class="group flex flex-col items-center gap-2"><div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white border border-neutral-200 shadow-card overflow-hidden flex items-center justify-center group-hover:shadow-hover group-hover:scale-110 transition-all duration-300"><img src="https://images.unsplash.com/photo-1591337676887-a217a6970a8a?auto=format&fit=crop&w=200&q=80"    alt="Phones"     loading="lazy" class="w-full h-full object-cover"></div><span class="text-xs font-medium text-neutral-700 group-hover:text-primary-600 transition-colors text-center">Phones</span></a>
-      <a href="shop.html?cat=beauty"      class="group flex flex-col items-center gap-2"><div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white border border-neutral-200 shadow-card overflow-hidden flex items-center justify-center group-hover:shadow-hover group-hover:scale-110 transition-all duration-300"><img src="https://images.unsplash.com/photo-1596462502278-27bfdd403348?auto=format&fit=crop&w=200&q=80"   alt="Beauty"     loading="lazy" class="w-full h-full object-cover"></div><span class="text-xs font-medium text-neutral-700 group-hover:text-primary-600 transition-colors text-center">Beauty</span></a>
-      <a href="shop.html?cat=home"        class="group flex flex-col items-center gap-2"><div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white border border-neutral-200 shadow-card overflow-hidden flex items-center justify-center group-hover:shadow-hover group-hover:scale-110 transition-all duration-300"><img src="https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?auto=format&fit=crop&w=200&q=80"   alt="Home"       loading="lazy" class="w-full h-full object-cover"></div><span class="text-xs font-medium text-neutral-700 group-hover:text-primary-600 transition-colors text-center">Home</span></a>
-      <a href="shop.html?cat=sports"      class="group flex flex-col items-center gap-2"><div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white border border-neutral-200 shadow-card overflow-hidden flex items-center justify-center group-hover:shadow-hover group-hover:scale-110 transition-all duration-300"><img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=200&q=80"   alt="Sports"     loading="lazy" class="w-full h-full object-cover"></div><span class="text-xs font-medium text-neutral-700 group-hover:text-primary-600 transition-colors text-center">Sports</span></a>
-      <a href="shop.html?cat=gifts"       class="group flex flex-col items-center gap-2"><div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white border border-neutral-200 shadow-card overflow-hidden flex items-center justify-center group-hover:shadow-hover group-hover:scale-110 transition-all duration-300"><img src="https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&w=200&q=80"   alt="Gifts"      loading="lazy" class="w-full h-full object-cover"></div><span class="text-xs font-medium text-neutral-700 group-hover:text-primary-600 transition-colors text-center">Gifts</span></a>
-      <a href="shop.html?cat=laptops"     class="group flex flex-col items-center gap-2"><div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white border border-neutral-200 shadow-card overflow-hidden flex items-center justify-center group-hover:shadow-hover group-hover:scale-110 transition-all duration-300"><img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=200&q=80"   alt="Laptops"    loading="lazy" class="w-full h-full object-cover"></div><span class="text-xs font-medium text-neutral-700 group-hover:text-primary-600 transition-colors text-center">Laptops</span></a>
-    </div>
-  </div>
-</section>
-
-<!-- FLASH SALES -->
-<section class="py-10 md:py-14 bg-white">
-  <div class="max-w-7xl mx-auto px-5">
-    <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
-      <div class="flex items-center gap-3 flex-wrap"><h2 class="font-heading text-2xl md:text-3xl font-bold text-neutral-900">⚡ Flash Sales</h2><div class="flex items-center gap-2 bg-red-50 text-red-600 px-3 py-1.5 rounded-lg border border-red-100 font-mono font-bold text-sm"><i data-lucide="timer" class="w-4 h-4"></i><span id="flash-timer">05:23:45</span></div></div>
-      <a href="shop.html?sale=1" class="text-sm text-primary-600 font-semibold hover:text-primary-700 flex items-center gap-1">See all <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
-    </div>
-    <div class="scroll-wrap">
-      <button class="scroll-arrow left" onclick="scrollSection('flash-scroll',-1)" aria-label="Scroll left">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-      </button>
-      <div class="pscroll" id="flash-scroll"></div>
-      <button class="scroll-arrow right" onclick="scrollSection('flash-scroll',1)" aria-label="Scroll right">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
-    </div>
-  </div>
-</section>
-
-<!-- PHONES & TABLETS -->
-<section class="py-10 md:py-14 bg-neutral-50">
-  <div class="max-w-7xl mx-auto px-5">
-    <div class="flex items-center justify-between mb-5"><div><h2 class="font-heading text-xl md:text-3xl font-bold text-neutral-900">📱 Phones &amp; Tablets</h2><p class="text-sm text-neutral-500 mt-0.5">Latest mobile devices</p></div><a href="shop.html?cat=phones" class="text-sm text-primary-600 font-semibold flex items-center gap-1">View all <i data-lucide="arrow-right" class="w-4 h-4"></i></a></div>
-    <div class="scroll-wrap">
-      <button class="scroll-arrow left" onclick="scrollSection('phones-scroll',-1)" aria-label="Scroll left">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-      </button>
-      <div class="pscroll" id="phones-scroll"></div>
-      <button class="scroll-arrow right" onclick="scrollSection('phones-scroll',1)" aria-label="Scroll right">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
-    </div>
-  </div>
-</section>
-
-<!-- PROMO BANNERS -->
-<section class="py-8 bg-white">
-  <div class="max-w-7xl mx-auto px-5">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div class="relative rounded-xl2 overflow-hidden bg-gradient-to-br from-orange-600 to-orange-800 p-6 min-h-[160px] flex flex-col justify-between"><div><p class="text-orange-200 text-xs font-bold uppercase tracking-widest mb-1">Latest Offers</p><h3 class="font-heading text-white font-bold text-xl leading-tight">Up to 30% Off<br>Fashion Picks</h3></div><a href="shop.html?cat=fashion" class="inline-flex items-center gap-1 mt-4 bg-white text-orange-700 text-xs font-bold px-4 py-2 rounded-full hover:bg-orange-50 w-fit">Shop Now <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></a><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=300&q=80" alt="" class="absolute right-0 bottom-0 h-full w-36 object-cover opacity-20 pointer-events-none"></div>
-      <div class="relative rounded-xl2 overflow-hidden bg-gradient-to-br from-blue-700 to-blue-900 p-6 min-h-[160px] flex flex-col justify-between"><div><p class="text-blue-200 text-xs font-bold uppercase tracking-widest mb-1">Mega Deals</p><h3 class="font-heading text-white font-bold text-xl leading-tight">Electronics<br>from $29</h3></div><a href="shop.html?cat=electronics" class="inline-flex items-center gap-1 mt-4 bg-white text-blue-700 text-xs font-bold px-4 py-2 rounded-full hover:bg-blue-50 w-fit">Grab Deal <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></a></div>
-      <div class="relative rounded-xl2 overflow-hidden bg-gradient-to-br from-green-600 to-emerald-800 p-6 min-h-[160px] flex flex-col justify-between"><div><p class="text-green-200 text-xs font-bold uppercase tracking-widest mb-1">Free Shipping</p><h3 class="font-heading text-white font-bold text-xl leading-tight">Orders Over<br>&#x20A6;25,000</h3></div><a href="shop.html" class="inline-flex items-center gap-1 mt-4 bg-white text-green-700 text-xs font-bold px-4 py-2 rounded-full hover:bg-green-50 w-fit">Shop Now <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></a></div>
-    </div>
-  </div>
-</section>
-
-<!-- DAILY ESSENTIALS -->
-<section class="py-10 md:py-14 bg-neutral-50">
-  <div class="max-w-7xl mx-auto px-5">
-    <div class="flex items-center justify-between mb-5"><div><h2 class="font-heading text-xl md:text-3xl font-bold text-neutral-900">🛒 Daily Essentials</h2><p class="text-sm text-neutral-500 mt-0.5">Everyday must-haves</p></div><a href="shop.html" class="text-sm text-primary-600 font-semibold flex items-center gap-1">View all <i data-lucide="arrow-right" class="w-4 h-4"></i></a></div>
-    <div class="scroll-wrap">
-      <button class="scroll-arrow left" onclick="scrollSection('essentials-scroll',-1)" aria-label="Scroll left">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-      </button>
-      <div class="pscroll" id="essentials-scroll"></div>
-      <button class="scroll-arrow right" onclick="scrollSection('essentials-scroll',1)" aria-label="Scroll right">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
-    </div>
-  </div>
-</section>
-
-<!-- NEW ARRIVALS -->
-<section class="py-10 md:py-14 bg-white">
-  <div class="max-w-7xl mx-auto px-5">
-    <div class="flex items-center justify-between mb-5"><div><h2 class="font-heading text-xl md:text-3xl font-bold text-neutral-900">✨ New Arrivals</h2><p class="text-sm text-neutral-500 mt-0.5">Fresh styles just dropped</p></div><a href="shop.html" class="text-sm text-primary-600 font-semibold flex items-center gap-1">View all <i data-lucide="arrow-right" class="w-4 h-4"></i></a></div>
-    <div class="scroll-wrap">
-      <button class="scroll-arrow left" onclick="scrollSection('arrivals-scroll',-1)" aria-label="Scroll left">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-      </button>
-      <div class="pscroll" id="arrivals-scroll"></div>
-      <button class="scroll-arrow right" onclick="scrollSection('arrivals-scroll',1)" aria-label="Scroll right">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
-    </div>
-  </div>
-</section>
-
-<!-- MEGA DEALS -->
-<section class="py-10 md:py-14 bg-neutral-50">
-  <div class="max-w-7xl mx-auto px-5">
-    <div class="flex items-center justify-between mb-5"><div><h2 class="font-heading text-xl md:text-3xl font-bold text-neutral-900">🔥 Mega Deals</h2><p class="text-sm text-neutral-500 mt-0.5">Biggest discounts of the week</p></div><a href="shop.html?sale=1" class="text-sm text-primary-600 font-semibold flex items-center gap-1">View all <i data-lucide="arrow-right" class="w-4 h-4"></i></a></div>
-    <div class="scroll-wrap">
-      <button class="scroll-arrow left" onclick="scrollSection('mega-scroll',-1)" aria-label="Scroll left">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-      </button>
-      <div class="pscroll" id="mega-scroll"></div>
-      <button class="scroll-arrow right" onclick="scrollSection('mega-scroll',1)" aria-label="Scroll right">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
-    </div>
-  </div>
-</section>
-
-<!-- BRAND VIDEO -->
-<section class="py-12 md:py-16 bg-neutral-900 relative overflow-hidden">
-  <div class="absolute inset-0 opacity-10" style="background:radial-gradient(circle at 30% 50%,#ea580c,transparent 60%)"></div>
-  <div class="max-w-7xl mx-auto px-5 relative z-10">
-    <div class="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
-      <div class="text-white max-w-md text-center lg:text-left">
-        <span class="inline-block px-3 py-1 bg-primary-600/20 border border-primary-500/30 text-primary-400 text-xs font-bold uppercase tracking-wider rounded-full mb-4">Watch Our Story</span>
-        <h2 class="font-heading text-3xl md:text-4xl font-bold mb-4 leading-tight">Experience the <span class="text-primary-500">AhiaGlobal</span> Difference</h2>
-        <p class="text-neutral-300 text-sm md:text-base mb-6 leading-relaxed">From handpicked artisan crafts to global electronics — discover how we connect Africa's finest products to the world.</p>
-        <div class="flex flex-wrap gap-3 justify-center lg:justify-start"><a href="shop.html" class="flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-full transition-all text-sm"><i data-lucide="shopping-bag" class="w-4 h-4"></i>Start Shopping</a><a href="shop.html?cat=fashion" class="px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full border border-white/20 transition-all text-sm">Explore Collections</a></div>
-      </div>
-      <div class="flex-1 w-full max-w-2xl">
-        <div id="video-container" class="relative rounded-xl2 overflow-hidden shadow-2xl bg-neutral-800 cursor-pointer group" style="padding-bottom:56.25%" onclick="playVideo()">
-          <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=900&q=80" alt="Video thumbnail" class="absolute inset-0 w-full h-full object-cover opacity-70">
-          <div class="absolute inset-0 bg-neutral-900/30"></div>
-          <div class="absolute inset-0 flex items-center justify-center z-10"><div class="w-16 h-16 bg-white/90 group-hover:bg-white rounded-full flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform duration-300"><svg width="26" height="26" viewBox="0 0 24 24" fill="#ea580c"><polygon points="5,3 19,12 5,21"/></svg></div></div>
-          <p class="absolute bottom-4 inset-x-0 text-center text-white text-sm font-semibold z-10 drop-shadow">Watch: The AhiaGlobal Story</p>
+      <div
+        class="bg-neutral-800 border border-neutral-700 rounded-xl2 p-5 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div>
+          <p class="font-heading font-bold text-white text-sm md:text-base">Need help? We're available 24/7</p>
+          <p class="text-xs text-neutral-500 mt-0.5">Call, email, or chat with our support team.</p>
         </div>
-        <div class="grid grid-cols-3 gap-4 mt-5 text-center"><div><p class="font-heading text-2xl font-bold text-white">50K+</p><p class="text-xs text-neutral-400 mt-0.5">Happy Customers</p></div><div><p class="font-heading text-2xl font-bold text-primary-500">500+</p><p class="text-xs text-neutral-400 mt-0.5">African Brands</p></div><div><p class="font-heading text-2xl font-bold text-white">50+</p><p class="text-xs text-neutral-400 mt-0.5">Countries Served</p></div></div>
+        <div class="flex flex-wrap gap-2.5"><a href="tel:+2348001234567"
+            class="flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-full transition-colors"><i
+              data-lucide="phone" class="w-4 h-4"></i>Call Us</a><a href="mailto:support@ahiaglobal.com"
+            class="flex items-center gap-2 px-5 py-2.5 border border-neutral-600 text-neutral-300 text-sm font-semibold rounded-full hover:bg-neutral-700 transition-colors"><i
+              data-lucide="mail" class="w-4 h-4"></i>Email Us</a><button
+            onclick="showToast('info','Live Chat','Connecting you to an agent&#8230;')"
+            class="flex items-center gap-2 px-5 py-2.5 border border-neutral-600 text-neutral-300 text-sm font-semibold rounded-full hover:bg-neutral-700 transition-colors"><i
+              data-lucide="message-circle" class="w-4 h-4"></i>Live Chat</button></div>
+      </div>
+      <div class="border-t border-neutral-800 pt-6 flex flex-col sm:flex-row justify-between items-center gap-3">
+        <p class="text-xs text-neutral-600">&#169; 2024 AhiaGlobal. All rights reserved.</p>
+        <div class="flex gap-4 text-xs text-neutral-600"><button class="hover:text-neutral-400">Privacy
+            Policy</button><button class="hover:text-neutral-400">Terms of Service</button><button
+            class="hover:text-neutral-400">Cookie Settings</button></div>
       </div>
     </div>
+  </footer>
+
+  <!-- MOBILE BOTTOM NAV -->
+  <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-200 z-[150] flex">
+    <a href="index.html" class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-primary-600"><i
+        data-lucide="home" class="w-5 h-5"></i><span class="text-[10px] font-medium">Home</span></a>
+    <a href="shop.html" class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-neutral-500"><i
+        data-lucide="layout-grid" class="w-5 h-5"></i><span class="text-[10px] font-medium">Shop</span></a>
+    <a href="checkout.html"
+      class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-neutral-500 relative">
+      <div class="relative"><i data-lucide="shopping-cart" class="w-5 h-5"></i><span
+          class="cart-count-badge absolute -top-2 -right-2 w-4 h-4 bg-red-500 text-white text-[9px] font-bold flex items-center justify-center rounded-full">0</span>
+      </div><span class="text-[10px] font-medium">Cart</span>
+    </a>
+    <button class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-neutral-500"><i
+        data-lucide="heart" class="w-5 h-5"></i><span class="text-[10px] font-medium">Wishlist</span></button>
+    <button onclick="openAuth('login')"
+      class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-neutral-500"><i data-lucide="user"
+        class="w-5 h-5"></i><span class="text-[10px] font-medium">Account</span></button>
   </div>
-</section>
 
-<!-- NEWSLETTER -->
-<section class="py-12 md:py-16 bg-white border-t border-neutral-100">
-  <div class="max-w-7xl mx-auto px-5">
-    <div class="flex flex-col md:flex-row items-center justify-between gap-8">
-      <div class="text-center md:text-left max-w-lg"><h2 class="font-heading text-2xl md:text-3xl font-bold text-neutral-900 mb-2">Join the AhiaGlobal Community</h2><p class="text-neutral-500 text-sm md:text-base">Subscribe for exclusive offers, new arrivals &amp; cultural stories.</p></div>
-      <div class="w-full md:w-auto flex-1 max-w-md">
-        <div id="nl-form"><div class="flex flex-col sm:flex-row gap-2"><input id="nl-email" type="email" placeholder="Enter your email address" class="flex-1 px-4 py-3 rounded-lg border border-neutral-200 text-sm bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-primary-500"><button onclick="subscribeNL()" class="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition-colors text-sm whitespace-nowrap">Subscribe Now</button></div><p class="text-[11px] text-neutral-400 mt-2">By subscribing, you agree to our <a href="#" class="underline">Terms</a> &amp; <a href="#" class="underline">Privacy</a>.</p></div>
-        <div id="nl-thanks" class="hidden text-center py-4"><div class="w-11 h-11 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2"><i data-lucide="check" class="w-6 h-6 text-green-600"></i></div><p class="font-heading font-bold text-neutral-900">Subscribed! &#127881;</p><p class="text-sm text-neutral-500 mt-1">Welcome to the AhiaGlobal community.</p></div>
-      </div>
-    </div>
-  </div>
-</section>
+  <script src="shared.js"></script>
+  <script>
+    /* === PRODUCT DATA === */
+    const D = {
+      flash: [
+        { id: 'f1', name: 'Premium Wireless Headphones', price: '$129.99', orig: '$185', disc: '-30%', img: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80', sold: 75, left: 12 },
+        { id: 'f2', name: 'Polaroid Instant Camera', price: '$89.99', orig: '$105', disc: '-15%', img: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400&q=80', sold: 45, left: 30 },
+        { id: 'f3', name: 'Nike Air Max Red', price: '$145', orig: '$195', disc: '-25%', img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80', sold: 90, left: 4 },
+        { id: 'f4', name: 'Minimalist Smart Watch', price: '$199', orig: '$330', disc: '-40%', img: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80', sold: 60, left: 18 },
+        { id: 'f5', name: 'Sony WH-1000XM5', price: '$279', orig: '$399', disc: '-30%', img: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=400&q=80', sold: 80, left: 7 },
+        { id: 'f6', name: 'iPad Air 5th Gen', price: '$499', orig: '$599', disc: '-17%', img: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&q=80', sold: 55, left: 15 },
+        { id: 'f7', name: 'Power Bank 20K', price: '$39.99', orig: '$65', disc: '-38%', img: 'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=400&q=80', sold: 70, left: 40 },
+        { id: 'f8', name: 'Mechanical Keyboard RGB', price: '$79.99', orig: '$130', disc: '-38%', img: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400&q=80', sold: 40, left: 22 },
+        { id: 'f9', name: 'Fitbit Charge 6', price: '$119', orig: '$159', disc: '-25%', img: 'https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?w=400&q=80', sold: 65, left: 11 },
+        { id: 'f10', name: 'GoPro Hero 12', price: '$349', orig: '$449', disc: '-22%', img: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400&q=80', sold: 50, left: 9 },
+      ],
+      phones: [
+        { id: 'p1', name: 'iPhone 15 Pro Max', price: '$1,099', orig: '$1,199', img: 'https://images.unsplash.com/photo-1696446702183-be88e4a4f4ab?w=400&q=80' },
+        { id: 'p2', name: 'Samsung Galaxy S24', price: '$799', orig: '$899', img: 'https://images.unsplash.com/photo-1591337676887-a217a6970a8a?w=400&q=80' },
+        { id: 'p3', name: 'Tecno Camon 20', price: '$189', orig: '$229', img: 'https://images.unsplash.com/photo-1556656793-08538906a9f8?w=400&q=80' },
+        { id: 'p4', name: 'Infinix Note 30 Pro', price: '$149', orig: '$179', img: 'https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?w=400&q=80' },
+        { id: 'p5', name: 'Google Pixel 8 Pro', price: '$799', orig: '$999', img: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=400&q=80' },
+        { id: 'p6', name: 'OnePlus 12', price: '$549', orig: '$699', img: 'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&q=80' },
+        { id: 'p7', name: 'Samsung Tab S9', price: '$699', orig: '$799', img: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&q=80' },
+        { id: 'p8', name: 'Xiaomi 14 Ultra', price: '$649', orig: '$749', img: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&q=80' },
+        { id: 'p9', name: 'Nokia G60 5G', price: '$289', orig: '$349', img: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=400&q=80' },
+        { id: 'p10', name: 'Oppo Reno 11 Pro', price: '$449', orig: '$549', img: 'https://images.unsplash.com/photo-1567581935884-3349723552ca?w=400&q=80' },
+      ],
+      essentials: [
+        { id: 'e1', name: 'Dettol Antibac Soap 6pk', price: '$8.99', orig: '$12', img: 'https://images.unsplash.com/photo-1584305574647-0cc949a2bb9f?w=400&q=80' },
+        { id: 'e2', name: 'Ariel Washing Powder 5kg', price: '$14.99', orig: '$19', img: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80' },
+        { id: 'e3', name: 'Nestle Milo 2kg Tin', price: '$11.50', orig: '$15', img: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=400&q=80' },
+        { id: 'e4', name: 'Indomie Noodles 40pk', price: '$9.99', orig: '$13', img: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400&q=80' },
+        { id: 'e5', name: 'Peak Full Cream Milk 12pk', price: '$18', orig: '$22', img: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=400&q=80' },
+        { id: 'e6', name: 'Vaseline Moisture Lotion', price: '$6.50', orig: '$9', img: 'https://images.unsplash.com/photo-1596462502278-27bfdd403348?w=400&q=80' },
+        { id: 'e7', name: 'Jumbo Tissue Paper', price: '$5.99', orig: '$8', img: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&q=80' },
+        { id: 'e8', name: 'Oral-B Pro Toothbrush', price: '$7.99', orig: '$11', img: 'https://images.unsplash.com/photo-1559591935-ac37ce3ee99b?w=400&q=80' },
+        { id: 'e9', name: 'Always Maxi Pads 20pk', price: '$4.99', orig: '$7', img: 'https://images.unsplash.com/photo-1607619662634-3ac55ec0e216?w=400&q=80' },
+        { id: 'e10', name: 'Cooking Oil 5L', price: '$12', orig: '$16', img: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&q=80' },
+      ],
+      arrivals: [
+        { id: 'a1', name: 'Summer Floral Dress', price: '$45', badge: 'New', img: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&q=80' },
+        { id: 'a2', name: 'Urban Cotton T-Shirt', price: '$28', badge: 'New', img: 'https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?w=400&q=80' },
+        { id: 'a3', name: 'Handwoven Basket Bag', price: '$55', badge: 'New', img: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400&q=80' },
+        { id: 'a4', name: 'Ankara Print Blazer', price: '$72', badge: 'New', img: 'https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=400&q=80' },
+        { id: 'a5', name: 'Ceramic Vase Set', price: '$32', badge: 'New', img: 'https://images.unsplash.com/photo-1629198688000-71f23e745b6e?w=400&q=80' },
+        { id: 'a6', name: 'Linen Wide-Leg Trousers', price: '$49', badge: 'New', img: 'https://images.unsplash.com/photo-1591195853828-11db59a44f43?w=400&q=80' },
+        { id: 'a7', name: 'Kente Print Sneakers', price: '$89', badge: 'New', img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80' },
+        { id: 'a8', name: 'Leather Belt Bag', price: '$38', badge: 'New', img: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&q=80' },
+        { id: 'a9', name: 'Boubou Traditional Set', price: '$95', badge: 'New', img: 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=400&q=80' },
+        { id: 'a10', name: 'Beaded Necklace', price: '$22', badge: 'New', img: 'https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?w=400&q=80' },
+        { id: 'a11', name: 'Adire Tie-Dye Top', price: '$34', badge: 'New', img: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400&q=80' },
+        { id: 'a12', name: 'Woven Raffia Hat', price: '$27', badge: 'New', img: 'https://images.unsplash.com/photo-1572307480813-ceb0e59d8325?w=400&q=80' },
+      ],
+      mega: [
+        { id: 'm1', name: 'Dell XPS 15 Laptop', price: '$1,299', orig: '$1,799', disc: '-28%', img: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&q=80' },
+        { id: 'm2', name: 'Sony 65" 4K OLED TV', price: '$1,099', orig: '$1,599', disc: '-31%', img: 'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=400&q=80' },
+        { id: 'm3', name: 'DJI Mini 4 Pro Drone', price: '$759', orig: '$999', disc: '-24%', img: 'https://images.unsplash.com/photo-1507582020474-9a35b7d455d9?w=400&q=80' },
+        { id: 'm4', name: 'Canon EOS R50 Camera', price: '$679', orig: '$899', disc: '-24%', img: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400&q=80' },
+        { id: 'm5', name: 'Samsung 32" Monitor', price: '$399', orig: '$599', disc: '-33%', img: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400&q=80' },
+        { id: 'm6', name: 'PlayStation 5', price: '$449', orig: '$499', disc: '-10%', img: 'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=400&q=80' },
+        { id: 'm7', name: 'Dyson V15 Vacuum', price: '$549', orig: '$749', disc: '-27%', img: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80' },
+        { id: 'm8', name: 'LG French Door Fridge', price: '$899', orig: '$1,299', disc: '-31%', img: 'https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?w=400&q=80' },
+      ]
+    };
 
-<!-- FOOTER -->
-<footer class="bg-neutral-900 text-neutral-400 pt-12 pb-24 md:pb-10">
-  <div class="max-w-7xl mx-auto px-5">
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-10">
-      <div class="col-span-2"><div class="flex items-center gap-2 mb-4"><div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center text-white font-heading font-bold">A</div><span class="font-heading font-bold text-lg text-white">Ahia<span class="text-primary-600">Global</span></span></div><p class="text-sm text-neutral-500 mb-5 max-w-xs leading-relaxed">Connecting the world to authentic African products through a seamless, modern shopping experience.</p><div class="flex gap-2.5"><button class="w-9 h-9 rounded-full bg-neutral-800 flex items-center justify-center hover:bg-primary-600 hover:text-white transition-all"><i data-lucide="facebook"  class="w-4 h-4"></i></button><button class="w-9 h-9 rounded-full bg-neutral-800 flex items-center justify-center hover:bg-primary-600 hover:text-white transition-all"><i data-lucide="instagram" class="w-4 h-4"></i></button><button class="w-9 h-9 rounded-full bg-neutral-800 flex items-center justify-center hover:bg-primary-600 hover:text-white transition-all"><i data-lucide="twitter"   class="w-4 h-4"></i></button><button class="w-9 h-9 rounded-full bg-neutral-800 flex items-center justify-center hover:bg-primary-600 hover:text-white transition-all"><i data-lucide="youtube"   class="w-4 h-4"></i></button></div></div>
-      <div><h4 class="font-heading font-bold text-white mb-3 text-sm">Shop</h4><ul class="space-y-2 text-sm"><li><a href="shop.html" class="hover:text-primary-400">New Arrivals</a></li><li><a href="shop.html" class="hover:text-primary-400">Best Sellers</a></li><li><a href="shop.html?sale=1" class="hover:text-primary-400">Flash Sales</a></li><li><a href="shop.html" class="hover:text-primary-400">Gift Cards</a></li></ul></div>
-      <div><h4 class="font-heading font-bold text-white mb-3 text-sm">Support</h4><ul class="space-y-2 text-sm"><li><a href="faq.html"          class="hover:text-primary-400">Help Center</a></li><li><a href="confirmation.html" class="hover:text-primary-400">Track Order</a></li><li><a href="faq.html"          class="hover:text-primary-400">Returns</a></li><li><a href="faq.html"          class="hover:text-primary-400">Contact Us</a></li><li><a href="sizeguide.html"    class="hover:text-primary-400">Size Guide</a></li></ul></div>
-      <div><h4 class="font-heading font-bold text-white mb-3 text-sm">Company</h4><ul class="space-y-2 text-sm"><li><button class="hover:text-primary-400">About Us</button></li><li><a href="sell.html" class="hover:text-primary-400">Sell on Ahia</a></li><li><button class="hover:text-primary-400">Careers</button></li><li><button class="hover:text-primary-400">Blog</button></li></ul></div>
-    </div>
-    <div class="bg-neutral-800 border border-neutral-700 rounded-xl2 p-5 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div><p class="font-heading font-bold text-white text-sm md:text-base">Need help? We're available 24/7</p><p class="text-xs text-neutral-500 mt-0.5">Call, email, or chat with our support team.</p></div>
-      <div class="flex flex-wrap gap-2.5"><a href="tel:+2348001234567" class="flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-full transition-colors"><i data-lucide="phone" class="w-4 h-4"></i>Call Us</a><a href="mailto:support@ahiaglobal.com" class="flex items-center gap-2 px-5 py-2.5 border border-neutral-600 text-neutral-300 text-sm font-semibold rounded-full hover:bg-neutral-700 transition-colors"><i data-lucide="mail" class="w-4 h-4"></i>Email Us</a><button onclick="showToast('info','Live Chat','Connecting you to an agent&#8230;')" class="flex items-center gap-2 px-5 py-2.5 border border-neutral-600 text-neutral-300 text-sm font-semibold rounded-full hover:bg-neutral-700 transition-colors"><i data-lucide="message-circle" class="w-4 h-4"></i>Live Chat</button></div>
-    </div>
-    <div class="border-t border-neutral-800 pt-6 flex flex-col sm:flex-row justify-between items-center gap-3">
-      <p class="text-xs text-neutral-600">&#169; 2024 AhiaGlobal. All rights reserved.</p>
-      <div class="flex gap-4 text-xs text-neutral-600"><button class="hover:text-neutral-400">Privacy Policy</button><button class="hover:text-neutral-400">Terms of Service</button><button class="hover:text-neutral-400">Cookie Settings</button></div>
-    </div>
-  </div>
-</footer>
-
-<!-- MOBILE BOTTOM NAV -->
-<div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-200 z-[150] flex">
-  <a href="index.html"    class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-primary-600"><i data-lucide="home"          class="w-5 h-5"></i><span class="text-[10px] font-medium">Home</span></a>
-  <a href="shop.html"     class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-neutral-500"><i data-lucide="layout-grid"   class="w-5 h-5"></i><span class="text-[10px] font-medium">Shop</span></a>
-  <a href="checkout.html" class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-neutral-500 relative"><div class="relative"><i data-lucide="shopping-cart" class="w-5 h-5"></i><span class="cart-count-badge absolute -top-2 -right-2 w-4 h-4 bg-red-500 text-white text-[9px] font-bold flex items-center justify-center rounded-full">0</span></div><span class="text-[10px] font-medium">Cart</span></a>
-  <button class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-neutral-500"><i data-lucide="heart" class="w-5 h-5"></i><span class="text-[10px] font-medium">Wishlist</span></button>
-  <button onclick="openAuth('login')" class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-neutral-500"><i data-lucide="user" class="w-5 h-5"></i><span class="text-[10px] font-medium">Account</span></button>
-</div>
-
-<script src="shared.js"></script>
-<script>
-/* === PRODUCT DATA === */
-const D = {
-  flash:[
-    {id:'f1',name:'Premium Wireless Headphones',price:'$129.99',orig:'$185',disc:'-30%',img:'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80',sold:75,left:12},
-    {id:'f2',name:'Polaroid Instant Camera',price:'$89.99',orig:'$105',disc:'-15%',img:'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400&q=80',sold:45,left:30},
-    {id:'f3',name:'Nike Air Max Red',price:'$145',orig:'$195',disc:'-25%',img:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80',sold:90,left:4},
-    {id:'f4',name:'Minimalist Smart Watch',price:'$199',orig:'$330',disc:'-40%',img:'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80',sold:60,left:18},
-    {id:'f5',name:'Sony WH-1000XM5',price:'$279',orig:'$399',disc:'-30%',img:'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=400&q=80',sold:80,left:7},
-    {id:'f6',name:'iPad Air 5th Gen',price:'$499',orig:'$599',disc:'-17%',img:'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&q=80',sold:55,left:15},
-    {id:'f7',name:'Power Bank 20K',price:'$39.99',orig:'$65',disc:'-38%',img:'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=400&q=80',sold:70,left:40},
-    {id:'f8',name:'Mechanical Keyboard RGB',price:'$79.99',orig:'$130',disc:'-38%',img:'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400&q=80',sold:40,left:22},
-    {id:'f9',name:'Fitbit Charge 6',price:'$119',orig:'$159',disc:'-25%',img:'https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?w=400&q=80',sold:65,left:11},
-    {id:'f10',name:'GoPro Hero 12',price:'$349',orig:'$449',disc:'-22%',img:'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400&q=80',sold:50,left:9},
-  ],
-  phones:[
-    {id:'p1',name:'iPhone 15 Pro Max',price:'$1,099',orig:'$1,199',img:'https://images.unsplash.com/photo-1696446702183-be88e4a4f4ab?w=400&q=80'},
-    {id:'p2',name:'Samsung Galaxy S24',price:'$799',orig:'$899',img:'https://images.unsplash.com/photo-1591337676887-a217a6970a8a?w=400&q=80'},
-    {id:'p3',name:'Tecno Camon 20',price:'$189',orig:'$229',img:'https://images.unsplash.com/photo-1556656793-08538906a9f8?w=400&q=80'},
-    {id:'p4',name:'Infinix Note 30 Pro',price:'$149',orig:'$179',img:'https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?w=400&q=80'},
-    {id:'p5',name:'Google Pixel 8 Pro',price:'$799',orig:'$999',img:'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=400&q=80'},
-    {id:'p6',name:'OnePlus 12',price:'$549',orig:'$699',img:'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&q=80'},
-    {id:'p7',name:'Samsung Tab S9',price:'$699',orig:'$799',img:'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&q=80'},
-    {id:'p8',name:'Xiaomi 14 Ultra',price:'$649',orig:'$749',img:'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&q=80'},
-    {id:'p9',name:'Nokia G60 5G',price:'$289',orig:'$349',img:'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=400&q=80'},
-    {id:'p10',name:'Oppo Reno 11 Pro',price:'$449',orig:'$549',img:'https://images.unsplash.com/photo-1567581935884-3349723552ca?w=400&q=80'},
-  ],
-  essentials:[
-    {id:'e1',name:'Dettol Antibac Soap 6pk',price:'$8.99',orig:'$12',img:'https://images.unsplash.com/photo-1584305574647-0cc949a2bb9f?w=400&q=80'},
-    {id:'e2',name:'Ariel Washing Powder 5kg',price:'$14.99',orig:'$19',img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80'},
-    {id:'e3',name:'Nestle Milo 2kg Tin',price:'$11.50',orig:'$15',img:'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=400&q=80'},
-    {id:'e4',name:'Indomie Noodles 40pk',price:'$9.99',orig:'$13',img:'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400&q=80'},
-    {id:'e5',name:'Peak Full Cream Milk 12pk',price:'$18',orig:'$22',img:'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=400&q=80'},
-    {id:'e6',name:'Vaseline Moisture Lotion',price:'$6.50',orig:'$9',img:'https://images.unsplash.com/photo-1596462502278-27bfdd403348?w=400&q=80'},
-    {id:'e7',name:'Jumbo Tissue Paper',price:'$5.99',orig:'$8',img:'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&q=80'},
-    {id:'e8',name:'Oral-B Pro Toothbrush',price:'$7.99',orig:'$11',img:'https://images.unsplash.com/photo-1559591935-ac37ce3ee99b?w=400&q=80'},
-    {id:'e9',name:'Always Maxi Pads 20pk',price:'$4.99',orig:'$7',img:'https://images.unsplash.com/photo-1607619662634-3ac55ec0e216?w=400&q=80'},
-    {id:'e10',name:'Cooking Oil 5L',price:'$12',orig:'$16',img:'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&q=80'},
-  ],
-  arrivals:[
-    {id:'a1',name:'Summer Floral Dress',price:'$45',badge:'New',img:'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&q=80'},
-    {id:'a2',name:'Urban Cotton T-Shirt',price:'$28',badge:'New',img:'https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?w=400&q=80'},
-    {id:'a3',name:'Handwoven Basket Bag',price:'$55',badge:'New',img:'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400&q=80'},
-    {id:'a4',name:'Ankara Print Blazer',price:'$72',badge:'New',img:'https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=400&q=80'},
-    {id:'a5',name:'Ceramic Vase Set',price:'$32',badge:'New',img:'https://images.unsplash.com/photo-1629198688000-71f23e745b6e?w=400&q=80'},
-    {id:'a6',name:'Linen Wide-Leg Trousers',price:'$49',badge:'New',img:'https://images.unsplash.com/photo-1591195853828-11db59a44f43?w=400&q=80'},
-    {id:'a7',name:'Kente Print Sneakers',price:'$89',badge:'New',img:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80'},
-    {id:'a8',name:'Leather Belt Bag',price:'$38',badge:'New',img:'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&q=80'},
-    {id:'a9',name:'Boubou Traditional Set',price:'$95',badge:'New',img:'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=400&q=80'},
-    {id:'a10',name:'Beaded Necklace',price:'$22',badge:'New',img:'https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?w=400&q=80'},
-    {id:'a11',name:'Adire Tie-Dye Top',price:'$34',badge:'New',img:'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400&q=80'},
-    {id:'a12',name:'Woven Raffia Hat',price:'$27',badge:'New',img:'https://images.unsplash.com/photo-1572307480813-ceb0e59d8325?w=400&q=80'},
-  ],
-  mega:[
-    {id:'m1',name:'Dell XPS 15 Laptop',price:'$1,299',orig:'$1,799',disc:'-28%',img:'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&q=80'},
-    {id:'m2',name:'Sony 65" 4K OLED TV',price:'$1,099',orig:'$1,599',disc:'-31%',img:'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=400&q=80'},
-    {id:'m3',name:'DJI Mini 4 Pro Drone',price:'$759',orig:'$999',disc:'-24%',img:'https://images.unsplash.com/photo-1507582020474-9a35b7d455d9?w=400&q=80'},
-    {id:'m4',name:'Canon EOS R50 Camera',price:'$679',orig:'$899',disc:'-24%',img:'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400&q=80'},
-    {id:'m5',name:'Samsung 32" Monitor',price:'$399',orig:'$599',disc:'-33%',img:'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400&q=80'},
-    {id:'m6',name:'PlayStation 5',price:'$449',orig:'$499',disc:'-10%',img:'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=400&q=80'},
-    {id:'m7',name:'Dyson V15 Vacuum',price:'$549',orig:'$749',disc:'-27%',img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80'},
-    {id:'m8',name:'LG French Door Fridge',price:'$899',orig:'$1,299',disc:'-31%',img:'https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?w=400&q=80'},
-  ]
-};
-
-/* === RENDER CARDS === */
-function renderSection(id, items, showSold) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  const stars = '<svg width="10" height="10" viewBox="0 0 24 24" fill="#facc15"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>';
-  const starsEmpty = '<svg width="10" height="10" viewBox="0 0 24 24" fill="#e2e8f0"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>';
-  el.innerHTML = items.map(p => {
-    const price = parseFloat(String(p.price).replace(/[^0-9.]/g,'')) || 0;
-    const safeName = (p.name||'').replace(/'/g,"\\'");
-    const safeImg  = (p.img||'');
-    return `<div class="pcard">
+    /* === RENDER CARDS === */
+    function renderSection(id, items, showSold) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const stars = '<svg width="10" height="10" viewBox="0 0 24 24" fill="#facc15"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>';
+      const starsEmpty = '<svg width="10" height="10" viewBox="0 0 24 24" fill="#e2e8f0"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>';
+      el.innerHTML = items.map(p => {
+        const price = parseFloat(String(p.price).replace(/[^0-9.]/g, '')) || 0;
+        const safeName = (p.name || '').replace(/'/g, "\\'");
+        const safeImg = (p.img || '');
+        return `<div class="pcard">
   <div class="pcard-inner">
     <div style="position:relative;aspect-ratio:1/1;overflow:hidden;background:#f1f5f9">
-      <img src="${safeImg}" alt="${p.name||''}" loading="lazy"
+      <img src="${safeImg}" alt="${p.name || ''}" loading="lazy"
            style="width:100%;height:100%;object-fit:cover;transition:transform .5s"
            onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'" onclick="window.location='product.html?id='+('${p.id}')" style="cursor:pointer"
            onerror="this.src='https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80'">
-      ${p.disc  ? `<div style="position:absolute;top:8px;left:8px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;z-index:2">${p.disc}</div>` : ''}
+      ${p.disc ? `<div style="position:absolute;top:8px;left:8px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;z-index:2">${p.disc}</div>` : ''}
       ${p.badge && !p.disc ? `<div style="position:absolute;top:8px;left:8px;background:rgba(255,255,255,.9);font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;z-index:2;text-transform:uppercase;letter-spacing:.05em">${p.badge}</div>` : ''}
       <button onclick="toggleWishlist(this,'${safeName}')"
               class="pwish" style="position:absolute;top:8px;right:8px;padding:6px;background:rgba(255,255,255,.85);border-radius:50%;border:none;cursor:pointer;z-index:2;color:#94a3b8">
@@ -625,98 +1444,99 @@ function renderSection(id, items, showSold) {
     </div>
     <div style="padding:10px 12px 12px">
       <div style="display:flex;gap:1px;margin-bottom:5px">${stars.repeat(4)}${starsEmpty}</div>
-      <a href="product.html?id=${p.id}" style="display:block;font-size:12px;font-weight:500;color:#1e293b;margin-bottom:5px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;text-decoration:none;line-height:1.4" onmouseover="this.style.color='#ea580c'" onmouseout="this.style.color='#1e293b'">${p.name||''}</a>
+      <a href="product.html?id=${p.id}" style="display:block;font-size:12px;font-weight:500;color:#1e293b;margin-bottom:5px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;text-decoration:none;line-height:1.4" onmouseover="this.style.color='#ea580c'" onmouseout="this.style.color='#1e293b'">${p.name || ''}</a>
       <div style="display:flex;align-items:center;gap:6px">
-        <span style="font-weight:700;color:#ea580c;font-size:13px">${p.price||''}</span>
+        <span style="font-weight:700;color:#ea580c;font-size:13px">${p.price || ''}</span>
         ${p.orig ? `<span style="font-size:10px;color:#94a3b8;text-decoration:line-through">${p.orig}</span>` : ''}
       </div>
       ${showSold && p.sold ? `<div style="margin-top:6px"><div style="width:100%;background:#f1f5f9;border-radius:4px;height:4px;overflow:hidden"><div style="background:#ef4444;height:4px;border-radius:4px;width:${p.sold}%"></div></div><p style="font-size:10px;color:#94a3b8;margin-top:3px">${p.left} left in stock</p></div>` : ''}
     </div>
   </div>
 </div>`;
-  }).join('');
-}
+      }).join('');
+    }
 
-/* === BANNER === */
-let slide = 0, N = 3, timer;
-function goSlide(n) {
-  slide = (n + N) % N;
-  document.getElementById('banner-track').style.transform = 'translateX(-' + (slide * 100/3) + '%)';
-  document.querySelectorAll('[id^="dot-"]').forEach((d,i) => {
-    d.style.width   = i === slide ? '24px' : '8px';
-    d.style.opacity = i === slide ? '1' : '0.4';
-  });
-}
-function nextSlide() { goSlide(slide + 1); resetTimer(); }
-function prevSlide() { goSlide(slide - 1); resetTimer(); }
-function resetTimer() { clearInterval(timer); timer = setInterval(() => goSlide(slide+1), 5000); }
-// touch swipe
-var tx = 0;
-document.getElementById('banner-track').addEventListener('touchstart', function(e){tx=e.touches[0].clientX},{passive:true});
-document.getElementById('banner-track').addEventListener('touchend',   function(e){var dx=e.changedTouches[0].clientX-tx; if(Math.abs(dx)>50){dx>0?prevSlide():nextSlide();}});
+    /* === BANNER === */
+    let slide = 0, N = 3, timer;
+    function goSlide(n) {
+      slide = (n + N) % N;
+      document.getElementById('banner-track').style.transform = 'translateX(-' + (slide * 100 / 3) + '%)';
+      document.querySelectorAll('[id^="dot-"]').forEach((d, i) => {
+        d.style.width = i === slide ? '24px' : '8px';
+        d.style.opacity = i === slide ? '1' : '0.4';
+      });
+    }
+    function nextSlide() { goSlide(slide + 1); resetTimer(); }
+    function prevSlide() { goSlide(slide - 1); resetTimer(); }
+    function resetTimer() { clearInterval(timer); timer = setInterval(() => goSlide(slide + 1), 5000); }
+    // touch swipe
+    var tx = 0;
+    document.getElementById('banner-track').addEventListener('touchstart', function (e) { tx = e.touches[0].clientX }, { passive: true });
+    document.getElementById('banner-track').addEventListener('touchend', function (e) { var dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 50) { dx > 0 ? prevSlide() : nextSlide(); } });
 
-/* === FLASH TIMER === */
-function startTimer() {
-  var s = 5*3600+23*60+45;
-  var el = document.getElementById('flash-timer');
-  if(!el) return;
-  setInterval(function(){ s=s>0?s-1:5*3600+23*60+45; el.textContent=[Math.floor(s/3600),Math.floor((s%3600)/60),s%60].map(function(n){return String(n).padStart(2,'0')}).join(':'); },1000);
-}
+    /* === FLASH TIMER === */
+    function startTimer() {
+      var s = 5 * 3600 + 23 * 60 + 45;
+      var el = document.getElementById('flash-timer');
+      if (!el) return;
+      setInterval(function () { s = s > 0 ? s - 1 : 5 * 3600 + 23 * 60 + 45; el.textContent = [Math.floor(s / 3600), Math.floor((s % 3600) / 60), s % 60].map(function (n) { return String(n).padStart(2, '0') }).join(':'); }, 1000);
+    }
 
-/* === SEARCH === */
-function fillSearch(v){ document.getElementById('desktop-search').value=v; document.getElementById('search-drop').classList.remove('open'); }
-function doSearch(){ var v=document.getElementById('desktop-search')?.value?.trim(); if(v) window.location.href='shop.html?q='+encodeURIComponent(v); }
-document.addEventListener('click',function(e){ if(!e.target.closest('#desktop-search')&&!e.target.closest('#search-drop')) document.getElementById('search-drop')?.classList.remove('open'); });
+    /* === SEARCH === */
+    function fillSearch(v) { document.getElementById('desktop-search').value = v; document.getElementById('search-drop').classList.remove('open'); }
+    function doSearch() { var v = document.getElementById('desktop-search')?.value?.trim(); if (v) window.location.href = 'shop.html?q=' + encodeURIComponent(v); }
+    document.addEventListener('click', function (e) { if (!e.target.closest('#desktop-search') && !e.target.closest('#search-drop')) document.getElementById('search-drop')?.classList.remove('open'); });
 
-/* === LANG === */
-function toggleLang(){ document.getElementById('lang-panel').classList.toggle('hidden'); }
-function setLang(l,c){ document.getElementById('lang-label').textContent=l+' / '+c; document.getElementById('lang-panel').classList.add('hidden'); showToast('info','Language updated','Now showing '+l+' / '+c); }
-document.addEventListener('click',function(e){ if(!e.target.closest('#lang-btn')&&!e.target.closest('#lang-panel')) document.getElementById('lang-panel')?.classList.add('hidden'); });
+    /* === LANG === */
+    function toggleLang() { document.getElementById('lang-panel').classList.toggle('hidden'); }
+    function setLang(l, c) { document.getElementById('lang-label').textContent = l + ' / ' + c; document.getElementById('lang-panel').classList.add('hidden'); showToast('info', 'Language updated', 'Now showing ' + l + ' / ' + c); }
+    document.addEventListener('click', function (e) { if (!e.target.closest('#lang-btn') && !e.target.closest('#lang-panel')) document.getElementById('lang-panel')?.classList.add('hidden'); });
 
-/* === NOTIFICATION PANEL === */
-document.addEventListener('click',function(e){ if(!e.target.closest('#notif-panel')&&!e.target.closest('[onclick*="notif-panel"]')) document.getElementById('notif-panel')?.classList.remove('open'); });
+    /* === NOTIFICATION PANEL === */
+    document.addEventListener('click', function (e) { if (!e.target.closest('#notif-panel') && !e.target.closest('[onclick*="notif-panel"]')) document.getElementById('notif-panel')?.classList.remove('open'); });
 
-/* === NEWSLETTER === */
-function subscribeNL(){
-  var email=document.getElementById('nl-email')?.value?.trim();
-  if(!email||!/\S+@\S+\.\S+/.test(email)){showToast('error','Invalid email','Enter a valid email address.');return;}
-  document.getElementById('nl-form').classList.add('hidden');
-  document.getElementById('nl-thanks').classList.remove('hidden');
-  lucide.createIcons();
-}
+    /* === NEWSLETTER === */
+    function subscribeNL() {
+      var email = document.getElementById('nl-email')?.value?.trim();
+      if (!email || !/\S+@\S+\.\S+/.test(email)) { showToast('error', 'Invalid email', 'Enter a valid email address.'); return; }
+      document.getElementById('nl-form').classList.add('hidden');
+      document.getElementById('nl-thanks').classList.remove('hidden');
+      lucide.createIcons();
+    }
 
-/* === VIDEO === */
-function playVideo(){
-  var c=document.getElementById('video-container');
-  c.innerHTML='<iframe style="position:absolute;inset:0;width:100%;height:100%" src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0" frameborder="0" allow="autoplay;fullscreen" allowfullscreen></iframe>';
-}
+    /* === VIDEO === */
+    function playVideo() {
+      var c = document.getElementById('video-container');
+      c.innerHTML = '<iframe style="position:absolute;inset:0;width:100%;height:100%" src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0" frameborder="0" allow="autoplay;fullscreen" allowfullscreen></iframe>';
+    }
 
-/* === MOBILE MENU === */
-// openMobileMenu defined in shared.js
-// closeMobileMenu defined in shared.js
+    /* === MOBILE MENU === */
+    // openMobileMenu defined in shared.js
+    // closeMobileMenu defined in shared.js
 
-/* === STICKY HEADER === */
-window.addEventListener('scroll',function(){document.getElementById('main-header')?.classList.toggle('scrolled',window.scrollY>10);});
+    /* === STICKY HEADER === */
+    window.addEventListener('scroll', function () { document.getElementById('main-header')?.classList.toggle('scrolled', window.scrollY > 10); });
 
-/* === INIT === */
-document.addEventListener('DOMContentLoaded', function() {
-  renderSection('flash-scroll',     D.flash,      true);
-  renderSection('phones-scroll',    D.phones,     false);
-  renderSection('essentials-scroll',D.essentials, false);
-  renderSection('arrivals-scroll',  D.arrivals,   false);
-  renderSection('mega-scroll',      D.mega,       false);
-  resetTimer();
-  startTimer();
-  lucide.createIcons();
-});
+    /* === INIT === */
+    document.addEventListener('DOMContentLoaded', function () {
+      renderSection('flash-scroll', D.flash, true);
+      renderSection('phones-scroll', D.phones, false);
+      renderSection('essentials-scroll', D.essentials, false);
+      renderSection('arrivals-scroll', D.arrivals, false);
+      renderSection('mega-scroll', D.mega, false);
+      resetTimer();
+      startTimer();
+      lucide.createIcons();
+    });
 
-function scrollSection(id, dir) {
-  var el = document.getElementById(id);
-  if (!el) return;
-  var cardW = el.querySelector('.pcard') ? el.querySelector('.pcard').offsetWidth + 14 : 230;
-  el.scrollBy({ left: dir * cardW * 2.5, behavior: 'smooth' });
-}
+    function scrollSection(id, dir) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      var cardW = el.querySelector('.pcard') ? el.querySelector('.pcard').offsetWidth + 14 : 230;
+      el.scrollBy({ left: dir * cardW * 2.5, behavior: 'smooth' });
+    }
 
-</script>
+  </script>
 </body>
+
 </html>

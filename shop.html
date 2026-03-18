@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
 <title>Shop — AhiaGlobal</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="shared.css">
@@ -11,6 +11,7 @@
 tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-serif'],body:['Inter','sans-serif']},colors:{primary:{50:'#fff7ed',100:'#ffedd5',200:'#fed7aa',300:'#fdba74',400:'#fb923c',500:'#f97316',600:'#ea580c',700:'#c2410c',800:'#9a3412',900:'#7c2d12'},neutral:{50:'#f8fafc',100:'#f1f5f9',200:'#e2e8f0',300:'#cbd5e1',400:'#94a3b8',500:'#64748b',600:'#475569',700:'#334155',800:'#1e293b',900:'#0f172a'}},boxShadow:{card:'0 4px 14px -3px rgba(15,23,42,.09)',hover:'0 12px 30px -5px rgba(15,23,42,.16)',modal:'0 24px 60px -8px rgba(15,23,42,.28)'},borderRadius:{xl2:'0.875rem',xl3:'1.25rem'}}}}
 </script>
 <style>
+/* Mobile-first responsive fixes */
 #auth-modal{opacity:0;pointer-events:none;transition:opacity .25s}
 #auth-modal.open{opacity:1;pointer-events:auto}
 #auth-box{transform:translateY(14px) scale(.96);transition:transform .28s cubic-bezier(.34,1.56,.64,1),opacity .25s;opacity:0}
@@ -47,9 +48,132 @@ tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-s
 .skeleton { background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; }
 @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 .error-state { display:none; }
+
+/* Mobile responsive fixes */
+@media (max-width: 640px) {
+  .grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+  
+  .prod-card .p-3 {
+    padding: 0.5rem;
+  }
+  
+  .prod-card .text-xs {
+    font-size: 0.7rem;
+  }
+  
+  .prod-card .text-sm {
+    font-size: 0.75rem;
+  }
+  
+  .prod-card .w-4.h-4 {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+  
+  /* Fix for horizontal scroll on category pills */
+  .cat-pill-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 0.5rem;
+    margin-bottom: -0.5rem;
+  }
+  
+  .cat-pill-container::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Fix for product images */
+  .aspect-square img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* Fix for toolbar on mobile */
+  .toolbar-mobile {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .toolbar-mobile > div {
+    width: 100%;
+  }
+  
+  /* Fix for sort select on mobile */
+  #sort-select {
+    width: 100%;
+    padding-right: 2rem;
+  }
+  
+  /* Fix for bottom nav */
+  .md\:hidden.fixed.bottom-0 {
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+  
+  /* Fix for filter drawer */
+  #filter-drawer {
+    width: 85%;
+    max-width: 320px;
+  }
+  
+  /* Fix for auth modal on mobile */
+  #auth-box {
+    margin: 1rem;
+    max-height: calc(100vh - 2rem);
+  }
+  
+  /* Fix for product list view on mobile */
+  .prod-card.flex {
+    flex-direction: column;
+  }
+  
+  .prod-card.flex .w-24.h-24 {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+  }
+  
+  /* Fix for header on mobile */
+  header .flex {
+    flex-wrap: nowrap;
+  }
+  
+  header .flex .flex-shrink-0 {
+    flex-shrink: 0;
+  }
+  
+  /* Fix for logo on mobile */
+  header .font-heading.text-xl {
+    font-size: 1rem;
+  }
+  
+  header .h-14 {
+    height: 2.5rem;
+  }
+  
+  /* Fix for search input on mobile */
+  .mt-2\.5.md\:hidden input {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+  
+  /* Fix for breadcrumb on mobile */
+  .text-xs.md\:text-base {
+    font-size: 0.7rem;
+  }
+  
+  /* Fix for page title on mobile */
+  .font-heading.text-2xl {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
+}
 </style>
 </head>
-<body class="font-body bg-neutral-50 text-neutral-900">
+<body class="font-body bg-neutral-50 text-neutral-900 overflow-x-hidden">
 
 <div id="toast-stack" class="fixed top-20 right-3 z-[9999] flex flex-col gap-2 w-80 max-w-[calc(100vw-1.5rem)] pointer-events-none"></div>
 
@@ -138,26 +262,31 @@ tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-s
 
 <!-- HEADER -->
 <header id="main-header" class="sticky top-0 z-[200] bg-white border-b border-neutral-200 transition-shadow">
-  <div class="max-w-7xl mx-auto px-4 py-3">
-    <div class="flex items-center gap-3">
-      <button onclick="openMobileMenu()" class="md:hidden w-10 h-10 flex items-center justify-center rounded-xl hover:bg-neutral-100 flex-shrink-0"><i data-lucide="menu" class="w-5 h-5 text-neutral-700"></i></button>
-      <a href="index.html" class="flex items-center gap-2 flex-shrink-0"><div class="w-9 h-9 bg-primary-600 rounded-lg flex items-center justify-center text-white font-heading font-bold text-lg">A</div><span class="font-heading font-bold text-lg md:text-2xl text-neutral-900 tracking-tight">Ahia<span class="text-primary-600">Global</span></span></a>
+  <div class="max-w-7xl mx-auto px-4 py-2 md:py-3">
+    <div class="flex items-center gap-2 md:gap-3">
+      <button onclick="openMobileMenu()" class="md:hidden w-9 h-9 flex items-center justify-center rounded-xl hover:bg-neutral-100 flex-shrink-0"><i data-lucide="menu" class="w-5 h-5 text-neutral-700"></i></button>
+      <a href="index.html" class="flex items-center flex-shrink-0">
+        <img src="image.png" alt="Ahia Global" class="h-10 md:h-16 w-auto object-contain">
+        <span style="margin-left: -8px;"
+          class="font-heading font-bold text-base md:text-2xl text-neutral-900 tracking-tight leading-none">ahia<span
+            class="text-primary-600">global</span></span>
+      </a>
       <div class="hidden md:flex flex-1 max-w-lg mx-4 relative">
         <input id="header-search" type="text" placeholder="Search products, brands…" oninput="filterBySearch(this.value)" class="w-full pl-10 pr-24 py-2.5 bg-neutral-50 border border-neutral-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all">
         <i data-lucide="search" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400 w-4 h-4"></i>
         <button class="absolute right-1.5 top-1/2 -translate-y-1/2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-1.5 rounded-full text-xs font-semibold">Search</button>
       </div>
-      <div class="flex items-center gap-1.5 ml-auto md:ml-0">
-        <button class="md:hidden w-9 h-9 flex items-center justify-center rounded-xl hover:bg-neutral-100"><i data-lucide="search" class="w-5 h-5 text-neutral-600"></i></button>
+      <div class="flex items-center gap-1 ml-auto md:ml-0">
+        <button class="md:hidden w-8 h-8 flex items-center justify-center rounded-xl hover:bg-neutral-100"><i data-lucide="search" class="w-4 h-4 text-neutral-600"></i></button>
         <button class="hidden md:flex w-9 h-9 items-center justify-center rounded-xl hover:bg-neutral-100"><i data-lucide="heart" class="w-5 h-5 text-neutral-600"></i></button>
         <button onclick="openAuth('login')" id="header-auth-btn" class="hidden md:flex items-center gap-2 px-4 py-2 rounded-full border border-neutral-200 hover:border-primary-300 hover:bg-orange-50 text-sm font-medium text-neutral-700"><i data-lucide="user" class="w-4 h-4"></i><span id="header-auth-label">Sign In</span></button>
-        <a href="checkout.html" class="flex items-center gap-2 bg-neutral-900 text-white px-3 md:px-4 py-2 md:py-2.5 rounded-full hover:bg-neutral-800 transition-all">
-          <div class="relative"><i data-lucide="shopping-cart" class="w-4 h-4 md:w-5 md:h-5"></i><span id="header-cart-count" class="cart-count-badge absolute -top-2.5 -right-2.5 w-5 h-5 bg-primary-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-neutral-900">0</span></div>
+        <a href="checkout.html" class="flex items-center gap-1 md:gap-2 bg-neutral-900 text-white px-2 md:px-4 py-1.5 md:py-2.5 rounded-full hover:bg-neutral-800 transition-all">
+          <div class="relative"><i data-lucide="shopping-cart" class="w-4 h-4 md:w-5 md:h-5"></i><span id="header-cart-count" class="cart-count-badge absolute -top-2 -right-2 w-4 h-4 md:w-5 md:h-5 bg-primary-500 text-white text-[9px] md:text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-neutral-900">0</span></div>
           <span class="hidden lg:block text-sm font-medium cart-total-label">$0.00</span>
         </a>
       </div>
     </div>
-    <div class="mt-2.5 md:hidden relative"><input type="text" placeholder="Search products…" oninput="filterBySearch(this.value)" class="w-full pl-9 pr-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"><i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 w-4 h-4"></i></div>
+    <div class="mt-2 md:hidden relative"><input type="text" placeholder="Search products…" oninput="filterBySearch(this.value)" class="w-full pl-9 pr-4 py-2 bg-neutral-50 border border-neutral-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"><i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 w-4 h-4"></i></div>
   </div>
   <nav class="hidden md:block border-t border-neutral-100 bg-white">
     <div class="max-w-7xl mx-auto px-4">
@@ -189,37 +318,37 @@ tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-s
 
 <!-- BREADCRUMB + PAGE HEADER -->
 <div class="bg-white border-b border-neutral-100">
-  <div class="max-w-7xl mx-auto px-5 py-4">
-    <nav class="flex items-center gap-1.5 text-xs text-neutral-500 mb-2">
+  <div class="max-w-7xl mx-auto px-4 py-3 md:py-4">
+    <nav class="flex items-center gap-1.5 text-xs text-neutral-500 mb-1 md:mb-2">
       <a href="index.html" class="hover:text-primary-600">Home</a>
       <i data-lucide="chevron-right" class="w-3 h-3"></i>
       <span class="text-neutral-900 font-medium" id="breadcrumb-label">All Products</span>
     </nav>
-    <div class="flex items-end justify-between gap-4 flex-wrap">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-3 md:gap-4">
       <div>
-        <h1 class="font-heading text-2xl md:text-3xl font-bold text-neutral-900" id="page-title">All Products</h1>
-        <p class="text-sm text-neutral-500 mt-0.5"><span id="result-count">48</span> products found</p>
+        <h1 class="font-heading text-xl md:text-3xl font-bold text-neutral-900" id="page-title">All Products</h1>
+        <p class="text-xs md:text-sm text-neutral-500 mt-0.5"><span id="result-count">48</span> products found</p>
       </div>
-      <!-- Category pills -->
-      <div class="flex gap-2 overflow-x-auto pb-1 max-w-full" style="-ms-overflow-style:none;scrollbar-width:none">
-        <button onclick="setCat('all',this)" class="cat-pill active flex-shrink-0 px-3.5 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 hover:border-primary-300 transition-all">All</button>
-        <button onclick="setCat('fashion',this)" class="cat-pill flex-shrink-0 px-3.5 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 hover:border-primary-300 transition-all">Fashion</button>
-        <button onclick="setCat('electronics',this)" class="cat-pill flex-shrink-0 px-3.5 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 hover:border-primary-300 transition-all">Electronics</button>
-        <button onclick="setCat('phones',this)" class="cat-pill flex-shrink-0 px-3.5 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 hover:border-primary-300 transition-all">Phones</button>
-        <button onclick="setCat('home',this)" class="cat-pill flex-shrink-0 px-3.5 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 hover:border-primary-300 transition-all">Home</button>
-        <button onclick="setCat('beauty',this)" class="cat-pill flex-shrink-0 px-3.5 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 hover:border-primary-300 transition-all">Beauty</button>
-        <button onclick="setCat('sports',this)" class="cat-pill flex-shrink-0 px-3.5 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 hover:border-primary-300 transition-all">Sports</button>
-        <button onclick="setCat('gifts',this)" class="cat-pill flex-shrink-0 px-3.5 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 hover:border-primary-300 transition-all">Gifts</button>
-        <button onclick="setCat('laptops',this)" class="cat-pill flex-shrink-0 px-3.5 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 hover:border-primary-300 transition-all">Laptops</button>
+      <!-- Category pills with horizontal scroll on mobile -->
+      <div class="cat-pill-container flex gap-2 overflow-x-auto pb-1 max-w-full" style="-ms-overflow-style:none;scrollbar-width:none">
+        <button onclick="setCat('all',this)" class="cat-pill active flex-shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 hover:border-primary-300 transition-all">All</button>
+        <button onclick="setCat('fashion',this)" class="cat-pill flex-shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 hover:border-primary-300 transition-all">Fashion</button>
+        <button onclick="setCat('electronics',this)" class="cat-pill flex-shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 hover:border-primary-300 transition-all">Electronics</button>
+        <button onclick="setCat('phones',this)" class="cat-pill flex-shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 hover:border-primary-300 transition-all">Phones</button>
+        <button onclick="setCat('home',this)" class="cat-pill flex-shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 hover:border-primary-300 transition-all">Home</button>
+        <button onclick="setCat('beauty',this)" class="cat-pill flex-shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 hover:border-primary-300 transition-all">Beauty</button>
+        <button onclick="setCat('sports',this)" class="cat-pill flex-shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 hover:border-primary-300 transition-all">Sports</button>
+        <button onclick="setCat('gifts',this)" class="cat-pill flex-shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 hover:border-primary-300 transition-all">Gifts</button>
+        <button onclick="setCat('laptops',this)" class="cat-pill flex-shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 hover:border-primary-300 transition-all">Laptops</button>
       </div>
     </div>
   </div>
 </div>
 
-<div class="max-w-7xl mx-auto px-5 py-6">
+<div class="max-w-7xl mx-auto px-4 py-4 md:py-6">
   <!-- TOOLBAR -->
-  <div class="flex items-center justify-between gap-4 mb-5 flex-wrap">
-    <div class="flex items-center gap-2.5">
+  <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
+    <div class="flex items-center gap-2.5 w-full sm:w-auto">
       <!-- filter button mobile -->
       <button onclick="openFilterDrawer()" class="lg:hidden flex items-center gap-2 px-4 py-2 border border-neutral-200 rounded-full text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors bg-white">
         <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>Filters
@@ -228,10 +357,10 @@ tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-s
       <!-- active filter chips -->
       <div id="active-chips" class="flex gap-2 flex-wrap"></div>
     </div>
-    <div class="flex items-center gap-3 ml-auto">
+    <div class="flex items-center gap-3 w-full sm:w-auto">
       <!-- sort -->
-      <div class="relative">
-        <select id="sort-select" onchange="applySort(this.value)" class="pl-3 pr-8 py-2 border border-neutral-200 rounded-full text-sm font-medium text-neutral-700 bg-white appearance-none focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer">
+      <div class="relative flex-1 sm:flex-initial">
+        <select id="sort-select" onchange="applySort(this.value)" class="w-full sm:w-auto pl-3 pr-8 py-2 border border-neutral-200 rounded-full text-sm font-medium text-neutral-700 bg-white appearance-none focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer">
           <option value="featured">Featured</option>
           <option value="newest">Newest First</option>
           <option value="price-asc">Price: Low to High</option>
@@ -242,14 +371,14 @@ tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-s
         <i data-lucide="chevron-down" class="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-neutral-500 pointer-events-none"></i>
       </div>
       <!-- view toggle -->
-      <div class="flex bg-neutral-100 rounded-lg p-0.5">
+      <div class="flex bg-neutral-100 rounded-lg p-0.5 flex-shrink-0">
         <button id="grid-view-btn" onclick="setView('grid')" class="view-btn active w-8 h-7 flex items-center justify-center rounded-md transition-all"><i data-lucide="grid-2x2" class="w-4 h-4"></i></button>
         <button id="list-view-btn" onclick="setView('list')" class="view-btn w-8 h-7 flex items-center justify-center rounded-md transition-all text-neutral-500"><i data-lucide="list" class="w-4 h-4"></i></button>
       </div>
     </div>
   </div>
 
-  <div class="flex gap-7">
+  <div class="flex flex-col lg:flex-row gap-4 lg:gap-7">
     <!-- SIDEBAR FILTERS (desktop) -->
     <aside class="hidden lg:block w-56 flex-shrink-0 space-y-6">
       <div class="bg-white rounded-xl2 border border-neutral-100 p-4">
@@ -299,54 +428,37 @@ tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-s
       </div>
     </aside>
 
-    
-      <!-- SUBCATEGORY SIDEBAR (desktop) -->
-      <div id="subcat-sidebar" class="hidden lg:block w-48 flex-shrink-0">
-        <div class="bg-white rounded-xl2 border border-neutral-100 shadow-card overflow-hidden sticky top-24">
-          <div class="px-4 py-3 border-b border-neutral-100 bg-neutral-50">
-            <p class="text-xs font-bold text-neutral-500 uppercase tracking-wider" id="subcat-heading">Sub-categories</p>
-          </div>
-          <nav id="subcat-list" class="p-2"></nav>
+    <!-- SUBCATEGORY SIDEBAR (desktop) -->
+    <div id="subcat-sidebar" class="hidden lg:block w-48 flex-shrink-0">
+      <div class="bg-white rounded-xl2 border border-neutral-100 shadow-card overflow-hidden sticky top-24">
+        <div class="px-4 py-3 border-b border-neutral-100 bg-neutral-50">
+          <p class="text-xs font-bold text-neutral-500 uppercase tracking-wider" id="subcat-heading">Sub-categories</p>
         </div>
+        <nav id="subcat-list" class="p-2"></nav>
       </div>
+    </div>
 
     <!-- PRODUCT GRID -->
     <div class="flex-1 min-w-0">
 
       <!-- LOADING SKELETONS (shown while rendering) -->
-      <div id="skeleton-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 hidden">
+      <div id="skeleton-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4 hidden">
         
         <div class="bg-white rounded-xl2 border border-neutral-100 overflow-hidden">
           <div class="aspect-square skeleton"></div>
-          <div class="p-3 space-y-2"><div class="h-3 skeleton rounded-full w-3/4"></div><div class="h-3 skeleton rounded-full w-1/2"></div><div class="h-4 skeleton rounded-full w-1/3"></div></div>
+          <div class="p-2 md:p-3 space-y-2"><div class="h-3 skeleton rounded-full w-3/4"></div><div class="h-3 skeleton rounded-full w-1/2"></div><div class="h-4 skeleton rounded-full w-1/3"></div></div>
         </div>
         <div class="bg-white rounded-xl2 border border-neutral-100 overflow-hidden">
           <div class="aspect-square skeleton"></div>
-          <div class="p-3 space-y-2"><div class="h-3 skeleton rounded-full w-3/4"></div><div class="h-3 skeleton rounded-full w-1/2"></div><div class="h-4 skeleton rounded-full w-1/3"></div></div>
+          <div class="p-2 md:p-3 space-y-2"><div class="h-3 skeleton rounded-full w-3/4"></div><div class="h-3 skeleton rounded-full w-1/2"></div><div class="h-4 skeleton rounded-full w-1/3"></div></div>
         </div>
         <div class="bg-white rounded-xl2 border border-neutral-100 overflow-hidden">
           <div class="aspect-square skeleton"></div>
-          <div class="p-3 space-y-2"><div class="h-3 skeleton rounded-full w-3/4"></div><div class="h-3 skeleton rounded-full w-1/2"></div><div class="h-4 skeleton rounded-full w-1/3"></div></div>
+          <div class="p-2 md:p-3 space-y-2"><div class="h-3 skeleton rounded-full w-3/4"></div><div class="h-3 skeleton rounded-full w-1/2"></div><div class="h-4 skeleton rounded-full w-1/3"></div></div>
         </div>
         <div class="bg-white rounded-xl2 border border-neutral-100 overflow-hidden">
           <div class="aspect-square skeleton"></div>
-          <div class="p-3 space-y-2"><div class="h-3 skeleton rounded-full w-3/4"></div><div class="h-3 skeleton rounded-full w-1/2"></div><div class="h-4 skeleton rounded-full w-1/3"></div></div>
-        </div>
-        <div class="bg-white rounded-xl2 border border-neutral-100 overflow-hidden">
-          <div class="aspect-square skeleton"></div>
-          <div class="p-3 space-y-2"><div class="h-3 skeleton rounded-full w-3/4"></div><div class="h-3 skeleton rounded-full w-1/2"></div><div class="h-4 skeleton rounded-full w-1/3"></div></div>
-        </div>
-        <div class="bg-white rounded-xl2 border border-neutral-100 overflow-hidden">
-          <div class="aspect-square skeleton"></div>
-          <div class="p-3 space-y-2"><div class="h-3 skeleton rounded-full w-3/4"></div><div class="h-3 skeleton rounded-full w-1/2"></div><div class="h-4 skeleton rounded-full w-1/3"></div></div>
-        </div>
-        <div class="bg-white rounded-xl2 border border-neutral-100 overflow-hidden">
-          <div class="aspect-square skeleton"></div>
-          <div class="p-3 space-y-2"><div class="h-3 skeleton rounded-full w-3/4"></div><div class="h-3 skeleton rounded-full w-1/2"></div><div class="h-4 skeleton rounded-full w-1/3"></div></div>
-        </div>
-        <div class="bg-white rounded-xl2 border border-neutral-100 overflow-hidden">
-          <div class="aspect-square skeleton"></div>
-          <div class="p-3 space-y-2"><div class="h-3 skeleton rounded-full w-3/4"></div><div class="h-3 skeleton rounded-full w-1/2"></div><div class="h-4 skeleton rounded-full w-1/3"></div></div>
+          <div class="p-2 md:p-3 space-y-2"><div class="h-3 skeleton rounded-full w-3/4"></div><div class="h-3 skeleton rounded-full w-1/2"></div><div class="h-4 skeleton rounded-full w-1/3"></div></div>
         </div>
       </div>
 
@@ -358,7 +470,7 @@ tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-s
         <button onclick="retryLoad()" class="flex items-center gap-2 px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-full text-sm font-semibold transition-colors mx-auto"><i data-lucide="refresh-cw" class="w-4 h-4"></i>Retry</button>
       </div>
 
-      <div id="product-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
+      <div id="product-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4"></div>
 
       <!-- NO RESULTS -->
       <div id="shop-no-results" class="hidden text-center py-20">
@@ -369,31 +481,84 @@ tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-s
       </div>
 
       <!-- PAGINATION -->
-      <div id="pagination" class="flex items-center justify-center gap-2 mt-10 flex-wrap">
-        <button onclick="changePage(-1)" id="prev-btn" class="w-9 h-9 flex items-center justify-center rounded-full border border-neutral-200 hover:bg-neutral-50 text-neutral-600 disabled:opacity-40" disabled><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
-        <div id="page-buttons" class="flex gap-1.5"></div>
-        <button onclick="changePage(1)" id="next-btn" class="w-9 h-9 flex items-center justify-center rounded-full border border-neutral-200 hover:bg-neutral-50 text-neutral-600"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+      <div id="pagination" class="flex items-center justify-center gap-2 mt-6 md:mt-10 flex-wrap">
+        <button onclick="changePage(-1)" id="prev-btn" class="w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-full border border-neutral-200 hover:bg-neutral-50 text-neutral-600 disabled:opacity-40" disabled><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+        <div id="page-buttons" class="flex gap-1"></div>
+        <button onclick="changePage(1)" id="next-btn" class="w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-full border border-neutral-200 hover:bg-neutral-50 text-neutral-600"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
       </div>
     </div>
   </div>
 </div>
 
 <!-- MOBILE BOTTOM NAV -->
-<div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-200 z-[150] flex">
-  <a href="index.html" class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-neutral-500"><i data-lucide="home" class="w-5 h-5"></i><span class="text-[10px] font-medium">Home</span></a>
-  <a href="shop.html" class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-primary-600"><i data-lucide="layout-grid" class="w-5 h-5"></i><span class="text-[10px] font-medium">Shop</span></a>
-  <a href="checkout.html" class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-neutral-500 relative"><div class="relative"><i data-lucide="shopping-cart" class="w-5 h-5"></i><span class="cart-count-badge absolute -top-2 -right-2 w-4 h-4 bg-red-500 text-white text-[9px] font-bold flex items-center justify-center rounded-full">0</span></div><span class="text-[10px] font-medium">Cart</span></a>
-  <button class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-neutral-500"><i data-lucide="heart" class="w-5 h-5"></i><span class="text-[10px] font-medium">Wishlist</span></button>
-  <button onclick="openAuth('login')" class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-neutral-500"><i data-lucide="user" class="w-5 h-5"></i><span class="text-[10px] font-medium">Account</span></button>
+<div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-200 z-[150] flex pb-safe">
+  <a href="index.html" class="flex-1 flex flex-col items-center justify-center py-1.5 gap-0.5 text-neutral-500"><i data-lucide="home" class="w-5 h-5"></i><span class="text-[10px] font-medium">Home</span></a>
+  <a href="shop.html" class="flex-1 flex flex-col items-center justify-center py-1.5 gap-0.5 text-primary-600"><i data-lucide="layout-grid" class="w-5 h-5"></i><span class="text-[10px] font-medium">Shop</span></a>
+  <a href="checkout.html" class="flex-1 flex flex-col items-center justify-center py-1.5 gap-0.5 text-neutral-500 relative"><div class="relative"><i data-lucide="shopping-cart" class="w-5 h-5"></i><span class="cart-count-badge absolute -top-2 -right-2 w-4 h-4 bg-red-500 text-white text-[9px] font-bold flex items-center justify-center rounded-full">0</span></div><span class="text-[10px] font-medium">Cart</span></a>
+  <button class="flex-1 flex flex-col items-center justify-center py-1.5 gap-0.5 text-neutral-500"><i data-lucide="heart" class="w-5 h-5"></i><span class="text-[10px] font-medium">Wishlist</span></button>
+  <button onclick="openAuth('login')" class="flex-1 flex flex-col items-center justify-center py-1.5 gap-0.5 text-neutral-500"><i data-lucide="user" class="w-5 h-5"></i><span class="text-[10px] font-medium">Account</span></button>
 </div>
 
-<footer class="bg-white border-t border-neutral-100 py-7 pb-24 md:pb-7 mt-6">
-  <div class="max-w-7xl mx-auto px-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+<footer class="bg-white border-t border-neutral-100 py-5 pb-24 md:pb-7 mt-4 md:mt-6">
+  <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
     <div class="flex items-center gap-2"><div class="w-7 h-7 bg-primary-600 rounded-md flex items-center justify-center text-white font-bold text-sm">A</div><span class="font-heading font-bold text-neutral-900">Ahia<span class="text-primary-600">Global</span></span></div>
     <p class="text-xs text-neutral-400">© 2024 AhiaGlobal. All rights reserved.</p>
     <div class="flex gap-4 text-xs text-neutral-500"><a href="faq.html" class="hover:text-primary-600">Help</a><a href="index.html" class="hover:text-primary-600">Home</a></div>
   </div>
 </footer>
+
+<style>
+/* Safe area padding for modern mobile devices */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* Fix for iOS input zoom */
+@media (max-width: 640px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Ensure images don't overflow */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Fix for sticky header on mobile */
+@media (max-width: 768px) {
+  #main-header.sticky {
+    position: sticky;
+    top: 0;
+  }
+}
+
+/* Ensure product grid doesn't overflow */
+#product-grid {
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Fix for rating stars alignment */
+.flex.gap-0\.5 {
+  display: flex;
+  align-items: center;
+}
+
+/* Ensure buttons are tappable on mobile */
+@media (max-width: 640px) {
+  button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .prod-card button {
+    min-height: auto;
+    min-width: auto;
+  }
+}
+</style>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="shared.js"></script>
 <script>
@@ -622,7 +787,7 @@ function renderGrid() {
   const starsHtml = (n) => Array.from({length:5},(_,i)=>`<svg width="10" height="10" viewBox="0 0 24 24" fill="${i<Math.floor(n)?'#facc15':'none'}" stroke="${i<Math.floor(n)?'#facc15':'#d1d5db'}" stroke-width="1"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>`).join('');
 
   if (state.view === 'grid') {
-    grid.className = 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4';
+    grid.className = 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4';
     grid.innerHTML = page.map((p, i) => `
       <div class="prod-card bg-white rounded-xl2 border border-neutral-100 overflow-hidden card-anim" style="animation-delay:${i*0.04}s">
         <div class="relative aspect-square overflow-hidden bg-neutral-50">
@@ -636,20 +801,20 @@ function renderGrid() {
             <button onclick="addItem('${p.id}','${p.name}',${p.price},'${p.img}')" class="w-full bg-neutral-900 hover:bg-primary-600 text-white py-2 rounded-lg text-xs font-semibold transition-colors">Add to Cart</button>
           </div>
         </div>
-        <div class="p-3">
-          <div class="flex items-center gap-0.5 mb-1">${starsHtml(p.rating)}<span class="text-[10px] text-neutral-400 ml-0.5">(${p.reviews})</span></div>
-          <a href="product.html?id=${p.id}" class="text-xs font-medium text-neutral-800 line-clamp-2 mb-1.5 hover:text-primary-600 transition-colors block">${p.name}</a>
+        <div class="p-2 md:p-3">
+          <div class="flex items-center gap-0.5 mb-1">${starsHtml(p.rating)}<span class="text-[9px] md:text-[10px] text-neutral-400 ml-0.5">(${p.reviews})</span></div>
+          <a href="product.html?id=${p.id}" class="text-[11px] md:text-xs font-medium text-neutral-800 line-clamp-2 mb-1.5 hover:text-primary-600 transition-colors block">${p.name}</a>
           <div class="flex items-center gap-1.5">
-            <span class="font-bold text-primary-600 text-sm">$${p.price}</span>
-            ${p.orig > p.price ? `<span class="text-[10px] text-neutral-400 line-through">$${p.orig}</span>` : ''}
+            <span class="font-bold text-primary-600 text-xs md:text-sm">$${p.price}</span>
+            ${p.orig > p.price ? `<span class="text-[9px] md:text-[10px] text-neutral-400 line-through">$${p.orig}</span>` : ''}
           </div>
         </div>
       </div>`).join('');
   } else {
     grid.className = 'space-y-3';
     grid.innerHTML = page.map((p,i) => `
-      <div class="prod-card bg-white rounded-xl2 border border-neutral-100 overflow-hidden flex gap-4 p-4 card-anim" style="animation-delay:${i*0.04}s">
-        <div class="w-24 h-24 sm:w-32 sm:h-32 rounded-xl overflow-hidden bg-neutral-50 flex-shrink-0 relative">
+      <div class="prod-card bg-white rounded-xl2 border border-neutral-100 overflow-hidden flex flex-col sm:flex-row gap-3 p-3 card-anim" style="animation-delay:${i*0.04}s">
+        <div class="w-full sm:w-24 h-24 sm:h-24 rounded-xl overflow-hidden bg-neutral-50 flex-shrink-0 relative">
           <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover" loading="lazy">
           ${p.disc ? `<div class="absolute top-1.5 left-1.5 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md">-${p.disc}%</div>` : ''}
         </div>
@@ -660,10 +825,10 @@ function renderGrid() {
             <p class="text-xs text-neutral-500 mt-0.5 capitalize">${p.cat}</p>
           </div>
           <div class="flex items-center justify-between mt-3 flex-wrap gap-2">
-            <div class="flex items-center gap-2"><span class="font-bold text-primary-600 text-lg">$${p.price}</span>${p.orig > p.price ? `<span class="text-sm text-neutral-400 line-through">$${p.orig}</span>` : ''}</div>
-            <button onclick="addItem('${p.id}','${p.name}',${p.price},'${p.img}')" class="flex items-center gap-1.5 px-4 py-2 bg-neutral-900 hover:bg-primary-600 text-white rounded-full text-xs font-semibold transition-colors">
+            <div class="flex items-center gap-2"><span class="font-bold text-primary-600 text-base md:text-lg">$${p.price}</span>${p.orig > p.price ? `<span class="text-sm text-neutral-400 line-through">$${p.orig}</span>` : ''}</div>
+            <button onclick="addItem('${p.id}','${p.name}',${p.price},'${p.img}')" class="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-900 hover:bg-primary-600 text-white rounded-full text-xs font-semibold transition-colors">
               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-              Add to Cart
+              Add
             </button>
           </div>
         </div>
@@ -682,9 +847,9 @@ function renderPagination(total) {
   const next = document.getElementById('next-btn');
   prev.disabled = state.page === 1;
   next.disabled = state.page === pages;
-  btns.innerHTML = Array.from({length: Math.min(pages,7)}, (_,i) => {
+  btns.innerHTML = Array.from({length: Math.min(pages,5)}, (_,i) => {
     const n = i + 1;
-    return `<button onclick="goPage(${n})" class="w-9 h-9 rounded-full text-sm font-semibold transition-all ${state.page === n ? 'bg-neutral-900 text-white' : 'border border-neutral-200 hover:bg-neutral-50 text-neutral-700'}">${n}</button>`;
+    return `<button onclick="goPage(${n})" class="w-8 h-8 md:w-9 md:h-9 rounded-full text-xs md:text-sm font-semibold transition-all ${state.page === n ? 'bg-neutral-900 text-white' : 'border border-neutral-200 hover:bg-neutral-50 text-neutral-700'}">${n}</button>`;
   }).join('');
 }
 
