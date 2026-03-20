@@ -3,530 +3,944 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Become a Rider — AhiaGlobal Delivery</title>
+<title>Rider Dashboard — AhiaGlobal</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
 <script src="https://unpkg.com/lucide@latest"></script>
 <script>
-tailwind.config={theme:{extend:{fontFamily:{heading:["Plus Jakarta Sans","sans-serif"],body:["Inter","sans-serif"]},colors:{primary:{50:"#fff7ed",100:"#ffedd5",200:"#fed7aa",300:"#fdba74",400:"#fb923c",500:"#f97316",600:"#ea580c",700:"#c2410c",800:"#9a3412",900:"#7c2d12"},neutral:{50:"#f8fafc",100:"#f1f5f9",200:"#e2e8f0",300:"#cbd5e1",400:"#94a3b8",500:"#64748b",600:"#475569",700:"#334155",800:"#1e293b",900:"#0f172a"}},boxShadow:{card:"0 4px 14px -3px rgba(15,23,42,.09)",hover:"0 12px 30px -5px rgba(15,23,42,.16)",modal:"0 24px 60px -8px rgba(15,23,42,.28)"},borderRadius:{xl2:"0.875rem",xl3:"1.25rem"}}}}
+tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-serif'],body:['Inter','sans-serif']},colors:{primary:{50:'#fff7ed',100:'#ffedd5',200:'#fed7aa',300:'#fdba74',400:'#fb923c',500:'#f97316',600:'#ea580c',700:'#c2410c',800:'#9a3412',900:'#7c2d12'},neutral:{50:'#f8fafc',100:'#f1f5f9',200:'#e2e8f0',300:'#cbd5e1',400:'#94a3b8',500:'#64748b',600:'#475569',700:'#334155',800:'#1e293b',900:'#0f172a'}},boxShadow:{card:'0 4px 14px -3px rgba(15,23,42,.09)',hover:'0 12px 30px -5px rgba(15,23,42,.16)',modal:'0 24px 60px -8px rgba(15,23,42,.28)'},borderRadius:{xl2:'0.875rem',xl3:'1.25rem'}}}}
 </script>
 <style>
-*,*::before,*::after{box-sizing:border-box}
-body{font-family:"Inter",sans-serif;background:#f8fafc;color:#0f172a}
-.field:focus-within label{color:#ea580c}
-.field:focus-within input,.field:focus-within select,.field:focus-within textarea{border-color:#ea580c;box-shadow:0 0 0 3px rgba(234,88,12,.12);outline:none}
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-@keyframes toastIn{from{opacity:0;transform:translateX(110%)}to{opacity:1;transform:translateX(0)}}
-@keyframes toastOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(110%)}}
-@keyframes countUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.afu{animation:fadeUp .6s ease both}
-.a1{animation-delay:.1s}.a2{animation-delay:.25s}.a3{animation-delay:.4s}.a4{animation-delay:.55s}
-.stat-card:hover{transform:translateY(-3px);box-shadow:0 12px 30px -5px rgba(15,23,42,.16)}
-.stat-card{transition:all .25s}
-.step-circle{width:48px;height:48px;border-radius:50%;background:#ea580c;color:#fff;font-weight:700;font-size:1.1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.scrolled{box-shadow:0 2px 20px -4px rgba(15,23,42,.12)}
-.vehicle-card{cursor:pointer;transition:all .2s}
-.vehicle-card:hover,.vehicle-card.selected{border-color:#ea580c;background:#fff7ed}
-.vehicle-card.selected .vehicle-icon{color:#ea580c}
+  /* ── Auth modal ── */
+  #auth-modal{opacity:0;pointer-events:none;transition:opacity .25s}
+  #auth-modal.open{opacity:1;pointer-events:auto}
+  #auth-box{transform:translateY(14px) scale(.96);transition:transform .28s cubic-bezier(.34,1.56,.64,1),opacity .25s;opacity:0}
+  #auth-modal.open #auth-box{transform:translateY(0) scale(1);opacity:1}
+  .field:focus-within label{color:#ea580c}
+  .field:focus-within input,.field:focus-within textarea{border-color:#ea580c;box-shadow:0 0 0 3px rgba(234,88,12,.12);outline:none}
+
+  /* ── Scroll shadow ── */
+  .scrolled{box-shadow:0 2px 20px -4px rgba(15,23,42,.12)}
+
+  /* ── Toast ── */
+  @keyframes toastIn{from{opacity:0;transform:translateX(110%)}to{opacity:1;transform:translateX(0)}}
+  @keyframes toastOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(110%)}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  .anim-fu{animation:fadeUp .5s ease both}
+
+  /* ── Sidebar ── */
+  #sidebar{transition:transform .3s cubic-bezier(.4,0,.2,1)}
+  #sidebar-backdrop{opacity:0;pointer-events:none;transition:opacity .3s}
+  #sidebar-backdrop.open{opacity:1;pointer-events:auto}
+  #sidebar.open{transform:translateX(0) !important}
+
+  /* ── Toggle switch ── */
+  .toggle-track{width:52px;height:28px;border-radius:999px;background:#e2e8f0;transition:background .25s;cursor:pointer;position:relative;flex-shrink:0}
+  .toggle-track.on{background:#22c55e}
+  .toggle-thumb{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.18);transition:left .25s cubic-bezier(.34,1.56,.64,1)}
+  .toggle-track.on .toggle-thumb{left:27px}
+
+  /* ── Status badge ── */
+  .badge-online{background:#dcfce7;color:#166534}
+  .badge-offline{background:#f1f5f9;color:#475569}
+  .badge-delivered{background:#dcfce7;color:#15803d}
+  .badge-transit{background:#dbeafe;color:#1d4ed8}
+  .badge-picked{background:#fef9c3;color:#854d0e}
+  .badge-assigned{background:#ede9fe;color:#6d28d9}
+  .badge-pending{background:#ffedd5;color:#c2410c}
+  .badge-rejected{background:#fee2e2;color:#b91c1c}
+
+  /* ── Order card hover ── */
+  .order-card{transition:box-shadow .2s,border-color .2s}
+  .order-card:hover{box-shadow:0 12px 30px -5px rgba(15,23,42,.13);border-color:#fdba74}
+
+  /* ── Map placeholder pulse ── */
+  @keyframes mapPulse{0%,100%{opacity:.6}50%{opacity:1}}
+  .map-dot{animation:mapPulse 1.8s ease-in-out infinite}
+
+  /* ── Earnings chart bar ── */
+  .bar-fill{transition:height .6s cubic-bezier(.4,0,.2,1)}
+
+  /* ── Tab active ── */
+  .dash-tab{border-bottom:2px solid transparent;transition:all .2s;cursor:pointer}
+  .dash-tab.active{border-bottom-color:#ea580c;color:#ea580c}
+
+  /* ── Pulse ring for online indicator ── */
+  @keyframes pingRing{0%{transform:scale(1);opacity:.7}100%{transform:scale(2.2);opacity:0}}
+  .ping-ring{animation:pingRing 1.4s ease-out infinite}
+
+  /* ── Notification dot ── */
+  .notif-dot{width:8px;height:8px;border-radius:50%;background:#ea580c;position:absolute;top:6px;right:6px}
+
+  /* ── Slide-in for modal ── */
+  @keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+  .slide-up{animation:slideUp .3s cubic-bezier(.34,1.56,.64,1) both}
+
+  /* ── Progress steps ── */
+  .step-done .step-circle{background:#22c55e;border-color:#22c55e;color:#fff}
+  .step-active .step-circle{background:#ea580c;border-color:#ea580c;color:#fff}
+  .step-line-done{background:#22c55e}
 </style>
 </head>
-<body class="font-body">
+<body class="font-body bg-neutral-50 text-neutral-900">
 
+<!-- Toast stack -->
 <div id="toast-stack" class="fixed top-20 right-3 z-[9999] flex flex-col gap-2 w-80 max-w-[calc(100vw-1.5rem)] pointer-events-none"></div>
 
-<!-- TOP BAR -->
-<div class="bg-neutral-900 text-neutral-400 py-1.5 px-4 text-xs hidden md:block">
-  <div class="max-w-7xl mx-auto flex items-center justify-between">
-    <div class="flex items-center gap-5">
-      <a href="tel:+2348001234567" class="flex items-center gap-1.5 hover:text-primary-400 transition-colors"><i data-lucide="phone" class="w-3 h-3"></i>+234 800 AHIA GLOBAL</a>
-      <a href="mailto:riders@ahiaglobal.com" class="flex items-center gap-1.5 hover:text-primary-400 transition-colors"><i data-lucide="mail" class="w-3 h-3"></i>riders@ahiaglobal.com</a>
+<!-- ═══════════════════════════════════════ AUTH MODAL ═══════════════════════════════════════ -->
+<div id="auth-modal" class="fixed inset-0 z-[500] flex items-center justify-center p-4" style="background:rgba(15,23,42,.6);backdrop-filter:blur(6px)">
+  <div id="auth-box" class="bg-white rounded-xl3 shadow-modal w-full max-w-[420px] relative overflow-hidden max-h-[90vh] overflow-y-auto">
+    <button onclick="closeAuth()" class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center"><i data-lucide="x" class="w-4 h-4 text-neutral-600"></i></button>
+    <div class="flex border-b border-neutral-100">
+      <button id="tab-login" onclick="switchAuth('login')" class="flex-1 py-4 text-sm font-semibold text-primary-600 border-b-2 border-primary-600">Sign In</button>
+      <button id="tab-signup" onclick="switchAuth('signup')" class="flex-1 py-4 text-sm font-semibold text-neutral-400 border-b-2 border-transparent hover:text-neutral-700">Create Account</button>
     </div>
-    <div class="flex items-center gap-4">
-      <a href="index.html" class="hover:text-primary-400 transition-colors">Back to Shop</a>
-      <div class="h-3 w-px bg-neutral-700"></div>
-      <a href="sell.html" class="hover:text-primary-400 transition-colors">Become a Seller</a>
+    <div id="panel-login" class="p-6">
+      <div class="text-center mb-5"><div class="w-11 h-11 bg-primary-600 rounded-xl flex items-center justify-center text-white font-heading font-bold text-lg mx-auto mb-2">A</div><h2 class="font-heading text-xl font-bold">Welcome back</h2></div>
+      <div class="space-y-3">
+        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Email</label><input id="login-email" type="email" placeholder="you@example.com" class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"></div>
+        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Password</label><div class="relative"><input id="login-pw" type="password" placeholder="••••••••" class="w-full px-4 py-2.5 pr-10 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"><button type="button" onclick="togglePw('login-pw',this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"><i data-lucide="eye" class="w-4 h-4"></i></button></div></div>
+        <button onclick="handleLogin()" class="w-full bg-primary-600 hover:bg-primary-700 text-white py-3 rounded-full font-semibold text-sm flex items-center justify-center gap-2">Sign In <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+      </div>
+      <p class="text-center text-sm text-neutral-500 mt-4">No account? <button onclick="switchAuth('signup')" class="text-primary-600 font-semibold hover:underline">Create one</button></p>
+    </div>
+    <div id="panel-signup" class="p-6 hidden">
+      <div class="text-center mb-5"><div class="w-11 h-11 bg-primary-600 rounded-xl flex items-center justify-center text-white font-heading font-bold text-lg mx-auto mb-2">A</div><h2 class="font-heading text-xl font-bold">Create account</h2></div>
+      <div class="space-y-3">
+        <div class="grid grid-cols-2 gap-3">
+          <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">First name</label><input type="text" placeholder="John" class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50"></div>
+          <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Last name</label><input type="text" placeholder="Doe" class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50"></div>
+        </div>
+        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Email</label><input type="email" placeholder="you@example.com" class="w-full px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50"></div>
+        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1">Password</label><div class="relative"><input id="signup-pw" type="password" placeholder="Min. 8 characters" class="w-full px-4 py-2.5 pr-10 border border-neutral-200 rounded-lg text-sm bg-neutral-50"><button type="button" onclick="togglePw('signup-pw',this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"><i data-lucide="eye" class="w-4 h-4"></i></button></div></div>
+        <button onclick="handleSignup()" class="w-full bg-primary-600 hover:bg-primary-700 text-white py-3 rounded-full font-semibold text-sm flex items-center justify-center gap-2">Create Account <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+      </div>
+      <p class="text-center text-sm text-neutral-500 mt-4">Have account? <button onclick="switchAuth('login')" class="text-primary-600 font-semibold hover:underline">Sign in</button></p>
     </div>
   </div>
 </div>
 
-<!-- HEADER -->
-<header id="main-header" class="sticky top-0 z-[200] bg-white border-b border-neutral-200 transition-shadow">
-  <div class="max-w-7xl mx-auto px-5 py-4 flex items-center justify-between gap-4">
-    <a href="index.html" class="flex items-center flex-shrink-0">
-          <img src="image.png" alt="Ahia Global" class="h-14 md:h-16 w-auto object-contain">
-          <span style="margin-left: -10px;"
-            class="font-heading font-bold text-xl md:text-2xl text-neutral-900 tracking-tight leading-none">ahia<span
-              class="text-primary-600">global</span></span>
-        </a>
-    <div class="flex items-center gap-3">
-      <a href="index.html" class="hidden md:flex items-center gap-1.5 text-sm text-neutral-600 hover:text-primary-600 transition-colors"><i data-lucide="shopping-bag" class="w-4 h-4"></i>Shop</a>
-      <a href="sell.html" class="hidden md:flex items-center gap-1.5 text-sm text-neutral-600 hover:text-primary-600 transition-colors"><i data-lucide="store" class="w-4 h-4"></i>Sell</a>
-      <button onclick="document.getElementById('apply-section').scrollIntoView({behavior:'smooth'})" class="flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all">
-        Apply Now <i data-lucide="arrow-right" class="w-4 h-4"></i>
-      </button>
+<!-- ═══════════════════════════════════════ ORDER ACTION MODAL ═══════════════════════════════════════ -->
+<div id="order-modal" class="fixed inset-0 z-[400] flex items-end sm:items-center justify-center p-0 sm:p-4 hidden" style="background:rgba(15,23,42,.55);backdrop-filter:blur(4px)">
+  <div id="order-modal-box" class="bg-white rounded-t-xl3 sm:rounded-xl3 shadow-modal w-full sm:max-w-[460px] slide-up overflow-hidden">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-neutral-100">
+      <h3 class="font-heading font-bold text-neutral-900" id="order-modal-title">Order #AH-00041</h3>
+      <button onclick="closeOrderModal()" class="w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center"><i data-lucide="x" class="w-4 h-4 text-neutral-600"></i></button>
+    </div>
+    <div class="p-5 space-y-4" id="order-modal-body">
+      <!-- filled by JS -->
     </div>
   </div>
-</header>
+</div>
 
-<!-- HERO -->
-<section class="bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 text-white py-16 md:py-24 relative overflow-hidden">
-  <div class="absolute inset-0 opacity-10" style="background:radial-gradient(circle at 70% 50%,#ea580c,transparent 55%)"></div>
-  <div class="max-w-7xl mx-auto px-5 relative z-10">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+<div id="sidebar-backdrop" class="fixed inset-0 z-[299] bg-neutral-900/40 md:hidden" onclick="closeSidebar()"></div>
+<aside id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-neutral-900 z-[300] flex flex-col -translate-x-full md:translate-x-0 transition-transform duration-300">
+  <!-- Logo -->
+  <div class="flex items-center gap-3 px-5 py-5 border-b border-neutral-800">
+    <img src="image.png" alt="Ahia Global" class="h-9 w-auto object-contain flex-shrink-0" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="w-8 h-8 bg-primary-600 rounded-lg items-center justify-center text-white font-bold font-heading text-sm flex-shrink-0" style="display:none">A</div>
+    <span class="font-heading font-bold text-white text-lg tracking-tight">ahia<span class="text-primary-500">global</span></span>
+    <button onclick="closeSidebar()" class="ml-auto md:hidden w-7 h-7 flex items-center justify-center text-neutral-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
+  </div>
+  <!-- Rider badge -->
+  <div class="px-4 py-3 border-b border-neutral-800">
+    <div class="flex items-center gap-3 bg-neutral-800 rounded-xl p-3">
+      <div class="w-10 h-10 rounded-full bg-primary-600 flex items-center justify-center text-white font-bold font-heading flex-shrink-0">EK</div>
+      <div class="min-w-0">
+        <p class="text-white text-sm font-semibold truncate">Emeka Okafor</p>
+        <p class="text-neutral-400 text-xs truncate">Rider · Lagos Express Co.</p>
+      </div>
+      <div class="flex-shrink-0 relative">
+        <div class="w-2.5 h-2.5 rounded-full bg-green-400" id="sidebar-status-dot"></div>
+        <div class="ping-ring w-2.5 h-2.5 rounded-full bg-green-400 absolute inset-0" id="sidebar-ping"></div>
+      </div>
+    </div>
+  </div>
+  <!-- Nav -->
+  <nav class="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
+    <button onclick="switchTab('overview')" id="nav-overview" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors active-nav">
+      <i data-lucide="layout-dashboard" class="w-4 h-4 flex-shrink-0"></i>Overview
+    </button>
+    <button onclick="switchTab('orders')" id="nav-orders" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors">
+      <i data-lucide="package" class="w-4 h-4 flex-shrink-0"></i>My Orders
+      <span class="ml-auto bg-primary-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">3</span>
+    </button>
+    <button onclick="switchTab('tracking')" id="nav-tracking" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors">
+      <i data-lucide="map-pin" class="w-4 h-4 flex-shrink-0"></i>Live Map
+    </button>
+    <button onclick="switchTab('earnings')" id="nav-earnings" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors">
+      <i data-lucide="wallet" class="w-4 h-4 flex-shrink-0"></i>Earnings
+    </button>
+    <div class="pt-3 pb-1 px-3"><p class="text-[10px] font-bold uppercase text-neutral-600 tracking-widest">Account</p></div>
+    <a href="#" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors">
+      <i data-lucide="user-circle" class="w-4 h-4 flex-shrink-0"></i>Profile
+    </a>
+    <a href="#" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors">
+      <i data-lucide="bell" class="w-4 h-4 flex-shrink-0"></i>Notifications
+      <span class="ml-auto bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">2</span>
+    </a>
+    <a href="index.html" class="sidebar-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors">
+      <i data-lucide="store" class="w-4 h-4 flex-shrink-0"></i>Back to Store
+    </a>
+  </nav>
+  <!-- Online toggle -->
+  <div class="px-4 py-4 border-t border-neutral-800">
+    <div class="flex items-center justify-between bg-neutral-800 rounded-xl px-4 py-3">
       <div>
-        <span class="inline-flex items-center gap-2 px-4 py-1.5 bg-primary-600/20 border border-primary-500/30 text-primary-400 text-xs font-bold rounded-full mb-5 uppercase tracking-wider afu a1"><i data-lucide="bike" class="w-3.5 h-3.5"></i>Now Hiring — Delivery Riders</span>
-        <h1 class="font-heading text-4xl md:text-5xl lg:text-6xl font-bold mb-5 leading-tight afu a2">Ride. Earn.<br><span class="text-primary-500">Grow.</span></h1>
-        <p class="text-neutral-300 text-base md:text-lg mb-8 max-w-lg leading-relaxed afu a3">Join thousands of AhiaGlobal delivery riders earning ₦3,000–₦15,000 daily. Set your own hours. Work in your city. Get paid weekly.</p>
-        <div class="flex flex-wrap gap-3 afu a4">
-          <button onclick="document.getElementById('apply-section').scrollIntoView({behavior:'smooth'})" class="flex items-center gap-2 px-8 py-3.5 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-full transition-all shadow-lg text-sm">
-            Start Earning Today <i data-lucide="arrow-right" class="w-4 h-4"></i>
-          </button>
-          <button onclick="document.getElementById('how-it-works').scrollIntoView({behavior:'smooth'})" class="px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full border border-white/20 transition-all text-sm">
-            How It Works
-          </button>
+        <p class="text-white text-xs font-semibold" id="sidebar-toggle-label">Online</p>
+        <p class="text-neutral-500 text-[10px]" id="sidebar-toggle-sub">Accepting orders</p>
+      </div>
+      <div class="toggle-track on" id="sidebar-toggle" onclick="toggleOnlineStatus()">
+        <div class="toggle-thumb"></div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══════════════════════════════════════ MAIN LAYOUT ═══════════════════════════════════════ -->
+<div class="md:flex md:h-screen md:overflow-hidden">
+  <!-- Spacer so main content doesn't go under the fixed sidebar on desktop -->
+  <div class="hidden md:block md:w-64 md:flex-shrink-0"></div>
+  <div class="flex-1 flex flex-col min-w-0 md:overflow-y-auto">
+
+    <!-- ── Top bar ── -->
+    <header id="main-header" class="sticky top-0 z-[200] bg-white border-b border-neutral-200 transition-shadow">
+      <div class="px-4 md:px-6 py-3 flex items-center gap-3">
+        <button onclick="openSidebar()" class="md:hidden w-9 h-9 flex items-center justify-center text-neutral-600 hover:bg-neutral-100 rounded-lg">
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+        <div class="hidden md:block">
+          <h1 class="font-heading font-bold text-neutral-900 text-lg" id="page-title">Dashboard Overview</h1>
+          <p class="text-xs text-neutral-500" id="page-sub">Friday, 20 March 2026</p>
         </div>
-        <!-- Quick stats -->
-        <div class="flex flex-wrap gap-6 mt-10 afu a4">
-          <div><p class="font-heading text-3xl font-bold text-primary-400">5,000+</p><p class="text-xs text-neutral-500 mt-0.5">Active Riders</p></div>
-          <div class="w-px bg-white/10"></div>
-          <div><p class="font-heading text-3xl font-bold text-white">₦15k</p><p class="text-xs text-neutral-500 mt-0.5">Max Daily Earnings</p></div>
-          <div class="w-px bg-white/10"></div>
-          <div><p class="font-heading text-3xl font-bold text-white">24h</p><p class="text-xs text-neutral-500 mt-0.5">To Get Started</p></div>
-          <div class="w-px bg-white/10"></div>
-          <div><p class="font-heading text-3xl font-bold text-green-400">Weekly</p><p class="text-xs text-neutral-500 mt-0.5">Pay Schedule</p></div>
+        <div class="ml-auto flex items-center gap-2">
+          <!-- Online status pill -->
+          <div class="flex items-center gap-2 px-3 py-1.5 rounded-full border border-neutral-200 bg-white text-xs font-semibold" id="status-pill">
+            <div class="relative">
+              <div class="w-2 h-2 rounded-full bg-green-500" id="status-dot"></div>
+              <div class="ping-ring w-2 h-2 rounded-full bg-green-400 absolute inset-0" id="status-ping"></div>
+            </div>
+            <span id="status-label">Online</span>
+          </div>
+          <!-- Notifications -->
+          <button class="relative w-9 h-9 flex items-center justify-center text-neutral-600 hover:bg-neutral-100 rounded-lg" onclick="showToast('info','Notifications','You have 2 new order assignments.')">
+            <i data-lucide="bell" class="w-5 h-5"></i>
+            <span class="notif-dot"></span>
+          </button>
+          <!-- Avatar -->
+          <div class="w-8 h-8 rounded-full bg-primary-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">EK</div>
         </div>
       </div>
-      <!-- Earnings calculator -->
-      <div class="hidden lg:block">
-        <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl3 p-7">
-          <h3 class="font-heading font-bold text-white text-lg mb-5 flex items-center gap-2"><i data-lucide="calculator" class="w-5 h-5 text-primary-500"></i>Earnings Calculator</h3>
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-neutral-300 mb-2">Deliveries per day</label>
-              <input type="range" id="del-slider" min="5" max="40" value="15" oninput="calcEarnings()" class="w-full accent-orange-500">
-              <div class="flex justify-between text-xs text-neutral-500 mt-1"><span>5</span><span>40</span></div>
+      <!-- Mobile tabs -->
+      <div class="flex md:hidden border-t border-neutral-100 overflow-x-auto scrollbar-hide">
+        <button onclick="switchTab('overview')" id="mob-nav-overview" class="dash-tab active flex-shrink-0 px-4 py-2.5 text-xs font-semibold text-primary-600">Overview</button>
+        <button onclick="switchTab('orders')" id="mob-nav-orders" class="dash-tab flex-shrink-0 px-4 py-2.5 text-xs font-semibold text-neutral-500">Orders <span class="ml-0.5 bg-primary-100 text-primary-700 text-[10px] font-bold px-1 py-0.5 rounded-full">3</span></button>
+        <button onclick="switchTab('tracking')" id="mob-nav-tracking" class="dash-tab flex-shrink-0 px-4 py-2.5 text-xs font-semibold text-neutral-500">Live Map</button>
+        <button onclick="switchTab('earnings')" id="mob-nav-earnings" class="dash-tab flex-shrink-0 px-4 py-2.5 text-xs font-semibold text-neutral-500">Earnings</button>
+      </div>
+    </header>
+
+    <!-- ═══════════════════ PAGE CONTENT ═══════════════════ -->
+    <main class="flex-1 px-4 md:px-6 py-5 pb-24 md:pb-6 space-y-5">
+
+      <!-- ════════ OVERVIEW TAB ════════ -->
+      <div id="tab-overview" class="space-y-5">
+
+        <!-- Welcome banner -->
+        <div class="bg-gradient-to-r from-neutral-900 to-neutral-800 rounded-xl2 p-5 flex items-center gap-4 anim-fu">
+          <div class="w-12 h-12 rounded-full bg-primary-600 flex items-center justify-center text-white font-bold font-heading text-lg flex-shrink-0">EK</div>
+          <div class="min-w-0 flex-1">
+            <h2 class="font-heading font-bold text-white text-base">Good morning, Emeka 👋</h2>
+            <p class="text-neutral-400 text-xs mt-0.5">You've completed <span class="text-primary-400 font-semibold">3 deliveries</span> today · Lagos Express Co.</p>
+          </div>
+          <div class="flex-shrink-0 hidden sm:block">
+            <div class="flex items-center gap-2 bg-green-900/40 border border-green-700/40 px-3 py-1.5 rounded-full">
+              <div class="w-1.5 h-1.5 rounded-full bg-green-400 ping-ring"></div>
+              <span class="text-green-400 text-xs font-semibold" id="banner-status">● Online</span>
             </div>
-            <div>
-              <label class="block text-sm font-medium text-neutral-300 mb-2">Days per week</label>
-              <div class="flex gap-2">
-                <button onclick="setDays(3,this)" class="flex-1 py-2 rounded-lg border border-white/20 text-xs font-semibold text-neutral-300 hover:border-primary-500 hover:text-primary-400 transition-all">3 days</button>
-                <button onclick="setDays(5,this)" class="flex-1 py-2 rounded-lg border border-primary-500 bg-primary-600/20 text-xs font-semibold text-primary-400 transition-all days-btn active">5 days</button>
-                <button onclick="setDays(7,this)" class="flex-1 py-2 rounded-lg border border-white/20 text-xs font-semibold text-neutral-300 hover:border-primary-500 hover:text-primary-400 transition-all">7 days</button>
+          </div>
+        </div>
+
+        <!-- Stat cards -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <div class="bg-white rounded-xl2 shadow-card border border-neutral-100 p-4 anim-fu" style="animation-delay:.05s">
+            <div class="flex items-center justify-between mb-3">
+              <div class="w-9 h-9 bg-orange-100 rounded-lg flex items-center justify-center"><i data-lucide="package-check" class="w-4 h-4 text-primary-600"></i></div>
+              <span class="text-xs text-green-600 font-semibold bg-green-50 px-2 py-0.5 rounded-full">+12%</span>
+            </div>
+            <p class="text-2xl font-heading font-bold text-neutral-900">47</p>
+            <p class="text-xs text-neutral-500 mt-0.5">Deliveries This Month</p>
+          </div>
+          <div class="bg-white rounded-xl2 shadow-card border border-neutral-100 p-4 anim-fu" style="animation-delay:.1s">
+            <div class="flex items-center justify-between mb-3">
+              <div class="w-9 h-9 bg-green-100 rounded-lg flex items-center justify-center"><i data-lucide="wallet" class="w-4 h-4 text-green-600"></i></div>
+              <span class="text-xs text-green-600 font-semibold bg-green-50 px-2 py-0.5 rounded-full">+8%</span>
+            </div>
+            <p class="text-2xl font-heading font-bold text-neutral-900">₦38,400</p>
+            <p class="text-xs text-neutral-500 mt-0.5">Earnings This Month</p>
+          </div>
+          <div class="bg-white rounded-xl2 shadow-card border border-neutral-100 p-4 anim-fu" style="animation-delay:.15s">
+            <div class="flex items-center justify-between mb-3">
+              <div class="w-9 h-9 bg-blue-100 rounded-lg flex items-center justify-center"><i data-lucide="star" class="w-4 h-4 text-blue-600"></i></div>
+            </div>
+            <p class="text-2xl font-heading font-bold text-neutral-900">4.8</p>
+            <p class="text-xs text-neutral-500 mt-0.5">Average Rating</p>
+          </div>
+          <div class="bg-white rounded-xl2 shadow-card border border-neutral-100 p-4 anim-fu" style="animation-delay:.2s">
+            <div class="flex items-center justify-between mb-3">
+              <div class="w-9 h-9 bg-purple-100 rounded-lg flex items-center justify-center"><i data-lucide="clock" class="w-4 h-4 text-purple-600"></i></div>
+            </div>
+            <p class="text-2xl font-heading font-bold text-neutral-900">18 min</p>
+            <p class="text-xs text-neutral-500 mt-0.5">Avg. Delivery Time</p>
+          </div>
+        </div>
+
+        <!-- Active order alert -->
+        <div class="bg-orange-50 border border-orange-200 rounded-xl2 p-4 flex items-start gap-3 anim-fu" style="animation-delay:.25s">
+          <div class="w-9 h-9 bg-primary-600 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+            <i data-lucide="truck" class="w-4 h-4 text-white"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold text-neutral-900">Active Delivery — #AH-00041</p>
+            <p class="text-xs text-neutral-600 mt-0.5">Pickup: 14 Broad St, Lagos Island → Drop: 22 Bode Thomas, Surulere</p>
+            <div class="flex items-center gap-2 mt-2">
+              <span class="text-[10px] font-bold uppercase badge-transit px-2 py-0.5 rounded-full">In Transit</span>
+              <span class="text-xs text-neutral-500">Est. arrival: 14 min</span>
+            </div>
+          </div>
+          <button onclick="openOrderModal('AH-00041')" class="flex-shrink-0 text-xs font-semibold text-primary-600 hover:underline mt-1">Update</button>
+        </div>
+
+        <!-- Assigned orders row -->
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-heading font-bold text-neutral-900 text-sm">Assigned Orders</h3>
+            <button onclick="switchTab('orders')" class="text-xs text-primary-600 font-semibold hover:underline flex items-center gap-1">View All <i data-lucide="arrow-right" class="w-3 h-3"></i></button>
+          </div>
+          <div class="space-y-2" id="overview-orders-list">
+            <!-- rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Online/Offline toggle card -->
+        <div class="bg-white rounded-xl2 shadow-card border border-neutral-100 p-5 flex items-center gap-4 anim-fu">
+          <div class="flex-1 min-w-0">
+            <h3 class="font-heading font-semibold text-neutral-900 text-sm">Availability Status</h3>
+            <p class="text-xs text-neutral-500 mt-0.5" id="avail-subtext">You are currently accepting orders. Toggle to go offline.</p>
+          </div>
+          <div class="toggle-track on flex-shrink-0" id="avail-toggle" onclick="toggleOnlineStatus()">
+            <div class="toggle-thumb"></div>
+          </div>
+        </div>
+
+      </div><!-- /tab-overview -->
+      </div>
+
+      <!-- ════════ ORDERS TAB ════════ -->
+      <div id="tab-orders" class="hidden space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="font-heading font-bold text-neutral-900">My Orders</h2>
+          <div class="flex gap-2">
+            <select id="order-filter" onchange="renderOrders()" class="text-xs border border-neutral-200 rounded-lg px-3 py-2 bg-white text-neutral-700 appearance-none">
+              <option value="all">All</option>
+              <option value="assigned">Assigned</option>
+              <option value="transit">In Transit</option>
+              <option value="delivered">Delivered</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Order cards -->
+        <div id="orders-list" class="space-y-3">
+          <!-- rendered by JS -->
+        </div>
+      </div>
+
+      <!-- ════════ TRACKING TAB ════════ -->
+      <div id="tab-tracking" class="hidden space-y-4">
+        <h2 class="font-heading font-bold text-neutral-900">Live Map</h2>
+        <!-- Map placeholder -->
+        <div class="bg-white rounded-xl2 shadow-card border border-neutral-100 overflow-hidden" style="height:340px;position:relative">
+          <!-- SVG map illustration -->
+          <svg width="100%" height="100%" viewBox="0 0 700 340" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0">
+            <rect width="700" height="340" fill="#e8f0e0"/>
+            <!-- Roads -->
+            <line x1="0" y1="170" x2="700" y2="170" stroke="#fff" stroke-width="14" opacity=".9"/>
+            <line x1="0" y1="100" x2="700" y2="240" stroke="#fff" stroke-width="8" opacity=".6"/>
+            <line x1="200" y1="0" x2="200" y2="340" stroke="#fff" stroke-width="10" opacity=".7"/>
+            <line x1="450" y1="0" x2="450" y2="340" stroke="#fff" stroke-width="8" opacity=".6"/>
+            <line x1="0" y1="270" x2="700" y2="270" stroke="#fff" stroke-width="6" opacity=".5"/>
+            <!-- Blocks -->
+            <rect x="30" y="30" width="140" height="50" rx="4" fill="#d1e8c4" opacity=".7"/>
+            <rect x="220" y="30" width="200" height="50" rx="4" fill="#d1e8c4" opacity=".7"/>
+            <rect x="460" y="30" width="200" height="50" rx="4" fill="#d1e8c4" opacity=".7"/>
+            <rect x="30" y="200" width="140" height="50" rx="4" fill="#d1e8c4" opacity=".7"/>
+            <rect x="220" y="200" width="200" height="50" rx="4" fill="#d1e8c4" opacity=".7"/>
+            <rect x="460" y="200" width="200" height="50" rx="4" fill="#d1e8c4" opacity=".7"/>
+            <rect x="30" y="290" width="140" height="40" rx="4" fill="#d1e8c4" opacity=".5"/>
+            <rect x="460" y="290" width="200" height="40" rx="4" fill="#d1e8c4" opacity=".5"/>
+            <!-- Destination pin -->
+            <circle cx="540" cy="170" r="18" fill="#fff" opacity=".95"/>
+            <circle cx="540" cy="170" r="12" fill="#ea580c"/>
+            <text x="540" y="175" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">B</text>
+          </svg>
+          <!-- Animated rider dot -->
+          <div style="position:absolute;left:calc(35% - 14px);top:calc(50% - 14px);z-index:10">
+            <div class="map-dot w-7 h-7 bg-primary-600 border-4 border-white rounded-full shadow-hover flex items-center justify-center">
+              <i data-lucide="bike" class="w-3 h-3 text-white"></i>
+            </div>
+            <div class="ping-ring w-7 h-7 bg-primary-400 rounded-full absolute inset-0" style="z-index:-1"></div>
+          </div>
+          <!-- Map overlay info -->
+          <div class="absolute bottom-3 left-3 right-3">
+            <div class="bg-white/90 backdrop-blur-sm rounded-xl border border-neutral-200 shadow-card p-3 flex items-center gap-3">
+              <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center flex-shrink-0"><i data-lucide="navigation" class="w-4 h-4 text-white"></i></div>
+              <div class="flex-1 min-w-0">
+                <p class="text-xs font-semibold text-neutral-900">En route to 22 Bode Thomas, Surulere</p>
+                <p class="text-[10px] text-neutral-500 mt-0.5">Est. 14 min · 3.2 km remaining</p>
               </div>
+              <span class="badge-transit text-[10px] font-bold px-2 py-1 rounded-full flex-shrink-0">In Transit</span>
             </div>
           </div>
-          <div class="mt-6 pt-5 border-t border-white/10 space-y-3">
-            <div class="flex justify-between items-center"><span class="text-sm text-neutral-400">Per delivery</span><span class="text-sm font-semibold text-white">₦<span id="per-del">500</span></span></div>
-            <div class="flex justify-between items-center"><span class="text-sm text-neutral-400">Daily earnings</span><span class="text-sm font-semibold text-white">₦<span id="daily-earn">7,500</span></span></div>
-            <div class="flex justify-between items-center pt-2 border-t border-white/10"><span class="text-base font-bold text-white">Weekly earnings</span><span class="text-2xl font-heading font-bold text-primary-400">₦<span id="weekly-earn">37,500</span></span></div>
-            <div class="flex justify-between items-center"><span class="text-sm text-neutral-400">Monthly estimate</span><span class="text-sm font-bold text-green-400">₦<span id="monthly-earn">150,000</span></span></div>
+        </div>
+
+        <!-- Delivery progress steps -->
+        <div class="bg-white rounded-xl2 shadow-card border border-neutral-100 p-5">
+          <h3 class="font-heading font-semibold text-neutral-900 text-sm mb-4">Delivery Progress — #AH-00041</h3>
+          <div class="flex items-start gap-0" id="progress-steps">
+            <div class="flex flex-col items-center flex-1 step-done">
+              <div class="step-circle w-8 h-8 rounded-full border-2 border-neutral-200 flex items-center justify-center text-xs font-bold text-neutral-400 bg-white z-10"><i data-lucide="check" class="w-4 h-4"></i></div>
+              <div class="w-full h-1 mt-2 step-line-done" style="margin-left:50%"></div>
+              <p class="text-[10px] font-semibold text-green-700 mt-2 text-center">Accepted</p>
+            </div>
+            <div class="flex flex-col items-center flex-1 step-done">
+              <div class="step-circle w-8 h-8 rounded-full border-2 border-neutral-200 flex items-center justify-center text-xs font-bold text-neutral-400 bg-white z-10"><i data-lucide="check" class="w-4 h-4"></i></div>
+              <div class="w-full h-1 mt-2 step-line-done"></div>
+              <p class="text-[10px] font-semibold text-green-700 mt-2 text-center">Picked Up</p>
+            </div>
+            <div class="flex flex-col items-center flex-1 step-active">
+              <div class="step-circle w-8 h-8 rounded-full border-2 border-neutral-200 flex items-center justify-center text-xs font-bold text-neutral-400 bg-white z-10"><i data-lucide="truck" class="w-4 h-4"></i></div>
+              <div class="w-full h-1 mt-2 bg-neutral-200" style="margin-right:50%"></div>
+              <p class="text-[10px] font-semibold text-primary-600 mt-2 text-center">In Transit</p>
+            </div>
+            <div class="flex flex-col items-center flex-1">
+              <div class="step-circle w-8 h-8 rounded-full border-2 border-neutral-200 flex items-center justify-center text-xs font-bold text-neutral-400 bg-white z-10">4</div>
+              <p class="text-[10px] font-semibold text-neutral-400 mt-2 text-center">Delivered</p>
+            </div>
           </div>
-          <button onclick="document.getElementById('apply-section').scrollIntoView({behavior:'smooth'})" class="w-full mt-5 bg-primary-600 hover:bg-primary-700 text-white py-3 rounded-full font-semibold text-sm transition-all">
-            Apply Now — Start Earning
+          <button onclick="markDelivered()" class="mt-5 w-full flex items-center justify-center gap-2 py-3 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-full transition-colors shadow-card">
+            <i data-lucide="check-circle" class="w-4 h-4"></i>Mark as Delivered
           </button>
         </div>
       </div>
-    </div>
-  </div>
-</section>
 
-<!-- BENEFITS -->
-<section class="py-14 bg-white">
-  <div class="max-w-6xl mx-auto px-5">
-    <div class="text-center mb-10">
-      <h2 class="font-heading text-3xl md:text-4xl font-bold text-neutral-900 mb-3">Why Ride with AhiaGlobal?</h2>
-      <p class="text-neutral-500">Everything you need to earn well and work smart.</p>
-    </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
-      <div class="stat-card bg-neutral-50 rounded-xl2 border border-neutral-100 p-6">
-        <div class="w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center mb-4"><i data-lucide="clock" class="w-6 h-6 text-primary-600"></i></div>
-        <h3 class="font-heading font-bold text-neutral-900 mb-2">Flexible Hours</h3>
-        <p class="text-sm text-neutral-500 leading-relaxed">Work whenever you want. Morning, evening or weekends — you decide your schedule. No minimum hours.</p>
-      </div>
-      <div class="stat-card bg-neutral-50 rounded-xl2 border border-neutral-100 p-6">
-        <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mb-4"><i data-lucide="banknote" class="w-6 h-6 text-green-600"></i></div>
-        <h3 class="font-heading font-bold text-neutral-900 mb-2">Weekly Pay</h3>
-        <p class="text-sm text-neutral-500 leading-relaxed">Get paid every Friday directly to your bank or mobile money. No waiting 30 days — we pay on time, every time.</p>
-      </div>
-      <div class="stat-card bg-neutral-50 rounded-xl2 border border-neutral-100 p-6">
-        <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-4"><i data-lucide="map-pin" class="w-6 h-6 text-blue-600"></i></div>
-        <h3 class="font-heading font-bold text-neutral-900 mb-2">Work in Your Area</h3>
-        <p class="text-sm text-neutral-500 leading-relaxed">Only deliver within your zone. No long-distance routes. Operate in your neighbourhood, save fuel costs.</p>
-      </div>
-      <div class="stat-card bg-neutral-50 rounded-xl2 border border-neutral-100 p-6">
-        <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center mb-4"><i data-lucide="trending-up" class="w-6 h-6 text-amber-600"></i></div>
-        <h3 class="font-heading font-bold text-neutral-900 mb-2">Earn More with Bonuses</h3>
-        <p class="text-sm text-neutral-500 leading-relaxed">Earn daily delivery bonuses, peak-hour multipliers (1.5×–2×) and monthly performance rewards up to ₦50,000.</p>
-      </div>
-      <div class="stat-card bg-neutral-50 rounded-xl2 border border-neutral-100 p-6">
-        <div class="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center mb-4"><i data-lucide="shield-check" class="w-6 h-6 text-purple-600"></i></div>
-        <h3 class="font-heading font-bold text-neutral-900 mb-2">Insurance Cover</h3>
-        <p class="text-sm text-neutral-500 leading-relaxed">All active riders get accident cover while on delivery. Your safety is our priority — ride with peace of mind.</p>
-      </div>
-      <div class="stat-card bg-neutral-50 rounded-xl2 border border-neutral-100 p-6">
-        <div class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center mb-4"><i data-lucide="headphones" class="w-6 h-6 text-red-500"></i></div>
-        <h3 class="font-heading font-bold text-neutral-900 mb-2">24/7 Rider Support</h3>
-        <p class="text-sm text-neutral-500 leading-relaxed">Dedicated rider support team available round the clock via phone, WhatsApp and the AhiaRider app.</p>
-      </div>
-    </div>
-  </div>
-</section>
+      <!-- ════════ EARNINGS TAB ════════ -->
+      <div id="tab-earnings" class="hidden space-y-4">
+        <h2 class="font-heading font-bold text-neutral-900">Earnings</h2>
 
-<!-- EARNINGS BREAKDOWN -->
-<section class="py-14 bg-neutral-50">
-  <div class="max-w-5xl mx-auto px-5">
-    <div class="text-center mb-10">
-      <h2 class="font-heading text-3xl font-bold text-neutral-900 mb-3">How Much Can You Earn?</h2>
-      <p class="text-neutral-500">Transparent pricing — no hidden cuts.</p>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-      <div class="bg-white rounded-xl2 border border-neutral-200 p-6 text-center hover:border-primary-300 hover:shadow-hover transition-all">
-        <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="bike" class="w-8 h-8 text-blue-600"></i></div>
-        <h3 class="font-heading font-bold text-neutral-900 text-lg mb-1">Bicycle</h3>
-        <p class="text-3xl font-heading font-bold text-primary-600 mb-1">₦300–₦500</p>
-        <p class="text-sm text-neutral-500 mb-4">per delivery</p>
-        <ul class="text-sm text-neutral-600 space-y-1.5 text-left">
-          <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500 flex-shrink-0"></i>Short-distance routes (0–3km)</li>
-          <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500 flex-shrink-0"></i>Low fuel cost</li>
-          <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500 flex-shrink-0"></i>Best for dense areas</li>
-        </ul>
-      </div>
-      <div class="bg-white rounded-xl2 border-2 border-primary-600 p-6 text-center relative shadow-hover">
-        <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary-600 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">Most Popular</div>
-        <div class="w-16 h-16 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="bike" class="w-8 h-8 text-primary-600"></i></div>
-        <h3 class="font-heading font-bold text-neutral-900 text-lg mb-1">Motorcycle</h3>
-        <p class="text-3xl font-heading font-bold text-primary-600 mb-1">₦500–₦800</p>
-        <p class="text-sm text-neutral-500 mb-4">per delivery</p>
-        <ul class="text-sm text-neutral-600 space-y-1.5 text-left">
-          <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500 flex-shrink-0"></i>Medium routes (3–10km)</li>
-          <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500 flex-shrink-0"></i>Higher order volume</li>
-          <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500 flex-shrink-0"></i>Peak-hour bonuses 1.5×</li>
-          <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500 flex-shrink-0"></i>Earn up to ₦15,000/day</li>
-        </ul>
-      </div>
-      <div class="bg-white rounded-xl2 border border-neutral-200 p-6 text-center hover:border-primary-300 hover:shadow-hover transition-all">
-        <div class="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="car" class="w-8 h-8 text-neutral-600"></i></div>
-        <h3 class="font-heading font-bold text-neutral-900 text-lg mb-1">Car / Van</h3>
-        <p class="text-3xl font-heading font-bold text-primary-600 mb-1">₦800–₦2,000</p>
-        <p class="text-sm text-neutral-500 mb-4">per delivery</p>
-        <ul class="text-sm text-neutral-600 space-y-1.5 text-left">
-          <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500 flex-shrink-0"></i>Bulky & fragile items</li>
-          <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500 flex-shrink-0"></i>Multi-drop routes</li>
-          <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500 flex-shrink-0"></i>Enterprise contracts available</li>
-        </ul>
-      </div>
-    </div>
-    <!-- Bonus table -->
-    <div class="mt-8 bg-white rounded-xl2 border border-neutral-100 overflow-hidden shadow-card">
-      <div class="px-5 py-3.5 bg-neutral-50 border-b border-neutral-100">
-        <h3 class="font-heading font-bold text-sm text-neutral-900 flex items-center gap-2"><i data-lucide="zap" class="w-4 h-4 text-primary-600"></i>Bonus & Incentive Structure</h3>
-      </div>
-      <div class="overflow-x-auto">
-        <table class="w-full text-sm">
-          <thead><tr class="bg-neutral-50 text-left"><th class="px-5 py-3 text-xs font-bold text-neutral-500 uppercase tracking-wide">Bonus Type</th><th class="px-5 py-3 text-xs font-bold text-neutral-500 uppercase tracking-wide">Trigger</th><th class="px-5 py-3 text-xs font-bold text-neutral-500 uppercase tracking-wide">Reward</th></tr></thead>
-          <tbody class="divide-y divide-neutral-50">
-            <tr class="hover:bg-neutral-50"><td class="px-5 py-3.5 font-medium text-neutral-900">Peak Hours Bonus</td><td class="px-5 py-3.5 text-neutral-500">Deliver 7am–9am or 5pm–8pm</td><td class="px-5 py-3.5 font-bold text-green-600">1.5× per delivery</td></tr>
-            <tr class="hover:bg-neutral-50"><td class="px-5 py-3.5 font-medium text-neutral-900">Weekend Warrior</td><td class="px-5 py-3.5 text-neutral-500">Complete 20+ deliveries on Saturday</td><td class="px-5 py-3.5 font-bold text-green-600">+ ₦5,000 bonus</td></tr>
-            <tr class="hover:bg-neutral-50"><td class="px-5 py-3.5 font-medium text-neutral-900">Star Rating Bonus</td><td class="px-5 py-3.5 text-neutral-500">Maintain 4.8+ rating for 30 days</td><td class="px-5 py-3.5 font-bold text-green-600">+ ₦10,000/month</td></tr>
-            <tr class="hover:bg-neutral-50"><td class="px-5 py-3.5 font-medium text-neutral-900">Referral Bonus</td><td class="px-5 py-3.5 text-neutral-500">Refer a rider who completes 50 trips</td><td class="px-5 py-3.5 font-bold text-green-600">₦3,000 per referral</td></tr>
-            <tr class="hover:bg-neutral-50"><td class="px-5 py-3.5 font-medium text-neutral-900">Top Rider Award</td><td class="px-5 py-3.5 text-neutral-500">Top 10 riders in your zone/month</td><td class="px-5 py-3.5 font-bold text-green-600">₦50,000 + trophy</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- HOW IT WORKS -->
-<section id="how-it-works" class="py-14 bg-white">
-  <div class="max-w-5xl mx-auto px-5">
-    <div class="text-center mb-10">
-      <h2 class="font-heading text-3xl font-bold text-neutral-900 mb-3">Get Started in 4 Simple Steps</h2>
-      <p class="text-neutral-500">From sign-up to first delivery in as little as 24 hours.</p>
-    </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-      <div class="flex flex-col items-center text-center gap-4">
-        <div class="step-circle">1</div>
-        <div class="w-14 h-14 bg-primary-50 rounded-xl2 flex items-center justify-center"><i data-lucide="clipboard-list" class="w-7 h-7 text-primary-600"></i></div>
-        <h3 class="font-heading font-bold text-neutral-900">Apply Online</h3>
-        <p class="text-sm text-neutral-500 leading-relaxed">Fill in the form below with your details and vehicle information.</p>
-      </div>
-      <div class="flex flex-col items-center text-center gap-4">
-        <div class="step-circle">2</div>
-        <div class="w-14 h-14 bg-blue-50 rounded-xl2 flex items-center justify-center"><i data-lucide="file-check" class="w-7 h-7 text-blue-600"></i></div>
-        <h3 class="font-heading font-bold text-neutral-900">Verification</h3>
-        <p class="text-sm text-neutral-500 leading-relaxed">Submit your ID, licence and vehicle documents. Approved within 24hrs.</p>
-      </div>
-      <div class="flex flex-col items-center text-center gap-4">
-        <div class="step-circle">3</div>
-        <div class="w-14 h-14 bg-green-50 rounded-xl2 flex items-center justify-center"><i data-lucide="smartphone" class="w-7 h-7 text-green-600"></i></div>
-        <h3 class="font-heading font-bold text-neutral-900">Get the App</h3>
-        <p class="text-sm text-neutral-500 leading-relaxed">Download the AhiaRider app, complete a short online training and activate your account.</p>
-      </div>
-      <div class="flex flex-col items-center text-center gap-4">
-        <div class="step-circle">4</div>
-        <div class="w-14 h-14 bg-amber-50 rounded-xl2 flex items-center justify-center"><i data-lucide="banknote" class="w-7 h-7 text-amber-600"></i></div>
-        <h3 class="font-heading font-bold text-neutral-900">Start Earning</h3>
-        <p class="text-sm text-neutral-500 leading-relaxed">Accept orders on the app and earn from your very first delivery. Weekly payouts.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- REQUIREMENTS -->
-<section class="py-14 bg-neutral-50">
-  <div class="max-w-5xl mx-auto px-5">
-    <div class="text-center mb-10">
-      <h2 class="font-heading text-3xl font-bold text-neutral-900 mb-3">What You Need to Join</h2>
-      <p class="text-neutral-500">Minimal requirements — we focus on dependability and attitude.</p>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div class="bg-white rounded-xl2 border border-neutral-100 p-6 shadow-card">
-        <h3 class="font-heading font-bold text-neutral-900 mb-4 flex items-center gap-2"><i data-lucide="user-check" class="w-5 h-5 text-primary-600"></i>Personal Requirements</h3>
-        <ul class="space-y-3 text-sm text-neutral-600">
-          <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5"></i>Age 18 years or older</li>
-          <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5"></i>Valid National ID or NIN (BVN acceptable)</li>
-          <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5"></i>Smartphone (Android 8.0+ or iOS 13+)</li>
-          <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5"></i>Bank account or registered mobile money wallet</li>
-          <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5"></i>Good knowledge of local roads and areas</li>
-        </ul>
-      </div>
-      <div class="bg-white rounded-xl2 border border-neutral-100 p-6 shadow-card">
-        <h3 class="font-heading font-bold text-neutral-900 mb-4 flex items-center gap-2"><i data-lucide="bike" class="w-5 h-5 text-primary-600"></i>Vehicle Requirements</h3>
-        <ul class="space-y-3 text-sm text-neutral-600">
-          <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5"></i>Working bicycle, motorcycle or car/van</li>
-          <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5"></i>Valid vehicle registration documents</li>
-          <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5"></i>Valid motorcycle/driving licence (for motorized vehicles)</li>
-          <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5"></i>Third-party vehicle insurance</li>
-          <li class="flex items-start gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5"></i>Delivery bag or box (we provide on request)</li>
-        </ul>
-      </div>
-    </div>
-    <div class="mt-5 bg-primary-50 border border-primary-100 rounded-xl2 p-4 flex items-start gap-3">
-      <i data-lucide="info" class="w-5 h-5 text-primary-600 flex-shrink-0 mt-0.5"></i>
-      <p class="text-sm text-primary-700"><strong>No vehicle?</strong> We have partnerships with motorcycle leasing companies. Ask about our Rider Starter Programme — ride with a leased bike and pay back from earnings with zero upfront cost.</p>
-    </div>
-  </div>
-</section>
-
-<!-- TESTIMONIALS -->
-<section class="py-14 bg-white">
-  <div class="max-w-5xl mx-auto px-5">
-    <div class="text-center mb-10">
-      <h2 class="font-heading text-3xl font-bold text-neutral-900 mb-3">Riders Love Working With Us</h2>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-      <div class="bg-neutral-50 rounded-xl2 border border-neutral-100 p-5">
-        <div class="flex items-center gap-1 mb-3">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-        </div>
-        <p class="text-sm text-neutral-600 italic mb-4">"I started with AhiaGlobal 6 months ago while studying at UNILAG. I earn ₦60,000–₦80,000 monthly just doing weekends and evenings. Best decision I ever made."</p>
-        <div class="flex items-center gap-2.5"><div class="w-9 h-9 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-bold text-sm">AO</div><div><p class="text-sm font-semibold text-neutral-900">Adewale Okafor</p><p class="text-xs text-neutral-500">Motorcycle Rider · Lagos Island</p></div></div>
-      </div>
-      <div class="bg-neutral-50 rounded-xl2 border border-neutral-100 p-5">
-        <div class="flex items-center gap-1 mb-3">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-        </div>
-        <p class="text-sm text-neutral-600 italic mb-4">"Weekly pay is what sold me. Before, I worked for a delivery company that paid monthly and always delayed. AhiaGlobal pays on Friday, every Friday without fail. Respect."</p>
-        <div class="flex items-center gap-2.5"><div class="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-bold text-sm">CI</div><div><p class="text-sm font-semibold text-neutral-900">Chidinma Ike</p><p class="text-xs text-neutral-500">Bicycle Rider · Surulere, Lagos</p></div></div>
-      </div>
-      <div class="bg-neutral-50 rounded-xl2 border border-neutral-100 p-5">
-        <div class="flex items-center gap-1 mb-3">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#facc15"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#e2e8f0"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-        </div>
-        <p class="text-sm text-neutral-600 italic mb-4">"Been driving with AhiaGlobal for 8 months using my car for bulky deliveries. The enterprise contracts are gold — same clients, regular routes, solid income of ₦200k+ monthly."</p>
-        <div class="flex items-center gap-2.5"><div class="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-sm">EB</div><div><p class="text-sm font-semibold text-neutral-900">Emeka Balogun</p><p class="text-xs text-neutral-500">Car Rider · Victoria Island, Lagos</p></div></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- APPLICATION FORM -->
-<section id="apply-section" class="py-14 bg-neutral-50">
-  <div class="max-w-2xl mx-auto px-5">
-    <div class="text-center mb-8">
-      <h2 class="font-heading text-3xl font-bold text-neutral-900 mb-3">Apply to Become a Rider</h2>
-      <p class="text-neutral-500">Takes 3 minutes. Our team will contact you within 24 hours.</p>
-    </div>
-
-    <div id="rider-form-wrap" class="bg-white rounded-xl3 shadow-card border border-neutral-100 p-6 md:p-8">
-      <!-- Vehicle type selector -->
-      <div class="mb-5">
-        <label class="block text-sm font-semibold text-neutral-700 mb-3">Select your vehicle type</label>
-        <div class="grid grid-cols-3 gap-3">
-          <div class="vehicle-card selected border-2 border-primary-600 bg-primary-50 rounded-xl2 p-4 text-center" onclick="selectVehicle(this,'bicycle')">
-            <i data-lucide="bike" class="vehicle-icon w-7 h-7 text-primary-600 mx-auto mb-2"></i>
-            <p class="text-xs font-bold text-neutral-800">Bicycle</p>
-            <p class="text-[10px] text-neutral-500 mt-0.5">₦300–₦500/del</p>
-            <input type="radio" name="vehicle" value="bicycle" checked class="sr-only">
+        <!-- Earnings summary -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="bg-gradient-to-br from-neutral-900 to-neutral-800 rounded-xl2 p-5 text-white sm:col-span-1">
+            <p class="text-xs text-neutral-400 mb-1">Total Balance</p>
+            <p class="text-3xl font-heading font-bold">₦38,400</p>
+            <p class="text-xs text-green-400 mt-1 font-semibold">+₦4,200 this week</p>
+            <button onclick="showToast('success','Withdrawal','Withdrawal request of ₦38,400 submitted!')" class="mt-4 w-full text-center bg-primary-600 hover:bg-primary-500 text-white text-xs font-semibold py-2 rounded-full transition-colors">
+              Withdraw Funds
+            </button>
           </div>
-          <div class="vehicle-card border-2 border-neutral-200 rounded-xl2 p-4 text-center" onclick="selectVehicle(this,'motorcycle')">
-            <i data-lucide="bike" class="vehicle-icon w-7 h-7 text-neutral-400 mx-auto mb-2"></i>
-            <p class="text-xs font-bold text-neutral-800">Motorcycle</p>
-            <p class="text-[10px] text-neutral-500 mt-0.5">₦500–₦800/del</p>
-            <input type="radio" name="vehicle" value="motorcycle" class="sr-only">
+          <div class="sm:col-span-2 grid grid-cols-2 gap-3">
+            <div class="bg-white rounded-xl2 shadow-card border border-neutral-100 p-4">
+              <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mb-2"><i data-lucide="calendar" class="w-4 h-4 text-blue-600"></i></div>
+              <p class="text-xl font-heading font-bold text-neutral-900">₦9,600</p>
+              <p class="text-xs text-neutral-500">This Week</p>
+            </div>
+            <div class="bg-white rounded-xl2 shadow-card border border-neutral-100 p-4">
+              <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center mb-2"><i data-lucide="trending-up" class="w-4 h-4 text-primary-600"></i></div>
+              <p class="text-xl font-heading font-bold text-neutral-900">₦1,400</p>
+              <p class="text-xs text-neutral-500">Today</p>
+            </div>
+            <div class="bg-white rounded-xl2 shadow-card border border-neutral-100 p-4">
+              <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mb-2"><i data-lucide="package-check" class="w-4 h-4 text-purple-600"></i></div>
+              <p class="text-xl font-heading font-bold text-neutral-900">47</p>
+              <p class="text-xs text-neutral-500">Deliveries (Month)</p>
+            </div>
+            <div class="bg-white rounded-xl2 shadow-card border border-neutral-100 p-4">
+              <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mb-2"><i data-lucide="star" class="w-4 h-4 text-green-600"></i></div>
+              <p class="text-xl font-heading font-bold text-neutral-900">4.8★</p>
+              <p class="text-xs text-neutral-500">Avg. Rating</p>
+            </div>
           </div>
-          <div class="vehicle-card border-2 border-neutral-200 rounded-xl2 p-4 text-center" onclick="selectVehicle(this,'car')">
-            <i data-lucide="car" class="vehicle-icon w-7 h-7 text-neutral-400 mx-auto mb-2"></i>
-            <p class="text-xs font-bold text-neutral-800">Car / Van</p>
-            <p class="text-[10px] text-neutral-500 mt-0.5">₦800–₦2,000/del</p>
-            <input type="radio" name="vehicle" value="car" class="sr-only">
+        </div>
+
+        <!-- Weekly earnings bar chart -->
+        <div class="bg-white rounded-xl2 shadow-card border border-neutral-100 p-5">
+          <h3 class="font-heading font-semibold text-neutral-900 text-sm mb-4">Weekly Breakdown</h3>
+          <div class="flex items-end gap-2 h-28">
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <span class="text-[9px] text-neutral-400 font-medium">₦1.1k</span>
+              <div class="w-full bg-orange-100 rounded-t-md bar-fill" style="height:45%"></div>
+              <span class="text-[9px] text-neutral-500">Mon</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <span class="text-[9px] text-neutral-400 font-medium">₦1.8k</span>
+              <div class="w-full bg-orange-200 rounded-t-md bar-fill" style="height:72%"></div>
+              <span class="text-[9px] text-neutral-500">Tue</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <span class="text-[9px] text-neutral-400 font-medium">₦2.1k</span>
+              <div class="w-full bg-primary-400 rounded-t-md bar-fill" style="height:84%"></div>
+              <span class="text-[9px] text-neutral-500">Wed</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <span class="text-[9px] text-neutral-400 font-medium">₦1.6k</span>
+              <div class="w-full bg-orange-200 rounded-t-md bar-fill" style="height:64%"></div>
+              <span class="text-[9px] text-neutral-500">Thu</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <span class="text-[9px] text-neutral-400 font-medium">₦2.6k</span>
+              <div class="w-full bg-primary-600 rounded-t-md bar-fill" style="height:100%"></div>
+              <span class="text-[9px] text-neutral-500">Fri</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <span class="text-[9px] text-neutral-400 font-medium">₦200</span>
+              <div class="w-full bg-orange-100 rounded-t-md bar-fill" style="height:8%"></div>
+              <span class="text-[9px] text-neutral-500">Sat</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <span class="text-[9px] text-neutral-400 font-medium">₦0</span>
+              <div class="w-full bg-neutral-100 rounded-t-md bar-fill" style="height:2%"></div>
+              <span class="text-[9px] text-neutral-500">Sun</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent transactions -->
+        <div class="bg-white rounded-xl2 shadow-card border border-neutral-100 p-5">
+          <h3 class="font-heading font-semibold text-neutral-900 text-sm mb-4">Recent Transactions</h3>
+          <div class="space-y-3">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0"><i data-lucide="arrow-down-left" class="w-4 h-4 text-green-600"></i></div>
+              <div class="flex-1 min-w-0"><p class="text-sm font-semibold text-neutral-900">Delivery — #AH-00041</p><p class="text-xs text-neutral-500">Today, 11:43 AM</p></div>
+              <span class="text-sm font-bold text-green-600">+₦800</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0"><i data-lucide="arrow-down-left" class="w-4 h-4 text-green-600"></i></div>
+              <div class="flex-1 min-w-0"><p class="text-sm font-semibold text-neutral-900">Delivery — #AH-00039</p><p class="text-xs text-neutral-500">Today, 9:12 AM</p></div>
+              <span class="text-sm font-bold text-green-600">+₦600</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0"><i data-lucide="arrow-up-right" class="w-4 h-4 text-red-500"></i></div>
+              <div class="flex-1 min-w-0"><p class="text-sm font-semibold text-neutral-900">Withdrawal</p><p class="text-xs text-neutral-500">Yesterday, 5:00 PM</p></div>
+              <span class="text-sm font-bold text-red-500">-₦20,000</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0"><i data-lucide="arrow-down-left" class="w-4 h-4 text-green-600"></i></div>
+              <div class="flex-1 min-w-0"><p class="text-sm font-semibold text-neutral-900">Delivery — #AH-00036</p><p class="text-xs text-neutral-500">Yesterday, 2:31 PM</p></div>
+              <span class="text-sm font-bold text-green-600">+₦750</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1.5">Full Name <span class="text-red-500">*</span></label><input id="r-name" type="text" placeholder="e.g. Emeka Okafor" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"></div>
-        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1.5">Phone Number <span class="text-red-500">*</span></label><input id="r-phone" type="tel" placeholder="+234 800 000 0000" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"></div>
-        <div class="field"><label class="block text-sm font-medium text-neutral-700 mb-1.5">Email Address</label><input id="r-email" type="email" placeholder="you@example.com" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 transition-all"></div>
-        <div class="field">
-          <label class="block text-sm font-medium text-neutral-700 mb-1.5">City / State <span class="text-red-500">*</span></label>
-          <div class="relative">
-            <select id="r-city" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 appearance-none transition-all">
-              <option value="">Select your city</option>
-              <option>Lagos</option><option>Abuja</option><option>Port Harcourt</option><option>Kano</option>
-              <option>Ibadan</option><option>Enugu</option><option>Benin City</option><option>Warri</option>
-              <option>Owerri</option><option>Calabar</option><option>Kaduna</option><option>Other</option>
-            </select>
-            <i data-lucide="chevron-down" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none"></i>
-          </div>
-        </div>
-        <div class="field">
-          <label class="block text-sm font-medium text-neutral-700 mb-1.5">Available Hours</label>
-          <div class="relative">
-            <select id="r-hours" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 appearance-none transition-all">
-              <option>Morning (6am–12pm)</option>
-              <option>Afternoon (12pm–6pm)</option>
-              <option selected>Full Day (6am–8pm)</option>
-              <option>Evenings only</option>
-              <option>Weekends only</option>
-            </select>
-            <i data-lucide="chevron-down" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none"></i>
-          </div>
-        </div>
-        <div class="field">
-          <label class="block text-sm font-medium text-neutral-700 mb-1.5">Experience</label>
-          <div class="relative">
-            <select id="r-exp" class="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm bg-neutral-50 appearance-none transition-all">
-              <option>No delivery experience</option>
-              <option>Less than 1 year</option>
-              <option>1–2 years</option>
-              <option>3+ years</option>
-            </select>
-            <i data-lucide="chevron-down" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none"></i>
-          </div>
-        </div>
-        <div class="sm:col-span-2"><label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" id="r-agree" class="w-4 h-4 mt-0.5 accent-orange-600 rounded flex-shrink-0"><span class="text-xs text-neutral-500">I confirm the information provided is accurate and I agree to AhiaGlobal's <a href="#" class="text-primary-600 hover:underline">Rider Terms of Service</a>.</span></label></div>
-      </div>
-      <button onclick="submitRiderForm()" class="w-full mt-5 bg-primary-600 hover:bg-primary-700 text-white py-4 rounded-full font-bold text-base transition-all shadow-card hover:shadow-hover flex items-center justify-center gap-2">
-        <i data-lucide="send" class="w-5 h-5"></i>Submit Application — It's Free!
-      </button>
-    </div>
+    </main>
+  </div><!-- /flex-1 -->
+</div><!-- /md:flex -->
 
-    <!-- Thank you state -->
-    <div id="rider-thanks" class="hidden bg-white rounded-xl3 shadow-card border border-neutral-100 p-10 text-center">
-      <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5"><i data-lucide="check-circle" class="w-8 h-8 text-green-600"></i></div>
-      <h2 class="font-heading text-2xl font-bold text-neutral-900 mb-3">Application Received! 🎉</h2>
-      <p class="text-neutral-500 mb-2">Thanks for applying to ride with AhiaGlobal.</p>
-      <p class="text-neutral-500 mb-6">Our rider operations team will call you at <strong id="thanks-phone" class="text-neutral-900">your number</strong> within <strong>24 hours</strong> to complete verification.</p>
-      <div class="bg-primary-50 rounded-xl2 border border-primary-100 p-4 mb-6 text-left">
-        <p class="text-sm font-bold text-primary-900 mb-2">What to prepare for your call:</p>
-        <ul class="text-sm text-primary-700 space-y-1">
-          <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5"></i>Your National ID or NIN</li>
-          <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5"></i>Vehicle registration papers</li>
-          <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5"></i>Bank account details for payouts</li>
-        </ul>
-      </div>
-      <div class="flex flex-col sm:flex-row justify-center gap-3">
-        <a href="index.html" class="flex items-center justify-center gap-2 px-7 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-full transition-all text-sm"><i data-lucide="shopping-bag" class="w-4 h-4"></i>Shop on AhiaGlobal</a>
-        <a href="faq.html" class="flex items-center justify-center gap-2 px-7 py-3 border border-neutral-300 text-neutral-700 font-semibold rounded-full hover:bg-neutral-50 transition-all text-sm"><i data-lucide="help-circle" class="w-4 h-4"></i>Rider FAQ</a>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- ═══════════════════════════════════════ MOBILE BOTTOM NAV ═══════════════════════════════════════ -->
+<div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-200 z-[150] flex">
+  <button onclick="switchTab('overview')" id="mob-bot-overview" class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-primary-600">
+    <i data-lucide="layout-dashboard" class="w-5 h-5"></i><span class="text-[10px] font-medium">Overview</span>
+  </button>
+  <button onclick="switchTab('orders')" id="mob-bot-orders" class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-neutral-500 relative">
+    <i data-lucide="package" class="w-5 h-5"></i><span class="text-[10px] font-medium">Orders</span>
+    <span class="absolute top-1.5 right-6 w-4 h-4 bg-primary-600 text-white text-[9px] font-bold flex items-center justify-center rounded-full">3</span>
+  </button>
+  <button onclick="switchTab('tracking')" id="mob-bot-tracking" class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-neutral-500">
+    <i data-lucide="map-pin" class="w-5 h-5"></i><span class="text-[10px] font-medium">Map</span>
+  </button>
+  <button onclick="switchTab('earnings')" id="mob-bot-earnings" class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-neutral-500">
+    <i data-lucide="wallet" class="w-5 h-5"></i><span class="text-[10px] font-medium">Earnings</span>
+  </button>
+</div>
 
-<!-- FOOTER -->
-<footer class="bg-neutral-900 text-neutral-400 py-10">
-  <div class="max-w-6xl mx-auto px-5 flex flex-col sm:flex-row items-center justify-between gap-4">
-    <div class="flex items-center gap-2"><div class="w-7 h-7 bg-primary-600 rounded-md flex items-center justify-center text-white font-bold text-sm">A</div><span class="font-heading font-bold text-white">Ahia<span class="text-primary-600">Global</span> <span class="text-neutral-400 font-normal text-sm">Delivery</span></span></div>
-    <p class="text-xs">© 2024 AhiaGlobal. All rights reserved.</p>
-    <div class="flex gap-4 text-xs"><a href="index.html" class="hover:text-primary-400">Shop</a><a href="sell.html" class="hover:text-primary-400">Sell</a><a href="faq.html" class="hover:text-primary-400">Help</a></div>
-  </div>
-</footer>
-
+<!-- ═══════════════════════════════════════ SCRIPTS ═══════════════════════════════════════ -->
 <script src="shared.js"></script>
 <script>
-let selectedVehicle = 'bicycle';
-let daysPerWeek = 5;
+// ── Data ──────────────────────────────────────────────────────────────────────
+const ORDERS = [
+  {
+    id:'AH-00041',
+    customer:'Mrs. Ngozi Adeyemi',
+    phone:'+234 803 221 4411',
+    pickup:'14 Broad St, Lagos Island',
+    dropoff:'22 Bode Thomas, Surulere',
+    items:'2x Groceries, 1x Fragile',
+    amount:'₦3,200',
+    earning:'₦800',
+    distance:'3.2 km',
+    status:'transit',
+    time:'10:58 AM'
+  },
+  {
+    id:'AH-00042',
+    customer:'Mr. Tunde Bakare',
+    phone:'+234 812 990 3302',
+    pickup:'5 Allen Ave, Ikeja',
+    dropoff:'Lekki Phase 1, Gate 2',
+    items:'1x Electronics Package',
+    amount:'₦5,500',
+    earning:'₦1,100',
+    distance:'7.1 km',
+    status:'assigned',
+    time:'12:30 PM'
+  },
+  {
+    id:'AH-00043',
+    customer:'Fatima Usman',
+    phone:'+234 907 441 5503',
+    pickup:'Ring Road, Ibadan',
+    dropoff:'Bodija Market, Ibadan',
+    items:'3x Clothing Bags',
+    amount:'₦2,800',
+    earning:'₦700',
+    distance:'2.1 km',
+    status:'assigned',
+    time:'1:15 PM'
+  },
+  {
+    id:'AH-00039',
+    customer:'Chinedu Obi',
+    phone:'+234 814 332 1100',
+    pickup:'10 Apongbon St',
+    dropoff:'Oshodi Under Bridge',
+    items:'1x Food Package',
+    amount:'₦1,800',
+    earning:'₦600',
+    distance:'1.8 km',
+    status:'delivered',
+    time:'9:12 AM'
+  },
+  {
+    id:'AH-00038',
+    customer:'Ade Williams',
+    phone:'+234 803 777 9900',
+    pickup:'Victoria Island',
+    dropoff:'Maryland',
+    items:'2x Document Envelopes',
+    amount:'₦2,200',
+    earning:'₦550',
+    distance:'5.4 km',
+    status:'rejected',
+    time:'8:00 AM'
+  }
+];
 
-function selectVehicle(el, type) {
-  selectedVehicle = type;
-  document.querySelectorAll('.vehicle-card').forEach(c => {
-    c.classList.remove('selected','border-primary-600','bg-primary-50');
-    c.classList.add('border-neutral-200');
-    c.querySelector('.vehicle-icon').classList.remove('text-primary-600');
-    c.querySelector('.vehicle-icon').classList.add('text-neutral-400');
+const STATUS_LABELS = {
+  transit:'In Transit',
+  assigned:'Assigned',
+  delivered:'Delivered',
+  rejected:'Rejected',
+  picked:'Picked Up'
+};
+
+const STATUS_BADGE = {
+  transit:'badge-transit',
+  assigned:'badge-assigned',
+  delivered:'badge-delivered',
+  rejected:'badge-rejected',
+  picked:'badge-picked'
+};
+
+// ── Online status ──────────────────────────────────────────────────────────────
+let isOnline = true;
+
+function toggleOnlineStatus() {
+  isOnline = !isOnline;
+  const toggles = ['sidebar-toggle','avail-toggle'];
+  toggles.forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.classList.toggle('on', isOnline);
   });
-  el.classList.add('selected','border-primary-600','bg-primary-50');
-  el.classList.remove('border-neutral-200');
-  el.querySelector('.vehicle-icon').classList.add('text-primary-600');
-  el.querySelector('.vehicle-icon').classList.remove('text-neutral-400');
+  document.getElementById('sidebar-toggle-label').textContent = isOnline ? 'Online' : 'Offline';
+  document.getElementById('sidebar-toggle-sub').textContent = isOnline ? 'Accepting orders' : 'Not accepting orders';
+  document.getElementById('avail-subtext').textContent = isOnline
+    ? 'You are currently accepting orders. Toggle to go offline.'
+    : 'You are offline. Toggle to start accepting orders.';
+  document.getElementById('status-label').textContent = isOnline ? 'Online' : 'Offline';
+  document.getElementById('banner-status').textContent = isOnline ? '● Online' : '○ Offline';
+  ['status-dot','sidebar-status-dot'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el){ el.classList.toggle('bg-green-500', isOnline); el.classList.toggle('bg-neutral-400', !isOnline); }
+  });
+  ['status-ping','sidebar-ping'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el){ el.classList.toggle('bg-green-400', isOnline); el.classList.toggle('hidden', !isOnline); }
+  });
+  showToast(isOnline?'success':'info', isOnline?'You are Online':'You are Offline', isOnline?'You will start receiving order assignments.':'You won\'t receive new orders until you go online.');
+}
+
+// ── Tab switching ──────────────────────────────────────────────────────────────
+const TAB_IDS = ['overview','orders','tracking','earnings'];
+const PAGE_TITLES = {
+  overview:['Dashboard Overview','Friday, 20 March 2026'],
+  orders:['My Orders','Manage and update deliveries'],
+  tracking:['Live Map','Real-time tracking'],
+  earnings:['Earnings','Your financials and payouts']
+};
+
+function switchTab(tab) {
+  TAB_IDS.forEach(t => {
+    document.getElementById('tab-'+t)?.classList.toggle('hidden', t !== tab);
+    // Desktop sidebar nav
+    const navEl = document.getElementById('nav-'+t);
+    if(navEl) {
+      navEl.classList.toggle('bg-primary-600', t === tab);
+      navEl.classList.toggle('!text-white', t === tab);
+      navEl.classList.remove('text-neutral-300');
+      navEl.classList.add(t === tab ? 'text-white' : 'text-neutral-300');
+    }
+    // Mobile top tabs
+    const mobEl = document.getElementById('mob-nav-'+t);
+    if(mobEl) {
+      mobEl.classList.toggle('active', t === tab);
+      mobEl.classList.toggle('text-primary-600', t === tab);
+      mobEl.classList.toggle('text-neutral-500', t !== tab);
+    }
+    // Mobile bottom nav
+    const botEl = document.getElementById('mob-bot-'+t);
+    if(botEl) {
+      botEl.classList.toggle('text-primary-600', t === tab);
+      botEl.classList.toggle('text-neutral-500', t !== tab);
+    }
+  });
+  const [title, sub] = PAGE_TITLES[tab];
+  document.getElementById('page-title').textContent = title;
+  document.getElementById('page-sub').textContent = sub;
+  closeSidebar();
+  if(tab === 'orders') renderOrders();
+  if(tab === 'overview') renderOverviewOrders();
   lucide.createIcons();
 }
 
-function setDays(d, btn) {
-  daysPerWeek = d;
-  document.querySelectorAll('.days-btn').forEach(b => {
-    b.classList.remove('border-primary-500','bg-primary-600/20','text-primary-400');
-    b.classList.add('border-white/20','text-neutral-300');
-  });
-  btn.classList.add('border-primary-500','bg-primary-600/20','text-primary-400');
-  btn.classList.remove('border-white/20','text-neutral-300');
-  calcEarnings();
+// ── Render orders ──────────────────────────────────────────────────────────────
+function orderCardHTML(o, compact=false) {
+  const badge = STATUS_BADGE[o.status] || 'badge-pending';
+  const label = STATUS_LABELS[o.status] || o.status;
+  if(compact) {
+    return `<div class="order-card bg-white rounded-xl border border-neutral-100 shadow-card p-3.5 flex items-center gap-3 cursor-pointer" onclick="openOrderModal('${o.id}')">
+      <div class="w-9 h-9 bg-orange-50 border border-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
+        <i data-lucide="package" class="w-4 h-4 text-primary-600"></i>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2">
+          <p class="text-sm font-semibold text-neutral-900">${o.id}</p>
+          <span class="${badge} text-[10px] font-bold px-1.5 py-0.5 rounded-full">${label}</span>
+        </div>
+        <p class="text-xs text-neutral-500 truncate mt-0.5">${o.dropoff}</p>
+      </div>
+      <div class="text-right flex-shrink-0">
+        <p class="text-xs font-bold text-green-600">${o.earning}</p>
+        <p class="text-[10px] text-neutral-400">${o.time}</p>
+      </div>
+    </div>`;
+  }
+  const actions = o.status === 'assigned' ? `
+    <div class="flex gap-2 pt-1">
+      <button onclick="acceptOrder('${o.id}')" class="flex-1 flex items-center justify-center gap-1.5 py-2 bg-primary-600 hover:bg-primary-700 text-white text-xs font-semibold rounded-full transition-colors"><i data-lucide="check" class="w-3.5 h-3.5"></i>Accept</button>
+      <button onclick="rejectOrder('${o.id}')" class="flex-1 flex items-center justify-center gap-1.5 py-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-xs font-semibold rounded-full transition-colors"><i data-lucide="x" class="w-3.5 h-3.5"></i>Reject</button>
+    </div>` : o.status === 'transit' ? `
+    <div class="flex gap-2 pt-1">
+      <button onclick="openOrderModal('${o.id}')" class="flex-1 flex items-center justify-center gap-1.5 py-2 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold rounded-full transition-colors"><i data-lucide="check-circle" class="w-3.5 h-3.5"></i>Mark Delivered</button>
+      <button onclick="switchTab('tracking')" class="flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-50 text-blue-700 text-xs font-semibold rounded-full transition-colors border border-blue-100"><i data-lucide="map-pin" class="w-3.5 h-3.5"></i>Track</button>
+    </div>` : '';
+
+  return `<div class="order-card bg-white rounded-xl2 border border-neutral-100 shadow-card p-4 space-y-3">
+    <div class="flex items-start justify-between gap-2">
+      <div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <p class="font-heading font-bold text-neutral-900 text-sm">${o.id}</p>
+          <span class="${badge} text-[10px] font-bold px-2 py-0.5 rounded-full">${label}</span>
+        </div>
+        <p class="text-xs text-neutral-500 mt-0.5">${o.customer} · ${o.time}</p>
+      </div>
+      <div class="text-right flex-shrink-0">
+        <p class="text-sm font-bold text-green-600">${o.earning}</p>
+        <p class="text-[10px] text-neutral-400">${o.distance}</p>
+      </div>
+    </div>
+    <div class="flex gap-4 text-xs">
+      <div class="flex-1 min-w-0">
+        <div class="flex items-start gap-1.5"><div class="w-2 h-2 rounded-full bg-primary-500 mt-1 flex-shrink-0"></div><p class="text-neutral-600 truncate">${o.pickup}</p></div>
+        <div class="ml-3.5 h-3 border-l border-dashed border-neutral-300"></div>
+        <div class="flex items-start gap-1.5"><div class="w-2 h-2 rounded-full bg-green-500 mt-1 flex-shrink-0"></div><p class="text-neutral-600 truncate">${o.dropoff}</p></div>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 pt-1 border-t border-neutral-50">
+      <i data-lucide="package" class="w-3.5 h-3.5 text-neutral-400"></i>
+      <p class="text-xs text-neutral-500">${o.items}</p>
+      <span class="ml-auto text-xs font-semibold text-neutral-700">${o.amount}</span>
+    </div>
+    ${actions}
+  </div>`;
 }
 
-function calcEarnings() {
-  var dels = parseInt(document.getElementById('del-slider').value) || 15;
-  var rateMap = {bicycle:400, motorcycle:650, car:1400};
-  var rate = rateMap[selectedVehicle] || 650;
-  var daily = dels * rate;
-  var weekly = daily * daysPerWeek;
-  var monthly = weekly * 4;
-  document.getElementById('per-del').textContent = rate.toLocaleString();
-  document.getElementById('daily-earn').textContent = daily.toLocaleString();
-  document.getElementById('weekly-earn').textContent = weekly.toLocaleString();
-  document.getElementById('monthly-earn').textContent = monthly.toLocaleString();
-}
-
-function submitRiderForm() {
-  var name  = document.getElementById('r-name')?.value?.trim();
-  var phone = document.getElementById('r-phone')?.value?.trim();
-  var city  = document.getElementById('r-city')?.value;
-  var agree = document.getElementById('r-agree')?.checked;
-  if (!name)  { showToast('error','Required','Please enter your full name.'); return; }
-  if (!phone) { showToast('error','Required','Please enter your phone number.'); return; }
-  if (!city)  { showToast('error','Required','Please select your city.'); return; }
-  if (!agree) { showToast('error','Terms required','Please accept the Rider Terms of Service.'); return; }
-  document.getElementById('rider-form-wrap').classList.add('hidden');
-  document.getElementById('rider-thanks').classList.remove('hidden');
-  document.getElementById('thanks-phone').textContent = phone;
+function renderOrders() {
+  const filter = document.getElementById('order-filter')?.value || 'all';
+  const list = ORDERS.filter(o => filter === 'all' || o.status === filter);
+  const el = document.getElementById('orders-list');
+  if(!el) return;
+  if(list.length === 0){
+    el.innerHTML = `<div class="text-center py-12"><div class="w-12 h-12 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-3"><i data-lucide="package-x" class="w-6 h-6 text-neutral-400"></i></div><p class="text-sm text-neutral-500">No orders found.</p></div>`;
+  } else {
+    el.innerHTML = list.map(o => orderCardHTML(o)).join('');
+  }
   lucide.createIcons();
 }
 
-window.addEventListener('scroll', () => document.getElementById('main-header')?.classList.toggle('scrolled', window.scrollY > 10));
-document.addEventListener('DOMContentLoaded', () => { calcEarnings(); lucide.createIcons(); });
+function renderOverviewOrders() {
+  const list = ORDERS.filter(o => ['assigned','transit','picked'].includes(o.status)).slice(0,3);
+  const el = document.getElementById('overview-orders-list');
+  if(!el) return;
+  el.innerHTML = list.map(o => orderCardHTML(o, true)).join('') ||
+    `<p class="text-sm text-neutral-400 text-center py-4">No active orders right now.</p>`;
+  lucide.createIcons();
+}
+
+// ── Accept / Reject ──────────────────────────────────────────────────────────
+function acceptOrder(id) {
+  const o = ORDERS.find(x => x.id === id);
+  if(!o) return;
+  o.status = 'picked';
+  showToast('success','Order Accepted','Head to pickup: '+o.pickup);
+  renderOrders();
+}
+
+function rejectOrder(id) {
+  const o = ORDERS.find(x => x.id === id);
+  if(!o) return;
+  o.status = 'rejected';
+  showToast('info','Order Rejected','Order '+id+' has been rejected.');
+  renderOrders();
+}
+
+// ── Mark delivered ─────────────────────────────────────────────────────────────
+function markDelivered() {
+  const o = ORDERS.find(x => x.id === 'AH-00041');
+  if(o) o.status = 'delivered';
+  showToast('success','Delivery Complete!','Order #AH-00041 marked as delivered. Great job! +₦800');
+  document.querySelector('#progress-steps .step-active')?.classList.replace('step-active','step-done');
+  lucide.createIcons();
+}
+
+// ── Order detail modal ─────────────────────────────────────────────────────────
+function openOrderModal(id) {
+  const o = ORDERS.find(x => x.id === id);
+  if(!o) return;
+  const badge = STATUS_BADGE[o.status] || '';
+  const label = STATUS_LABELS[o.status] || o.status;
+  document.getElementById('order-modal-title').textContent = 'Order '+id;
+  document.getElementById('order-modal-body').innerHTML = `
+    <div class="flex items-center gap-2 mb-1">
+      <span class="${badge} text-xs font-bold px-2 py-0.5 rounded-full">${label}</span>
+      <span class="text-xs text-neutral-500">${o.time}</span>
+    </div>
+    <div class="bg-neutral-50 rounded-xl p-3 space-y-2 text-sm">
+      <div class="flex gap-2"><i data-lucide="user" class="w-4 h-4 text-neutral-400 flex-shrink-0 mt-0.5"></i><div><p class="font-semibold text-neutral-900">${o.customer}</p><p class="text-xs text-neutral-500">${o.phone}</p></div></div>
+      <div class="border-t border-neutral-100 pt-2 space-y-1.5">
+        <div class="flex items-start gap-2"><div class="w-2 h-2 rounded-full bg-primary-500 mt-1.5 flex-shrink-0"></div><p class="text-neutral-600 text-xs">${o.pickup}</p></div>
+        <div class="ml-3.5 h-3 border-l border-dashed border-neutral-300"></div>
+        <div class="flex items-start gap-2"><div class="w-2 h-2 rounded-full bg-green-500 mt-1.5 flex-shrink-0"></div><p class="text-neutral-600 text-xs">${o.dropoff}</p></div>
+      </div>
+    </div>
+    <div class="flex justify-between text-sm">
+      <div><p class="text-xs text-neutral-500">Items</p><p class="font-semibold text-neutral-900 text-xs mt-0.5">${o.items}</p></div>
+      <div class="text-right"><p class="text-xs text-neutral-500">Order Value</p><p class="font-semibold text-neutral-900 mt-0.5">${o.amount}</p></div>
+      <div class="text-right"><p class="text-xs text-neutral-500">Your Earnings</p><p class="font-bold text-green-600 mt-0.5">${o.earning}</p></div>
+    </div>
+    ${o.status === 'transit' ? `
+    <div class="space-y-2 border-t border-neutral-100 pt-3">
+      <p class="text-xs font-semibold text-neutral-700">Update Delivery Status</p>
+      <div class="grid grid-cols-2 gap-2">
+        <button onclick="updateStatus('${id}','picked');closeOrderModal()" class="flex items-center justify-center gap-1.5 py-2 bg-yellow-50 border border-yellow-200 text-yellow-800 text-xs font-semibold rounded-lg">📦 Picked Up</button>
+        <button onclick="updateStatus('${id}','transit');closeOrderModal()" class="flex items-center justify-center gap-1.5 py-2 bg-blue-50 border border-blue-200 text-blue-800 text-xs font-semibold rounded-lg">🚴 In Transit</button>
+        <button onclick="updateStatus('${id}','delivered');closeOrderModal()" class="col-span-2 flex items-center justify-center gap-1.5 py-2.5 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold rounded-lg transition-colors">✅ Mark Delivered</button>
+      </div>
+    </div>` : ''}
+    ${o.status === 'assigned' ? `
+    <div class="flex gap-2 pt-1 border-t border-neutral-100">
+      <button onclick="acceptOrder('${id}');closeOrderModal()" class="flex-1 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-full transition-colors">Accept Order</button>
+      <button onclick="rejectOrder('${id}');closeOrderModal()" class="flex-1 py-2.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-sm font-semibold rounded-full transition-colors">Reject</button>
+    </div>` : ''}
+  `;
+  document.getElementById('order-modal').classList.remove('hidden');
+  // Reset slide-up animation
+  const box = document.getElementById('order-modal-box');
+  box.classList.remove('slide-up');
+  void box.offsetWidth;
+  box.classList.add('slide-up');
+  lucide.createIcons();
+}
+
+function closeOrderModal() {
+  document.getElementById('order-modal').classList.add('hidden');
+}
+
+function updateStatus(id, status) {
+  const o = ORDERS.find(x => x.id === id);
+  if(!o) return;
+  o.status = status;
+  showToast('success','Status Updated','Order '+id+' is now: '+STATUS_LABELS[status]);
+  renderOrders();
+  renderOverviewOrders();
+}
+
+// ── Sidebar ───────────────────────────────────────────────────────────────────
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebar-backdrop').classList.add('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-backdrop').classList.remove('open');
+}
+
+// ── Toast (fallback if shared.js not present) ─────────────────────────────────
+if(typeof showToast === 'undefined') {
+  window.showToast = function(type, title, msg) {
+    const colors = {success:'#22c55e',error:'#ef4444',info:'#3b82f6',warning:'#f59e0b'};
+    const stack = document.getElementById('toast-stack');
+    const t = document.createElement('div');
+    t.style.cssText = `pointer-events:auto;background:#fff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.12);padding:12px 14px;display:flex;align-items:flex-start;gap:10px;animation:toastIn .3s ease both;min-width:240px`;
+    t.innerHTML = `<div style="width:8px;height:8px;border-radius:50%;background:${colors[type]||'#94a3b8'};margin-top:4px;flex-shrink:0"></div><div><p style="font-size:13px;font-weight:600;color:#0f172a;margin:0">${title}</p><p style="font-size:12px;color:#64748b;margin:2px 0 0">${msg}</p></div>`;
+    stack.appendChild(t);
+    setTimeout(()=>{t.style.animation='toastOut .3s ease forwards';setTimeout(()=>t.remove(),300)},3500);
+  };
+}
+
+// ── Auth helpers (fallback) ───────────────────────────────────────────────────
+if(typeof openAuth === 'undefined') {
+  window.openAuth = function(tab='login'){ document.getElementById('auth-modal').classList.add('open'); switchAuth(tab); };
+  window.closeAuth = function(){ document.getElementById('auth-modal').classList.remove('open'); };
+  window.switchAuth = function(tab){
+    document.getElementById('panel-login').classList.toggle('hidden', tab!=='login');
+    document.getElementById('panel-signup').classList.toggle('hidden', tab!=='signup');
+    document.getElementById('tab-login').classList.toggle('text-primary-600', tab==='login');
+    document.getElementById('tab-signup').classList.toggle('text-primary-600', tab==='signup');
+  };
+  window.handleLogin = function(){ closeAuth(); showToast('success','Signed In','Welcome back, Emeka!'); };
+  window.handleSignup = function(){ closeAuth(); showToast('success','Account Created','Welcome to AhiaGlobal!'); };
+  window.togglePw = function(id, btn){ const i=document.getElementById(id); i.type=i.type==='password'?'text':'password'; };
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  lucide && lucide.createIcons();
+  switchTab('overview'); // renders overview orders internally
+  // Scroll shadow
+  window.addEventListener('scroll', () => {
+    document.getElementById('main-header')?.classList.toggle('scrolled', window.scrollY > 10);
+  });
+});
 </script>
 </body>
 </html>
