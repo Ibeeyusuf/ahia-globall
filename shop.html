@@ -11,7 +11,7 @@
 tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-serif'],body:['Inter','sans-serif']},colors:{primary:{50:'#fff7ed',100:'#ffedd5',200:'#fed7aa',300:'#fdba74',400:'#fb923c',500:'#f97316',600:'#ea580c',700:'#c2410c',800:'#9a3412',900:'#7c2d12'},neutral:{50:'#f8fafc',100:'#f1f5f9',200:'#e2e8f0',300:'#cbd5e1',400:'#94a3b8',500:'#64748b',600:'#475569',700:'#334155',800:'#1e293b',900:'#0f172a'}},boxShadow:{card:'0 4px 14px -3px rgba(15,23,42,.09)',hover:'0 12px 30px -5px rgba(15,23,42,.16)',modal:'0 24px 60px -8px rgba(15,23,42,.28)'},borderRadius:{xl2:'0.875rem',xl3:'1.25rem'}}}}
 </script>
 <style>
-/* Mobile-first responsive fixes */
+/* ── Core states ── */
 #auth-modal{opacity:0;pointer-events:none;transition:opacity .25s}
 #auth-modal.open{opacity:1;pointer-events:auto}
 #auth-box{transform:translateY(14px) scale(.96);transition:transform .28s cubic-bezier(.34,1.56,.64,1),opacity .25s;opacity:0}
@@ -26,15 +26,34 @@ tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-s
 #filter-overlay.open{opacity:1;pointer-events:auto}
 .field:focus-within label{color:#ea580c}
 .field:focus-within input{border-color:#ea580c;box-shadow:0 0 0 3px rgba(234,88,12,.12);outline:none}
+
+/* ── Product card ── */
 .prod-card{transition:box-shadow .22s,transform .22s}
 .prod-card:hover{box-shadow:0 12px 30px -5px rgba(15,23,42,.16);transform:translateY(-2px)}
-.prod-card .add-btn{transform:translateY(100%);transition:transform .28s ease}
-.prod-card:hover .add-btn{transform:translateY(0)}
-.prod-card .wish-btn{opacity:0;transition:opacity .2s}
-.prod-card:hover .wish-btn{opacity:1}
+
+/* Desktop hover behaviours */
+@media(hover:hover) and (min-width:640px){
+  .prod-card .add-btn{transform:translateY(100%);transition:transform .28s ease}
+  .prod-card:hover .add-btn{transform:translateY(0)}
+  .prod-card .wish-btn{opacity:0;transition:opacity .2s}
+  .prod-card:hover .wish-btn{opacity:1}
+}
+/* Touch / mobile — always show both */
+@media(hover:none),(max-width:639px){
+  .prod-card .add-btn{transform:translateY(0)!important}
+  .prod-card .wish-btn{opacity:1!important}
+}
+
 .wish-btn.wished{color:#ef4444;opacity:1!important}
 .wish-btn.wished svg{fill:currentColor}
+
+/* ── Pills ── */
 .cat-pill.active{background:#ea580c;color:#fff;border-color:#ea580c}
+/* Scrollbar hide for pill row */
+.cat-pill-row{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;display:flex;gap:8px;padding-bottom:4px}
+.cat-pill-row::-webkit-scrollbar{display:none}
+
+/* ── Misc ── */
 .sort-active{color:#ea580c}
 .view-btn.active{background:#0f172a;color:#fff}
 .price-range{accent-color:#ea580c}
@@ -44,133 +63,41 @@ tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-s
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .card-anim{animation:fadeIn .35s ease both}
 .scrolled{box-shadow:0 2px 20px -4px rgba(15,23,42,.12)}
+.skeleton{background:linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%);background-size:200% 100%;animation:shimmer 1.4s infinite}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
-.skeleton { background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; }
-@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-.error-state { display:none; }
+/* ── Subcategory dropdown transition ── */
+#subcat-dropdown-body{transition:max-height .3s cubic-bezier(.4,0,.2,1);overflow:hidden}
+#subcat-chevron{transition:transform .25s ease}
 
-/* Mobile responsive fixes */
-@media (max-width: 640px) {
-  .grid-cols-2 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.75rem;
-  }
-  
-  .prod-card .p-3 {
-    padding: 0.5rem;
-  }
-  
-  .prod-card .text-xs {
-    font-size: 0.7rem;
-  }
-  
-  .prod-card .text-sm {
-    font-size: 0.75rem;
-  }
-  
-  .prod-card .w-4.h-4 {
-    width: 0.875rem;
-    height: 0.875rem;
-  }
-  
-  /* Fix for horizontal scroll on category pills */
-  .cat-pill-container {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    padding-bottom: 0.5rem;
-    margin-bottom: -0.5rem;
-  }
-  
-  .cat-pill-container::-webkit-scrollbar {
-    display: none;
-  }
-  
-  /* Fix for product images */
-  .aspect-square img {
-    object-fit: cover;
-    width: 100%;
-    height: 100%;
-  }
-  
-  /* Fix for toolbar on mobile */
-  .toolbar-mobile {
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-  
-  .toolbar-mobile > div {
-    width: 100%;
-  }
-  
-  /* Fix for sort select on mobile */
-  #sort-select {
-    width: 100%;
-    padding-right: 2rem;
-  }
-  
-  /* Fix for bottom nav */
-  .md\:hidden.fixed.bottom-0 {
-    padding-bottom: env(safe-area-inset-bottom, 0);
-  }
-  
-  /* Fix for filter drawer */
-  #filter-drawer {
-    width: 85%;
-    max-width: 320px;
-  }
-  
-  /* Fix for auth modal on mobile */
-  #auth-box {
-    margin: 1rem;
-    max-height: calc(100vh - 2rem);
-  }
-  
-  /* Fix for product list view on mobile */
-  .prod-card.flex {
-    flex-direction: column;
-  }
-  
-  .prod-card.flex .w-24.h-24 {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 1;
-  }
-  
-  /* Fix for header on mobile */
-  header .flex {
-    flex-wrap: nowrap;
-  }
-  
-  header .flex .flex-shrink-0 {
-    flex-shrink: 0;
-  }
-  
-  /* Fix for logo on mobile */
-  header .font-heading.text-xl {
-    font-size: 1rem;
-  }
-  
-  header .h-14 {
-    height: 2.5rem;
-  }
-  
-  /* Fix for search input on mobile */
-  .mt-2\.5.md\:hidden input {
-    font-size: 16px; /* Prevents zoom on iOS */
-  }
-  
-  /* Fix for breadcrumb on mobile */
-  .text-xs.md\:text-base {
-    font-size: 0.7rem;
-  }
-  
-  /* Fix for page title on mobile */
-  .font-heading.text-2xl {
-    font-size: 1.25rem;
-    line-height: 1.75rem;
-  }
+/* ── Safe area ── */
+.pb-safe{padding-bottom:env(safe-area-inset-bottom,0)}
+
+/* ── Mobile-specific improvements ── */
+@media(max-width:639px){
+  /* Prevent iOS input zoom */
+  input,select,textarea{font-size:16px !important}
+
+  /* Toolbar: keep filter + sort on one line */
+  .mob-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+  .mob-toolbar-left{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
+  .mob-toolbar-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+
+  /* Sort select compact on mobile */
+  #sort-select{padding:6px 28px 6px 10px;font-size:12px !important;max-width:130px}
+
+  /* Product cards — better padding on mobile */
+  .prod-card .mob-info{padding:8px 10px 10px}
+
+  /* List view — always horizontal on mobile */
+  .list-card-inner{display:flex;gap:12px;padding:12px}
+  .list-card-img{width:90px;height:90px;flex-shrink:0;border-radius:10px;overflow:hidden;background:#f8fafc;position:relative}
+  .list-card-body{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:space-between}
 }
+
+/* ── Content bottom padding so bottom nav doesn't cover it ── */
+.main-content{padding-bottom:80px}
+@media(min-width:768px){.main-content{padding-bottom:24px}}
 </style>
 </head>
 <body class="font-body bg-neutral-50 text-neutral-900 overflow-x-hidden">
@@ -227,9 +154,20 @@ tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-s
   <nav class="flex-1 p-3 space-y-0.5">
     <a href="index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:text-primary-600"><i data-lucide="home" class="w-4 h-4"></i>Home</a>
     <a href="shop.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-primary-600 bg-primary-50"><i data-lucide="shopping-bag" class="w-4 h-4"></i>Shop</a>
+    <a href="categories.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:text-primary-600"><i data-lucide="layout-grid" class="w-4 h-4"></i>Categories</a>
     <a href="checkout.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:text-primary-600"><i data-lucide="shopping-cart" class="w-4 h-4"></i>Cart <span id="mob-cart-badge" class="ml-auto w-5 h-5 bg-primary-600 text-white text-[10px] font-bold flex items-center justify-center rounded-full cart-count-badge">0</span></a>
     <a href="account.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:text-primary-600"><i data-lucide="user" class="w-4 h-4"></i>My Account</a>
     <a href="faq.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:text-primary-600"><i data-lucide="help-circle" class="w-4 h-4"></i>Help Center</a>
+    <!-- Mobile category quick links -->
+    <div class="pt-2 pb-1 px-3"><p class="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Categories</p></div>
+    <a href="shop.html?cat=fashion" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-neutral-600 hover:bg-neutral-50 hover:text-primary-600">👗 Fashion</a>
+    <a href="shop.html?cat=phones" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-neutral-600 hover:bg-neutral-50 hover:text-primary-600">📱 Phones & Tablets</a>
+    <a href="shop.html?cat=electronics" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-neutral-600 hover:bg-neutral-50 hover:text-primary-600">💻 Electronics</a>
+    <a href="shop.html?cat=beauty" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-neutral-600 hover:bg-neutral-50 hover:text-primary-600">✨ Health & Beauty</a>
+    <a href="shop.html?cat=home" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-neutral-600 hover:bg-neutral-50 hover:text-primary-600">🏠 Home & Living</a>
+    <a href="shop.html?cat=sports" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-neutral-600 hover:bg-neutral-50 hover:text-primary-600">🏋️ Sports & Fitness</a>
+    <a href="shop.html?cat=agriculture" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-neutral-600 hover:bg-neutral-50 hover:text-primary-600">🌾 Agriculture</a>
+    <a href="shop.html?cat=automobiles" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-neutral-600 hover:bg-neutral-50 hover:text-primary-600">🚗 Automobiles</a>
   </nav>
   <div class="p-3 border-t border-neutral-100"><button id="mob-logout-btn" onclick="doLogout()" class="hidden w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50"><i data-lucide="log-out" class="w-4 h-4"></i>Sign Out</button></div>
 </div>
@@ -243,20 +181,50 @@ tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-s
     <h2 class="font-heading font-bold text-neutral-900">Filters</h2>
     <button onclick="closeFilterDrawer()" class="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center"><i data-lucide="x" class="w-4 h-4"></i></button>
   </div>
-  <div class="flex-1 overflow-y-auto p-4 space-y-6" id="filter-drawer-content">
-    <!-- injected same as desktop sidebar -->
+  <div class="flex-1 overflow-y-auto p-4 space-y-5">
+    <!-- Price range -->
+    <div>
+      <h4 class="text-xs font-bold text-neutral-700 uppercase tracking-wide mb-3">Price Range</h4>
+      <input type="range" id="price-slider-mob" min="0" max="2000" value="2000" step="10" class="price-range w-full" oninput="updatePrice(this.value)">
+      <div class="flex justify-between text-xs text-neutral-500 mt-1"><span>$0</span><span id="price-label-mob" class="text-primary-600 font-semibold">$2,000</span></div>
+    </div>
+    <!-- Rating -->
+    <div>
+      <h4 class="text-xs font-bold text-neutral-700 uppercase tracking-wide mb-3">Min Rating</h4>
+      <div class="space-y-2">
+        <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="rating-mob" value="0" checked class="w-4 h-4 accent-orange-600" onchange="state.minRating=0;state.page=1;renderGrid()"><span class="text-sm text-neutral-700">Any rating</span></label>
+        <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="rating-mob" value="4.5" class="w-4 h-4 accent-orange-600" onchange="state.minRating=4.5;state.page=1;renderGrid()"><span class="text-sm text-neutral-700">4.5★ &amp; above</span></label>
+        <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="rating-mob" value="4" class="w-4 h-4 accent-orange-600" onchange="state.minRating=4;state.page=1;renderGrid()"><span class="text-sm text-neutral-700">4★ &amp; above</span></label>
+        <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="rating-mob" value="3" class="w-4 h-4 accent-orange-600" onchange="state.minRating=3;state.page=1;renderGrid()"><span class="text-sm text-neutral-700">3★ &amp; above</span></label>
+      </div>
+    </div>
+    <!-- Discount -->
+    <div>
+      <h4 class="text-xs font-bold text-neutral-700 uppercase tracking-wide mb-3">Discount</h4>
+      <div class="space-y-2">
+        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="w-4 h-4 accent-orange-600 rounded" value="10" onchange="toggleDiscount(this)"><span class="text-sm text-neutral-700">10% or more</span></label>
+        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="w-4 h-4 accent-orange-600 rounded" value="20" onchange="toggleDiscount(this)"><span class="text-sm text-neutral-700">20% or more</span></label>
+        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="w-4 h-4 accent-orange-600 rounded" value="30" onchange="toggleDiscount(this)"><span class="text-sm text-neutral-700">30% or more</span></label>
+        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="w-4 h-4 accent-orange-600 rounded" value="50" onchange="toggleDiscount(this)"><span class="text-sm text-neutral-700">50% or more</span></label>
+      </div>
+    </div>
+    <!-- Subcategories (populated by JS) -->
+    <div id="mob-subcat-section" class="hidden">
+      <h4 class="text-xs font-bold text-neutral-700 uppercase tracking-wide mb-3" id="mob-subcat-heading">Sub-categories</h4>
+      <div id="mob-subcat-list" class="space-y-1"></div>
+    </div>
   </div>
   <div class="p-4 border-t border-neutral-100 flex gap-3">
     <button onclick="clearAllFilters();closeFilterDrawer()" class="flex-1 py-2.5 border border-neutral-300 rounded-full text-sm font-semibold text-neutral-700 hover:bg-neutral-50">Clear All</button>
-    <button onclick="closeFilterDrawer()" class="flex-1 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-full text-sm font-semibold transition-colors">Apply Filters</button>
+    <button onclick="closeFilterDrawer()" class="flex-1 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-full text-sm font-semibold transition-colors">Apply</button>
   </div>
 </div>
 
 <!-- TOP BAR -->
 <div class="bg-neutral-900 text-neutral-50 py-1.5 px-4 text-xs hidden md:block">
   <div class="max-w-7xl mx-auto flex justify-between items-center">
-    <div class="flex items-center gap-5"><a href="tel:+2348001234567" class="flex items-center gap-1.5 hover:text-primary-300"><i data-lucide="phone" class="w-3 h-3"></i>+234 800 AHIA GLOBAL</a><a href="/cdn-cgi/l/email-protection#a1d2d4d1d1ced3d5e1c0c9c8c0c6cdcec3c0cd8fc2cecc" class="flex items-center gap-1.5 hover:text-primary-300"><i data-lucide="mail" class="w-3 h-3"></i><span class="__cf_email__" data-cfemail="e3909693938c9197a3828b8a82848f8c81828fcd808c8e">[email&#160;protected]</span></a></div>
-    <div class="flex items-center gap-4"><a href="index.html" class="hover:text-primary-300">Sell on Ahia</a><div class="h-3 w-px bg-neutral-700"></div><a href="confirmation.html" class="hover:text-primary-300">Track Order</a><div class="h-3 w-px bg-neutral-700"></div><button class="flex items-center gap-1 hover:text-primary-300"><i data-lucide="globe" class="w-3 h-3"></i>EN / NGN</button></div>
+    <div class="flex items-center gap-5"><a href="tel:+2348001234567" class="flex items-center gap-1.5 hover:text-primary-300"><i data-lucide="phone" class="w-3 h-3"></i>+234 800 AHIA GLOBAL</a></div>
+    <div class="flex items-center gap-4"><a href="index.html" class="hover:text-primary-300">Sell on Ahia</a><div class="h-3 w-px bg-neutral-700"></div><a href="confirmation.html" class="hover:text-primary-300">Track Order</a></div>
   </div>
 </div>
 
@@ -267,9 +235,7 @@ tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-s
       <button onclick="openMobileMenu()" class="md:hidden w-9 h-9 flex items-center justify-center rounded-xl hover:bg-neutral-100 flex-shrink-0"><i data-lucide="menu" class="w-5 h-5 text-neutral-700"></i></button>
       <a href="index.html" class="flex items-center flex-shrink-0">
         <img src="image.png" alt="Ahia Global" class="h-10 md:h-16 w-auto object-contain">
-        <span style="margin-left: -8px;"
-          class="font-heading font-bold text-base md:text-2xl text-neutral-900 tracking-tight leading-none">ahia<span
-            class="text-primary-600">global</span></span>
+        <span style="margin-left:-8px" class="font-heading font-bold text-base md:text-2xl text-neutral-900 tracking-tight leading-none">ahia<span class="text-primary-600">global</span></span>
       </a>
       <div class="hidden md:flex flex-1 max-w-lg mx-4 relative">
         <input id="header-search" type="text" placeholder="Search products, brands…" oninput="filterBySearch(this.value)" class="w-full pl-10 pr-24 py-2.5 bg-neutral-50 border border-neutral-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all">
@@ -277,7 +243,6 @@ tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-s
         <button class="absolute right-1.5 top-1/2 -translate-y-1/2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-1.5 rounded-full text-xs font-semibold">Search</button>
       </div>
       <div class="flex items-center gap-1 ml-auto md:ml-0">
-        <button class="md:hidden w-8 h-8 flex items-center justify-center rounded-xl hover:bg-neutral-100"><i data-lucide="search" class="w-4 h-4 text-neutral-600"></i></button>
         <button class="hidden md:flex w-9 h-9 items-center justify-center rounded-xl hover:bg-neutral-100"><i data-lucide="heart" class="w-5 h-5 text-neutral-600"></i></button>
         <button onclick="openAuth('login')" id="header-auth-btn" class="hidden md:flex items-center gap-2 px-4 py-2 rounded-full border border-neutral-200 hover:border-primary-300 hover:bg-orange-50 text-sm font-medium text-neutral-700"><i data-lucide="user" class="w-4 h-4"></i><span id="header-auth-label">Sign In</span></button>
         <a href="checkout.html" class="flex items-center gap-1 md:gap-2 bg-neutral-900 text-white px-2 md:px-4 py-1.5 md:py-2.5 rounded-full hover:bg-neutral-800 transition-all">
@@ -286,31 +251,37 @@ tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-s
         </a>
       </div>
     </div>
-    <div class="mt-2 md:hidden relative"><input type="text" placeholder="Search products…" oninput="filterBySearch(this.value)" class="w-full pl-9 pr-4 py-2 bg-neutral-50 border border-neutral-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"><i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 w-4 h-4"></i></div>
+    <!-- Mobile search bar -->
+    <div class="mt-2 md:hidden relative">
+      <input type="text" placeholder="Search products…" oninput="filterBySearch(this.value)" style="font-size:16px" class="w-full pl-9 pr-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500">
+      <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 w-4 h-4 pointer-events-none"></i>
+    </div>
   </div>
+  <!-- Desktop nav -->
   <nav class="hidden md:block border-t border-neutral-100 bg-white">
     <div class="max-w-7xl mx-auto px-4">
       <ul class="flex items-center text-sm font-medium text-neutral-600" style="overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none;white-space:nowrap">
         <li class="relative group">
-          <a href="categories.html" class="inline-flex items-center gap-1.5 py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-home"><i data-lucide="layout-grid" class="w-4 h-4"></i>Categories<i data-lucide="chevron-down" class="w-3 h-3 ml-0.5"></i></a>
-          <!-- mega drop -->
+          <a href="categories.html" class="inline-flex items-center gap-1.5 py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all"><i data-lucide="layout-grid" class="w-4 h-4"></i>Categories<i data-lucide="chevron-down" class="w-3 h-3 ml-0.5"></i></a>
           <div class="hidden group-hover:grid absolute top-full left-0 z-50 bg-white border border-neutral-200 rounded-xl2 shadow-modal p-4 gap-4 mt-0" style="grid-template-columns:repeat(4,150px);min-width:620px">
             <div><p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-2">Fashion</p><a href="shop.html?cat=fashion&sub=mens" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Men's Fashion</a><a href="shop.html?cat=fashion&sub=womens" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Women's Fashion</a><a href="shop.html?cat=fashion&sub=shoes" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Shoes & Sneakers</a><a href="shop.html?cat=fashion&sub=bags" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Bags & Accessories</a></div>
             <div><p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-2">Phones</p><a href="shop.html?cat=phones&sub=smartphones" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Smartphones</a><a href="shop.html?cat=phones&sub=tablets" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Tablets</a><a href="shop.html?cat=phones&sub=smartwatches" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Smart Watches</a><a href="shop.html?cat=phones&sub=accessories" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Accessories</a></div>
             <div><p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-2">Electronics</p><a href="shop.html?cat=electronics&sub=audio" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Audio & Headphones</a><a href="shop.html?cat=electronics&sub=gaming" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Gaming</a><a href="shop.html?cat=electronics&sub=peripherals" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Computer Accessories</a><a href="shop.html?cat=laptops" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Laptops</a></div>
-            <div><p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-2">More</p><a href="shop.html?cat=beauty" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Health & Beauty</a><a href="shop.html?cat=home" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Home & Living</a><a href="shop.html?cat=sports" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Sports & Fitness</a><a href="shop.html?cat=gifts" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Gifts & Artisan</a></div>
+            <div><p class="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-2">More</p><a href="shop.html?cat=beauty" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Health & Beauty</a><a href="shop.html?cat=home" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Home & Living</a><a href="shop.html?cat=sports" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Sports & Fitness</a><a href="shop.html?cat=gifts" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Gifts & Artisan</a><a href="shop.html?cat=agriculture" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Agriculture</a><a href="shop.html?cat=automobiles" class="block text-xs text-neutral-600 hover:text-primary-600 py-1">Automobiles</a></div>
           </div>
         </li>
-        <li><a href="index.html"                class="inline-flex items-center gap-1.5 py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-home-page"><i data-lucide="home" class="w-4 h-4"></i>Home</a></li>
-        <li><a href="shop.html"                 class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-shop">All Products</a></li>
-        <li><a href="shop.html?cat=fashion"     class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-fashion">Fashion</a></li>
-        <li><a href="shop.html?cat=phones"      class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-phones">Phones</a></li>
-        <li><a href="shop.html?cat=electronics" class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-electronics">Electronics</a></li>
-        <li><a href="shop.html?cat=beauty"      class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-beauty">Beauty</a></li>
-        <li><a href="shop.html?cat=home"        class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-home-cat">Home</a></li>
-        <li><a href="shop.html?cat=sports"      class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-sports">Sports</a></li>
-        <li><a href="riders.html"               class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all" id="nav-riders">Riders</a></li>
-        <li class="ml-auto flex-shrink-0"><a href="shop.html?sale=1" class="inline-flex items-center gap-1 py-3 px-3 text-red-600 hover:text-red-700 font-semibold border-b-2 border-red-500" id="nav-sales"><i data-lucide="zap" class="w-3.5 h-3.5"></i>Flash Sales</a></li>
+        <li><a href="index.html" class="inline-flex items-center gap-1.5 py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all"><i data-lucide="home" class="w-4 h-4"></i>Home</a></li>
+        <li><a href="shop.html" class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all">All Products</a></li>
+        <li><a href="shop.html?cat=fashion" class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all">Fashion</a></li>
+        <li><a href="shop.html?cat=phones" class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all">Phones</a></li>
+        <li><a href="shop.html?cat=electronics" class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all">Electronics</a></li>
+        <li><a href="shop.html?cat=beauty" class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all">Beauty</a></li>
+        <li><a href="shop.html?cat=home" class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all">Home</a></li>
+        <li><a href="shop.html?cat=sports" class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all">Sports</a></li>
+        <li><a href="shop.html?cat=agriculture" class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all">Agriculture</a></li>
+        <li><a href="shop.html?cat=automobiles" class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all">Automobiles</a></li>
+        <li><a href="riders.html" class="inline-flex py-3 px-3 hover:text-primary-600 border-b-2 border-transparent hover:border-primary-400 transition-all">Riders</a></li>
+        <li class="ml-auto flex-shrink-0"><a href="shop.html?sale=1" class="inline-flex items-center gap-1 py-3 px-3 text-red-600 hover:text-red-700 font-semibold border-b-2 border-red-500"><i data-lucide="zap" class="w-3.5 h-3.5"></i>Flash Sales</a></li>
       </ul>
     </div>
   </nav>
@@ -318,59 +289,65 @@ tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-s
 
 <!-- BREADCRUMB + PAGE HEADER -->
 <div class="bg-white border-b border-neutral-100">
-  <div class="max-w-7xl mx-auto px-4 py-3 md:py-4">
-    <nav class="flex items-center gap-1.5 text-xs text-neutral-500 mb-1 md:mb-2">
+  <div class="max-w-7xl mx-auto px-4 py-3">
+    <nav class="flex items-center gap-1.5 text-xs text-neutral-500 mb-2">
       <a href="index.html" class="hover:text-primary-600">Home</a>
       <i data-lucide="chevron-right" class="w-3 h-3"></i>
       <span class="text-neutral-900 font-medium" id="breadcrumb-label">All Products</span>
     </nav>
-    <div class="flex flex-col md:flex-row md:items-end justify-between gap-3 md:gap-4">
+    <div class="flex items-start justify-between gap-3 mb-3">
       <div>
-        <h1 class="font-heading text-xl md:text-3xl font-bold text-neutral-900" id="page-title">All Products</h1>
-        <p class="text-xs md:text-sm text-neutral-500 mt-0.5"><span id="result-count">48</span> products found</p>
+        <h1 class="font-heading text-lg md:text-3xl font-bold text-neutral-900 leading-tight" id="page-title">All Products</h1>
+        <p class="text-xs text-neutral-500 mt-0.5"><span id="result-count">0</span> products found</p>
       </div>
-      <!-- Category pills with horizontal scroll on mobile -->
-      <div class="cat-pill-container flex gap-2 overflow-x-auto pb-1 max-w-full" style="-ms-overflow-style:none;scrollbar-width:none">
-        <button onclick="setCat('all',this)" class="cat-pill active flex-shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 hover:border-primary-300 transition-all">All</button>
-        <button onclick="setCat('fashion',this)" class="cat-pill flex-shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 hover:border-primary-300 transition-all">Fashion</button>
-        <button onclick="setCat('electronics',this)" class="cat-pill flex-shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 hover:border-primary-300 transition-all">Electronics</button>
-        <button onclick="setCat('phones',this)" class="cat-pill flex-shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 hover:border-primary-300 transition-all">Phones</button>
-        <button onclick="setCat('home',this)" class="cat-pill flex-shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 hover:border-primary-300 transition-all">Home</button>
-        <button onclick="setCat('beauty',this)" class="cat-pill flex-shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 hover:border-primary-300 transition-all">Beauty</button>
-        <button onclick="setCat('sports',this)" class="cat-pill flex-shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 hover:border-primary-300 transition-all">Sports</button>
-        <button onclick="setCat('gifts',this)" class="cat-pill flex-shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 hover:border-primary-300 transition-all">Gifts</button>
-        <button onclick="setCat('laptops',this)" class="cat-pill flex-shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 hover:border-primary-300 transition-all">Laptops</button>
+    </div>
+    <!-- Category pills — full width scrollable row -->
+    <div class="cat-pill-row">
+      <button onclick="setCat('all',this)" class="cat-pill active flex-shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 whitespace-nowrap">All</button>
+      <button onclick="setCat('fashion',this)" class="cat-pill flex-shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 whitespace-nowrap">Fashion</button>
+      <button onclick="setCat('electronics',this)" class="cat-pill flex-shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 whitespace-nowrap">Electronics</button>
+      <button onclick="setCat('phones',this)" class="cat-pill flex-shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 whitespace-nowrap">Phones</button>
+      <button onclick="setCat('home',this)" class="cat-pill flex-shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 whitespace-nowrap">Home</button>
+      <button onclick="setCat('beauty',this)" class="cat-pill flex-shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 whitespace-nowrap">Beauty</button>
+      <button onclick="setCat('sports',this)" class="cat-pill flex-shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 whitespace-nowrap">Sports</button>
+      <button onclick="setCat('gifts',this)" class="cat-pill flex-shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 whitespace-nowrap">Gifts</button>
+      <button onclick="setCat('laptops',this)" class="cat-pill flex-shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 whitespace-nowrap">Laptops</button>
+      <button onclick="setCat('agriculture',this)" class="cat-pill flex-shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 whitespace-nowrap">Agriculture</button>
+      <button onclick="setCat('automobiles',this)" class="cat-pill flex-shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full border border-neutral-200 bg-white text-neutral-700 whitespace-nowrap">Automobiles</button>
+    </div>
+    <!-- Subcategory dropdown — appears below pills when a category is selected (all screen sizes) -->
+    <div id="mob-subcat-dropdown" class="hidden mt-2 pb-1">
+      <div class="relative inline-block w-full max-w-xs">
+        <select id="mob-subcat-select" onchange="setSubcatFromSelect(this.value)" style="font-size:14px" class="w-full pl-3 pr-9 py-2 border-2 border-primary-200 rounded-full text-sm font-semibold text-primary-700 bg-primary-50 appearance-none focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer">
+        </select>
+        <i data-lucide="chevron-down" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-500 pointer-events-none"></i>
       </div>
     </div>
   </div>
 </div>
 
-<div class="max-w-7xl mx-auto px-4 py-4 md:py-6">
-  <!-- TOOLBAR -->
-  <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
-    <div class="flex items-center gap-2.5 w-full sm:w-auto">
-      <!-- filter button mobile -->
-      <button onclick="openFilterDrawer()" class="lg:hidden flex items-center gap-2 px-4 py-2 border border-neutral-200 rounded-full text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors bg-white">
+<div class="max-w-7xl mx-auto px-4 py-4 md:py-6 main-content">
+  <!-- TOOLBAR — single row on all screen sizes -->
+  <div class="flex items-center justify-between gap-2 mb-4">
+    <div class="flex items-center gap-2 min-w-0 flex-1">
+      <button onclick="openFilterDrawer()" class="lg:hidden flex-shrink-0 flex items-center gap-1.5 px-3 py-2 border border-neutral-200 rounded-full text-sm font-medium text-neutral-700 hover:bg-neutral-50 bg-white whitespace-nowrap">
         <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>Filters
-        <span id="filter-count-badge" class="hidden w-5 h-5 bg-primary-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center">0</span>
+        <span id="filter-count-badge" class="hidden w-5 h-5 bg-primary-600 text-white text-[10px] font-bold rounded-full items-center justify-center">0</span>
       </button>
-      <!-- active filter chips -->
-      <div id="active-chips" class="flex gap-2 flex-wrap"></div>
+      <div id="active-chips" class="flex gap-2 flex-wrap min-w-0 overflow-hidden"></div>
     </div>
-    <div class="flex items-center gap-3 w-full sm:w-auto">
-      <!-- sort -->
-      <div class="relative flex-1 sm:flex-initial">
-        <select id="sort-select" onchange="applySort(this.value)" class="w-full sm:w-auto pl-3 pr-8 py-2 border border-neutral-200 rounded-full text-sm font-medium text-neutral-700 bg-white appearance-none focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer">
+    <div class="flex items-center gap-2 flex-shrink-0">
+      <div class="relative">
+        <select id="sort-select" onchange="applySort(this.value)" style="font-size:14px" class="pl-2 pr-7 py-2 border border-neutral-200 rounded-full text-neutral-700 bg-white appearance-none focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer max-w-[120px] md:max-w-none md:text-sm md:pl-3 md:pr-8">
           <option value="featured">Featured</option>
-          <option value="newest">Newest First</option>
-          <option value="price-asc">Price: Low to High</option>
-          <option value="price-desc">Price: High to Low</option>
+          <option value="newest">Newest</option>
+          <option value="price-asc">Price ↑</option>
+          <option value="price-desc">Price ↓</option>
           <option value="rating">Top Rated</option>
-          <option value="discount">Biggest Discount</option>
+          <option value="discount">Best Deal</option>
         </select>
-        <i data-lucide="chevron-down" class="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-neutral-500 pointer-events-none"></i>
+        <i data-lucide="chevron-down" class="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-neutral-500 pointer-events-none"></i>
       </div>
-      <!-- view toggle -->
       <div class="flex bg-neutral-100 rounded-lg p-0.5 flex-shrink-0">
         <button id="grid-view-btn" onclick="setView('grid')" class="view-btn active w-8 h-7 flex items-center justify-center rounded-md transition-all"><i data-lucide="grid-2x2" class="w-4 h-4"></i></button>
         <button id="list-view-btn" onclick="setView('list')" class="view-btn w-8 h-7 flex items-center justify-center rounded-md transition-all text-neutral-500"><i data-lucide="list" class="w-4 h-4"></i></button>
@@ -379,33 +356,27 @@ tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-s
   </div>
 
   <div class="flex flex-col lg:flex-row gap-4 lg:gap-7">
-    <!-- SIDEBAR FILTERS (desktop) -->
+    <!-- SIDEBAR FILTERS (desktop only) -->
     <aside class="hidden lg:block w-56 flex-shrink-0 space-y-6">
       <div class="bg-white rounded-xl2 border border-neutral-100 p-4">
         <div class="flex items-center justify-between mb-4">
           <h3 class="font-heading font-bold text-sm text-neutral-900">Filters</h3>
-          <button onclick="clearAllFilters()" class="text-xs text-primary-600 font-semibold hover:underline" id="clear-btn">Clear all</button>
+          <button onclick="clearAllFilters()" class="text-xs text-primary-600 font-semibold hover:underline">Clear all</button>
         </div>
-
-        <!-- Price range -->
         <div class="mb-5">
           <h4 class="text-xs font-bold text-neutral-700 uppercase tracking-wide mb-3">Price Range</h4>
           <input type="range" id="price-slider" min="0" max="2000" value="2000" step="10" class="price-range w-full" oninput="updatePrice(this.value)">
           <div class="flex justify-between text-xs text-neutral-500 mt-1"><span>$0</span><span id="price-label" class="text-primary-600 font-semibold">$2,000</span></div>
         </div>
-
-        <!-- Rating -->
         <div class="mb-5">
           <h4 class="text-xs font-bold text-neutral-700 uppercase tracking-wide mb-3">Min Rating</h4>
           <div class="space-y-1.5">
-            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="rating" value="0" checked class="w-3.5 h-3.5 accent-orange-600"><span class="text-xs text-neutral-700">Any rating</span></label>
-            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="rating" value="4.5" class="w-3.5 h-3.5 accent-orange-600"><span class="text-xs text-neutral-700 flex items-center gap-1">4.5★ &amp; above</span></label>
-            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="rating" value="4" class="w-3.5 h-3.5 accent-orange-600"><span class="text-xs text-neutral-700">4★ &amp; above</span></label>
-            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="rating" value="3" class="w-3.5 h-3.5 accent-orange-600"><span class="text-xs text-neutral-700">3★ &amp; above</span></label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="rating" value="0" checked class="w-3.5 h-3.5 accent-orange-600" onchange="state.minRating=0;state.page=1;renderGrid()"><span class="text-xs text-neutral-700">Any rating</span></label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="rating" value="4.5" class="w-3.5 h-3.5 accent-orange-600" onchange="state.minRating=4.5;state.page=1;renderGrid()"><span class="text-xs text-neutral-700">4.5★ &amp; above</span></label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="rating" value="4" class="w-3.5 h-3.5 accent-orange-600" onchange="state.minRating=4;state.page=1;renderGrid()"><span class="text-xs text-neutral-700">4★ &amp; above</span></label>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="rating" value="3" class="w-3.5 h-3.5 accent-orange-600" onchange="state.minRating=3;state.page=1;renderGrid()"><span class="text-xs text-neutral-700">3★ &amp; above</span></label>
           </div>
         </div>
-
-        <!-- Discount -->
         <div class="mb-5">
           <h4 class="text-xs font-bold text-neutral-700 uppercase tracking-wide mb-3">Discount</h4>
           <div class="space-y-1.5">
@@ -415,64 +386,48 @@ tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-s
             <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="w-3.5 h-3.5 accent-orange-600 rounded" value="50" onchange="toggleDiscount(this)"><span class="text-xs text-neutral-700">50% or more</span></label>
           </div>
         </div>
-
-        <!-- Availability -->
         <div>
           <h4 class="text-xs font-bold text-neutral-700 uppercase tracking-wide mb-3">Availability</h4>
           <div class="space-y-1.5">
             <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="w-3.5 h-3.5 accent-orange-600 rounded" checked><span class="text-xs text-neutral-700">In Stock</span></label>
             <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="w-3.5 h-3.5 accent-orange-600 rounded"><span class="text-xs text-neutral-700">On Sale</span></label>
-            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="w-3.5 h-3.5 accent-orange-600 rounded"><span class="text-xs text-neutral-700">Free Shipping</span></label>
           </div>
         </div>
       </div>
     </aside>
 
-    <!-- SUBCATEGORY SIDEBAR (desktop) -->
-    <div id="subcat-sidebar" class="hidden lg:block w-48 flex-shrink-0">
+    <!-- SUBCATEGORY DROPDOWN (desktop) -->
+    <div id="subcat-sidebar" class="hidden lg:block w-52 flex-shrink-0">
       <div class="bg-white rounded-xl2 border border-neutral-100 shadow-card overflow-hidden sticky top-24">
-        <div class="px-4 py-3 border-b border-neutral-100 bg-neutral-50">
-          <p class="text-xs font-bold text-neutral-500 uppercase tracking-wider" id="subcat-heading">Sub-categories</p>
+        <!-- Dropdown header — click to open/close -->
+        <button id="subcat-toggle" onclick="toggleSubcatDropdown()" class="w-full flex items-center justify-between px-4 py-3 bg-neutral-50 border-b border-neutral-100 hover:bg-neutral-100 transition-colors">
+          <p class="text-xs font-bold text-neutral-600 uppercase tracking-wider" id="subcat-heading">Sub-categories</p>
+          <i data-lucide="chevron-down" id="subcat-chevron" class="w-4 h-4 text-neutral-400 transition-transform duration-200"></i>
+        </button>
+        <!-- Dropdown body -->
+        <div id="subcat-dropdown-body" class="overflow-hidden transition-all duration-300" style="max-height:0">
+          <nav id="subcat-list" class="p-2"></nav>
         </div>
-        <nav id="subcat-list" class="p-2"></nav>
       </div>
     </div>
 
     <!-- PRODUCT GRID -->
     <div class="flex-1 min-w-0">
-
-      <!-- LOADING SKELETONS (shown while rendering) -->
       <div id="skeleton-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4 hidden">
-        
-        <div class="bg-white rounded-xl2 border border-neutral-100 overflow-hidden">
-          <div class="aspect-square skeleton"></div>
-          <div class="p-2 md:p-3 space-y-2"><div class="h-3 skeleton rounded-full w-3/4"></div><div class="h-3 skeleton rounded-full w-1/2"></div><div class="h-4 skeleton rounded-full w-1/3"></div></div>
-        </div>
-        <div class="bg-white rounded-xl2 border border-neutral-100 overflow-hidden">
-          <div class="aspect-square skeleton"></div>
-          <div class="p-2 md:p-3 space-y-2"><div class="h-3 skeleton rounded-full w-3/4"></div><div class="h-3 skeleton rounded-full w-1/2"></div><div class="h-4 skeleton rounded-full w-1/3"></div></div>
-        </div>
-        <div class="bg-white rounded-xl2 border border-neutral-100 overflow-hidden">
-          <div class="aspect-square skeleton"></div>
-          <div class="p-2 md:p-3 space-y-2"><div class="h-3 skeleton rounded-full w-3/4"></div><div class="h-3 skeleton rounded-full w-1/2"></div><div class="h-4 skeleton rounded-full w-1/3"></div></div>
-        </div>
-        <div class="bg-white rounded-xl2 border border-neutral-100 overflow-hidden">
-          <div class="aspect-square skeleton"></div>
-          <div class="p-2 md:p-3 space-y-2"><div class="h-3 skeleton rounded-full w-3/4"></div><div class="h-3 skeleton rounded-full w-1/2"></div><div class="h-4 skeleton rounded-full w-1/3"></div></div>
-        </div>
+        <div class="bg-white rounded-xl2 border border-neutral-100 overflow-hidden"><div class="aspect-square skeleton"></div><div class="p-3 space-y-2"><div class="h-3 skeleton rounded-full w-3/4"></div><div class="h-3 skeleton rounded-full w-1/2"></div><div class="h-4 skeleton rounded-full w-1/3"></div></div></div>
+        <div class="bg-white rounded-xl2 border border-neutral-100 overflow-hidden"><div class="aspect-square skeleton"></div><div class="p-3 space-y-2"><div class="h-3 skeleton rounded-full w-3/4"></div><div class="h-3 skeleton rounded-full w-1/2"></div><div class="h-4 skeleton rounded-full w-1/3"></div></div></div>
+        <div class="bg-white rounded-xl2 border border-neutral-100 overflow-hidden"><div class="aspect-square skeleton"></div><div class="p-3 space-y-2"><div class="h-3 skeleton rounded-full w-3/4"></div><div class="h-3 skeleton rounded-full w-1/2"></div><div class="h-4 skeleton rounded-full w-1/3"></div></div></div>
+        <div class="bg-white rounded-xl2 border border-neutral-100 overflow-hidden"><div class="aspect-square skeleton"></div><div class="p-3 space-y-2"><div class="h-3 skeleton rounded-full w-3/4"></div><div class="h-3 skeleton rounded-full w-1/2"></div><div class="h-4 skeleton rounded-full w-1/3"></div></div></div>
       </div>
 
-      <!-- API ERROR STATE (PRD 3.6) -->
       <div id="api-error-state" class="hidden text-center py-20">
         <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="wifi-off" class="w-8 h-8 text-red-400"></i></div>
         <h3 class="font-heading text-lg font-bold text-neutral-700 mb-2">Couldn't Load Products</h3>
         <p class="text-neutral-500 text-sm mb-5">Check your connection and try again.</p>
-        <button onclick="retryLoad()" class="flex items-center gap-2 px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-full text-sm font-semibold transition-colors mx-auto"><i data-lucide="refresh-cw" class="w-4 h-4"></i>Retry</button>
       </div>
 
       <div id="product-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4"></div>
 
-      <!-- NO RESULTS -->
       <div id="shop-no-results" class="hidden text-center py-20">
         <div class="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="search-x" class="w-8 h-8 text-neutral-400"></i></div>
         <h3 class="font-heading text-lg font-bold text-neutral-700 mb-2">No products found</h3>
@@ -480,11 +435,10 @@ tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-s
         <button onclick="clearAllFilters()" class="px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-full text-sm font-semibold transition-colors">Clear Filters</button>
       </div>
 
-      <!-- PAGINATION -->
       <div id="pagination" class="flex items-center justify-center gap-2 mt-6 md:mt-10 flex-wrap">
-        <button onclick="changePage(-1)" id="prev-btn" class="w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-full border border-neutral-200 hover:bg-neutral-50 text-neutral-600 disabled:opacity-40" disabled><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+        <button onclick="changePage(-1)" id="prev-btn" class="w-9 h-9 flex items-center justify-center rounded-full border border-neutral-200 hover:bg-neutral-50 text-neutral-600 disabled:opacity-40" disabled><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
         <div id="page-buttons" class="flex gap-1"></div>
-        <button onclick="changePage(1)" id="next-btn" class="w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-full border border-neutral-200 hover:bg-neutral-50 text-neutral-600"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+        <button onclick="changePage(1)" id="next-btn" class="w-9 h-9 flex items-center justify-center rounded-full border border-neutral-200 hover:bg-neutral-50 text-neutral-600"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
       </div>
     </div>
   </div>
@@ -492,14 +446,16 @@ tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-s
 
 <!-- MOBILE BOTTOM NAV -->
 <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-200 z-[150] flex pb-safe">
-  <a href="index.html" class="flex-1 flex flex-col items-center justify-center py-1.5 gap-0.5 text-neutral-500"><i data-lucide="home" class="w-5 h-5"></i><span class="text-[10px] font-medium">Home</span></a>
-  <a href="shop.html" class="flex-1 flex flex-col items-center justify-center py-1.5 gap-0.5 text-primary-600"><i data-lucide="layout-grid" class="w-5 h-5"></i><span class="text-[10px] font-medium">Shop</span></a>
-  <a href="checkout.html" class="flex-1 flex flex-col items-center justify-center py-1.5 gap-0.5 text-neutral-500 relative"><div class="relative"><i data-lucide="shopping-cart" class="w-5 h-5"></i><span class="cart-count-badge absolute -top-2 -right-2 w-4 h-4 bg-red-500 text-white text-[9px] font-bold flex items-center justify-center rounded-full">0</span></div><span class="text-[10px] font-medium">Cart</span></a>
-  <button class="flex-1 flex flex-col items-center justify-center py-1.5 gap-0.5 text-neutral-500"><i data-lucide="heart" class="w-5 h-5"></i><span class="text-[10px] font-medium">Wishlist</span></button>
-  <button onclick="openAuth('login')" class="flex-1 flex flex-col items-center justify-center py-1.5 gap-0.5 text-neutral-500"><i data-lucide="user" class="w-5 h-5"></i><span class="text-[10px] font-medium">Account</span></button>
+  <a href="index.html" class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-neutral-500"><i data-lucide="home" class="w-5 h-5"></i><span class="text-[10px] font-medium">Home</span></a>
+  <a href="shop.html" class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-primary-600"><i data-lucide="layout-grid" class="w-5 h-5"></i><span class="text-[10px] font-medium">Shop</span></a>
+  <a href="checkout.html" class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-neutral-500 relative"><div class="relative"><i data-lucide="shopping-cart" class="w-5 h-5"></i><span class="cart-count-badge absolute -top-2 -right-2 w-4 h-4 bg-red-500 text-white text-[9px] font-bold flex items-center justify-center rounded-full">0</span></div><span class="text-[10px] font-medium">Cart</span></a>
+  <button class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-neutral-500"><i data-lucide="heart" class="w-5 h-5"></i><span class="text-[10px] font-medium">Wishlist</span></button>
+  <button onclick="openAuth('login')" class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-neutral-500"><i data-lucide="user" class="w-5 h-5"></i><span class="text-[10px] font-medium">Account</span></button>
 </div>
 
-<footer class="bg-white border-t border-neutral-100 py-5 pb-24 md:pb-7 mt-4 md:mt-6">
+<footer class="bg-white border-t border-neutral-100 py-5 mt-4 md:mt-6" style="padding-bottom:calc(env(safe-area-inset-bottom,0) + 80px)" >
+  <div class="hidden md:block" style="padding-bottom:0!important"></div>
+  <style>@media(min-width:768px){footer{padding-bottom:1.75rem!important}}</style>
   <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
     <div class="flex items-center gap-2"><div class="w-7 h-7 bg-primary-600 rounded-md flex items-center justify-center text-white font-bold text-sm">A</div><span class="font-heading font-bold text-neutral-900">Ahia<span class="text-primary-600">Global</span></span></div>
     <p class="text-xs text-neutral-400">© 2024 AhiaGlobal. All rights reserved.</p>
@@ -507,65 +463,9 @@ tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-s
   </div>
 </footer>
 
-<style>
-/* Safe area padding for modern mobile devices */
-.pb-safe {
-  padding-bottom: env(safe-area-inset-bottom, 0);
-}
-
-/* Fix for iOS input zoom */
-@media (max-width: 640px) {
-  input, select, textarea {
-    font-size: 16px !important;
-  }
-}
-
-/* Ensure images don't overflow */
-img {
-  max-width: 100%;
-  height: auto;
-}
-
-/* Fix for sticky header on mobile */
-@media (max-width: 768px) {
-  #main-header.sticky {
-    position: sticky;
-    top: 0;
-  }
-}
-
-/* Ensure product grid doesn't overflow */
-#product-grid {
-  width: 100%;
-  overflow: hidden;
-}
-
-/* Fix for rating stars alignment */
-.flex.gap-0\.5 {
-  display: flex;
-  align-items: center;
-}
-
-/* Ensure buttons are tappable on mobile */
-@media (max-width: 640px) {
-  button, a {
-    min-height: 44px;
-    min-width: 44px;
-  }
-  
-  .prod-card button {
-    min-height: auto;
-    min-width: auto;
-  }
-}
-</style>
-
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="shared.js"></script>
+<script src="shared.js"></script>
 <script>
-// ── Full product catalogue ────────────────────────────────────
-
 const ALL_PRODUCTS = [
-  // ── FASHION (12 products) ────────────────────────────────────
   {id:'fa1',subcat:'womens',name:'Ankara Print Blazer',price:72,orig:95,cat:'fashion',img:'https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=400&q=80',rating:4.7,reviews:83,disc:24,badge:'New'},
   {id:'fa2',subcat:'womens',name:'Summer Floral Dress',price:45,orig:60,cat:'fashion',img:'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&q=80',rating:4.8,reviews:134,disc:25,badge:''},
   {id:'fa3',subcat:'mens',name:'Urban Cotton T-Shirt',price:28,orig:35,cat:'fashion',img:'https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?w=400&q=80',rating:4.5,reviews:67,disc:20,badge:''},
@@ -578,8 +478,6 @@ const ALL_PRODUCTS = [
   {id:'fa10',subcat:'accessories',name:'Woven Raffia Hat',price:27,orig:38,cat:'fashion',img:'https://images.unsplash.com/photo-1572307480813-ceb0e59d8325?w=400&q=80',rating:4.5,reviews:19,disc:29,badge:''},
   {id:'fa11',subcat:'womens',name:'African Print Mini Skirt',price:35,orig:48,cat:'fashion',img:'https://images.unsplash.com/photo-1583846717393-dc2412c95ed7?w=400&q=80',rating:4.4,reviews:28,disc:27,badge:'New'},
   {id:'fa12',subcat:'bags',name:'Handwoven Basket Bag',price:55,orig:75,cat:'fashion',img:'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400&q=80',rating:4.7,reviews:38,disc:27,badge:''},
-
-  // ── ELECTRONICS (10 products) ─────────────────────────────────
   {id:'el1',subcat:'audio',name:'Premium Wireless Headphones',price:129.99,orig:185,cat:'electronics',img:'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80',rating:4.8,reviews:124,disc:30,badge:'-30%'},
   {id:'el2',subcat:'audio',name:'Wireless Earbuds Pro',price:89.99,orig:120,cat:'electronics',img:'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=400&q=80',rating:4.6,reviews:87,disc:25,badge:''},
   {id:'el3',subcat:'peripherals',name:'Mechanical Keyboard RGB',price:79.99,orig:130,cat:'electronics',img:'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400&q=80',rating:4.7,reviews:63,disc:38,badge:'Sale'},
@@ -590,8 +488,6 @@ const ALL_PRODUCTS = [
   {id:'el8',subcat:'peripherals',name:'Laptop Stand Aluminium',price:34.99,orig:50,cat:'electronics',img:'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400&q=80',rating:4.7,reviews:110,disc:30,badge:''},
   {id:'el9',subcat:'smart-home',name:'Smart Watch Fitness Pro',price:199,orig:330,cat:'electronics',img:'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80',rating:4.6,reviews:88,disc:40,badge:'-40%'},
   {id:'el10',subcat:'audio',name:'Sony WH-1000XM5',price:279,orig:399,cat:'electronics',img:'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=400&q=80',rating:4.9,reviews:445,disc:30,badge:'Top Pick'},
-
-  // ── PHONES & TABLETS (10 products) ───────────────────────────
   {id:'ph1',subcat:'smartphones',name:'iPhone 15 Pro Max',price:1099,orig:1199,cat:'phones',img:'https://images.unsplash.com/photo-1696446702183-be88e4a4f4ab?w=400&q=80',rating:4.9,reviews:320,disc:8,badge:'Hot'},
   {id:'ph2',subcat:'smartphones',name:'Samsung Galaxy S24',price:799,orig:899,cat:'phones',img:'https://images.unsplash.com/photo-1591337676887-a217a6970a8a?w=400&q=80',rating:4.8,reviews:210,disc:11,badge:''},
   {id:'ph3',subcat:'smartphones',name:'Tecno Camon 20',price:189,orig:229,cat:'phones',img:'https://images.unsplash.com/photo-1556656793-08538906a9f8?w=400&q=80',rating:4.4,reviews:95,disc:17,badge:''},
@@ -602,8 +498,6 @@ const ALL_PRODUCTS = [
   {id:'ph8',subcat:'smartphones',name:'Xiaomi 14 Ultra',price:649,orig:749,cat:'phones',img:'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&q=80',rating:4.7,reviews:112,disc:13,badge:''},
   {id:'ph9',subcat:'smartphones',name:'Nokia G60 5G',price:289,orig:349,cat:'phones',img:'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=400&q=80',rating:4.3,reviews:56,disc:17,badge:''},
   {id:'ph10',subcat:'smartphones',name:'Oppo Reno 11 Pro',price:449,orig:549,cat:'phones',img:'https://images.unsplash.com/photo-1567581935884-3349723552ca?w=400&q=80',rating:4.5,reviews:77,disc:18,badge:''},
-
-  // ── HOME & LIVING (10 products) ───────────────────────────────
   {id:'ho1',subcat:'decor',name:'Ceramic Vase Set of 3',price:32,orig:45,cat:'home',img:'https://images.unsplash.com/photo-1629198688000-71f23e745b6e?w=400&q=80',rating:4.5,reviews:44,disc:29,badge:'New'},
   {id:'ho2',subcat:'decor',name:'Macramé Wall Hanging',price:42,orig:60,cat:'home',img:'https://images.unsplash.com/photo-1513519245088-0e12902e35ca?w=400&q=80',rating:4.6,reviews:37,disc:30,badge:''},
   {id:'ho3',subcat:'kitchen',name:'Teak Wood Serving Tray',price:38,orig:55,cat:'home',img:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&q=80',rating:4.4,reviews:29,disc:31,badge:''},
@@ -614,8 +508,6 @@ const ALL_PRODUCTS = [
   {id:'ho8',subcat:'bedding',name:'Linen Duvet Cover Set',price:65,orig:90,cat:'home',img:'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=400&q=80',rating:4.7,reviews:73,disc:28,badge:'New'},
   {id:'ho9',subcat:'storage',name:'Rattan Storage Basket',price:28,orig:40,cat:'home',img:'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&q=80',rating:4.4,reviews:38,disc:30,badge:''},
   {id:'ho10',subcat:'candles',name:'Scented Reed Diffuser',price:19.99,orig:28,cat:'home',img:'https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=400&q=80',rating:4.6,reviews:55,disc:29,badge:''},
-
-  // ── BEAUTY (10 products) ──────────────────────────────────────
   {id:'be1',subcat:'skincare',name:'Shea Butter Body Cream',price:19.99,orig:28,cat:'beauty',img:'https://images.unsplash.com/photo-1596462502278-27bfdd403348?w=400&q=80',rating:4.8,reviews:145,disc:29,badge:'Best Seller'},
   {id:'be2',subcat:'skincare',name:'Black Soap Cleansing Bar',price:12.99,orig:18,cat:'beauty',img:'https://images.unsplash.com/photo-1584305574647-0cc949a2bb9f?w=400&q=80',rating:4.7,reviews:98,disc:28,badge:''},
   {id:'be3',subcat:'haircare',name:'Natural Hair Growth Oil',price:24.99,orig:35,cat:'beauty',img:'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=400&q=80',rating:4.6,reviews:113,disc:29,badge:''},
@@ -626,8 +518,6 @@ const ALL_PRODUCTS = [
   {id:'be8',subcat:'haircare',name:'Coconut Oil Hair Treatment',price:14.99,orig:20,cat:'beauty',img:'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&q=80',rating:4.7,reviews:134,disc:25,badge:''},
   {id:'be9',subcat:'skincare',name:'Rose Water Face Toner',price:13.99,orig:19,cat:'beauty',img:'https://images.unsplash.com/photo-1570194065650-d99fb4b63def?w=400&q=80',rating:4.4,reviews:58,disc:26,badge:''},
   {id:'be10',subcat:'skincare',name:'Charcoal Detox Face Scrub',price:17.99,orig:26,cat:'beauty',img:'https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=400&q=80',rating:4.5,reviews:67,disc:31,badge:''},
-
-  // ── SPORTS & FITNESS (10 products) ───────────────────────────
   {id:'sp1',subcat:'gym',name:'Pro Resistance Band Set',price:22.99,orig:35,cat:'sports',img:'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=400&q=80',rating:4.6,reviews:74,disc:34,badge:''},
   {id:'sp2',subcat:'yoga',name:'Yoga Mat Premium 6mm',price:34.99,orig:50,cat:'sports',img:'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&q=80',rating:4.8,reviews:132,disc:30,badge:'Top Pick'},
   {id:'sp3',subcat:'running',name:'Running Shoes Ultralight',price:89.99,orig:130,cat:'sports',img:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80',rating:4.7,reviews:89,disc:31,badge:''},
@@ -638,8 +528,6 @@ const ALL_PRODUCTS = [
   {id:'sp8',subcat:'gym',name:'Foam Roller Deep Tissue',price:24.99,orig:38,cat:'sports',img:'https://images.unsplash.com/photo-1510894347713-fc3dc6166086?w=400&q=80',rating:4.6,reviews:81,disc:34,badge:''},
   {id:'sp9',subcat:'nutrition',name:'Protein Shaker Bottle',price:12.99,orig:18,cat:'sports',img:'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=400&q=80',rating:4.3,reviews:52,disc:28,badge:''},
   {id:'sp10',subcat:'sportswear',name:'Compression Running Tights',price:39.99,orig:58,cat:'sports',img:'https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=400&q=80',rating:4.5,reviews:44,disc:31,badge:'New'},
-
-  // ── GIFTS & ACCESSORIES (10 products) ────────────────────────
   {id:'gi1',subcat:'art',name:'African Art Print Set A3',price:35,orig:50,cat:'gifts',img:'https://images.unsplash.com/photo-1513519245088-0e12902e35ca?w=400&q=80',rating:4.8,reviews:42,disc:30,badge:'New'},
   {id:'gi2',subcat:'gift-sets',name:'Personalised Photo Mug',price:16.99,orig:24,cat:'gifts',img:'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=400&q=80',rating:4.6,reviews:89,disc:29,badge:''},
   {id:'gi3',subcat:'gift-sets',name:'Luxury Scented Candle Gift Set',price:42,orig:58,cat:'gifts',img:'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=400&q=80',rating:4.7,reviews:63,disc:28,badge:'Best Seller'},
@@ -650,8 +538,26 @@ const ALL_PRODUCTS = [
   {id:'gi8',subcat:'books',name:'Afrocentric Journal Notebook',price:14.99,orig:22,cat:'gifts',img:'https://images.unsplash.com/photo-1531346878377-a5be20888e57?w=400&q=80',rating:4.7,reviews:58,disc:32,badge:''},
   {id:'gi9',subcat:'food-gifts',name:'Gourmet Spice Gift Set',price:22.99,orig:32,cat:'gifts',img:'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80',rating:4.5,reviews:34,disc:28,badge:'New'},
   {id:'gi10',subcat:'crafts',name:'Silk Scarf Hand-Painted',price:38,orig:55,cat:'gifts',img:'https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?w=400&q=80',rating:4.8,reviews:29,disc:31,badge:''},
-
-  // ── LAPTOPS & COMPUTERS (8 products) ─────────────────────────
+  {id:'ag1',subcat:'seeds',name:'Hybrid Tomato Seeds (100g)',price:8.99,orig:13,cat:'agriculture',img:'https://images.unsplash.com/photo-1592921870789-04563d55041c?w=400&q=80',rating:4.7,reviews:89,disc:31,badge:'Best Seller'},
+  {id:'ag2',subcat:'fertilisers',name:'NPK 20-20-20 Fertiliser 25kg',price:24,orig:32,cat:'agriculture',img:'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&q=80',rating:4.6,reviews:143,disc:25,badge:''},
+  {id:'ag3',subcat:'tools',name:'Stainless Steel Hoe & Fork Set',price:18.99,orig:27,cat:'agriculture',img:'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&q=80',rating:4.5,reviews:67,disc:30,badge:''},
+  {id:'ag4',subcat:'irrigation',name:'Drip Irrigation Kit 50m',price:35,orig:50,cat:'agriculture',img:'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=400&q=80',rating:4.8,reviews:54,disc:30,badge:'New'},
+  {id:'ag5',subcat:'pesticides',name:'Organic Neem Oil Pesticide 1L',price:12.50,orig:18,cat:'agriculture',img:'https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=400&q=80',rating:4.6,reviews:78,disc:31,badge:''},
+  {id:'ag6',subcat:'livestock',name:'Poultry Feed Grower Mash 25kg',price:22,orig:30,cat:'agriculture',img:'https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=400&q=80',rating:4.4,reviews:112,disc:27,badge:''},
+  {id:'ag7',subcat:'seeds',name:'Hybrid Maize Seed 2kg',price:11,orig:16,cat:'agriculture',img:'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&q=80',rating:4.7,reviews:95,disc:31,badge:'Top Pick'},
+  {id:'ag8',subcat:'tools',name:'Motorised Water Pump 1.5HP',price:85,orig:120,cat:'agriculture',img:'https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=400&q=80',rating:4.5,reviews:41,disc:29,badge:''},
+  {id:'ag9',subcat:'fertilisers',name:'Organic Compost Pellets 10kg',price:15,orig:22,cat:'agriculture',img:'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&q=80',rating:4.6,reviews:63,disc:32,badge:'New'},
+  {id:'ag10',subcat:'irrigation',name:'Sprinkler System Kit 100m²',price:45,orig:65,cat:'agriculture',img:'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=400&q=80',rating:4.7,reviews:37,disc:31,badge:''},
+  {id:'au1',subcat:'accessories',name:'Dash Cam 4K Front & Rear',price:89,orig:130,cat:'automobiles',img:'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&q=80',rating:4.7,reviews:156,disc:32,badge:'Hot'},
+  {id:'au2',subcat:'spare-parts',name:'Universal Car Battery 75Ah',price:120,orig:165,cat:'automobiles',img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80',rating:4.6,reviews:89,disc:27,badge:''},
+  {id:'au3',subcat:'tyres',name:'Bridgestone Tyres 205/55 R16',price:95,orig:130,cat:'automobiles',img:'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&q=80',rating:4.8,reviews:212,disc:27,badge:'Best Seller'},
+  {id:'au4',subcat:'oils',name:'Castrol Edge 5W-30 Full Syn 5L',price:45,orig:62,cat:'automobiles',img:'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=400&q=80',rating:4.9,reviews:341,disc:27,badge:'Top Pick'},
+  {id:'au5',subcat:'accessories',name:'Leather Steering Wheel Cover',price:18.99,orig:27,cat:'automobiles',img:'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=400&q=80',rating:4.5,reviews:74,disc:30,badge:''},
+  {id:'au6',subcat:'spare-parts',name:'Bosch Wiper Blades Set 24"',price:22,orig:32,cat:'automobiles',img:'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&q=80',rating:4.6,reviews:98,disc:31,badge:''},
+  {id:'au7',subcat:'accessories',name:'Car Seat Covers Full Set',price:55,orig:80,cat:'automobiles',img:'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400&q=80',rating:4.4,reviews:67,disc:31,badge:'New'},
+  {id:'au8',subcat:'tyres',name:'Michelin All-Season 225/45 R17',price:135,orig:185,cat:'automobiles',img:'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&q=80',rating:4.8,reviews:143,disc:27,badge:''},
+  {id:'au9',subcat:'spare-parts',name:'NGK Iridium Spark Plugs x4',price:32,orig:45,cat:'automobiles',img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80',rating:4.7,reviews:88,disc:29,badge:''},
+  {id:'au10',subcat:'oils',name:'Total Quartz 10W-40 4L',price:28,orig:40,cat:'automobiles',img:'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=400&q=80',rating:4.6,reviews:119,disc:30,badge:''},
   {id:'la1',subcat:'windows',name:'Dell XPS 15 Laptop',price:1299,orig:1799,cat:'laptops',img:'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&q=80',rating:4.8,reviews:267,disc:28,badge:'-28%'},
   {id:'la2',subcat:'mac',name:'MacBook Air M2',price:1099,orig:1299,cat:'laptops',img:'https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=400&q=80',rating:4.9,reviews:389,disc:15,badge:'Top Pick'},
   {id:'la3',subcat:'windows',name:'HP Pavilion 15 Ryzen 7',price:699,orig:899,cat:'laptops',img:'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&q=80',rating:4.5,reviews:145,disc:22,badge:''},
@@ -662,14 +568,12 @@ const ALL_PRODUCTS = [
   {id:'la8',subcat:'chromebook',name:'Samsung Chromebook 4',price:249,orig:329,cat:'laptops',img:'https://images.unsplash.com/photo-1561154464-82e9adf32764?w=400&q=80',rating:4.3,reviews:89,disc:24,badge:'Budget Pick'},
 ];
 
-// ── State ─────────────────────────────────────────────────────
 let state = {
-  cat: 'all', subcat: '', search: '', sort: 'featured',
-  maxPrice: 2000, minRating: 0, discounts: [],
-  view: 'grid', page: 1, perPage: 12
+  cat:'all', subcat:'', search:'', sort:'featured',
+  maxPrice:2000, minRating:0, discounts:[],
+  view:'grid', page:1, perPage:12
 };
 
-// ── Filter & render ───────────────────────────────────────────
 function getFiltered() {
   let p = [...ALL_PRODUCTS];
   if (state.cat !== 'all') p = p.filter(x => x.cat === state.cat);
@@ -678,49 +582,49 @@ function getFiltered() {
   p = p.filter(x => x.price <= state.maxPrice);
   if (state.minRating > 0) p = p.filter(x => x.rating >= state.minRating);
   if (state.discounts.length) p = p.filter(x => state.discounts.some(d => x.disc >= d));
-  // sort
   const s = state.sort;
-  if (s === 'price-asc') p.sort((a,b) => a.price - b.price);
-  else if (s === 'price-desc') p.sort((a,b) => b.price - a.price);
-  else if (s === 'newest') p.reverse();
-  else if (s === 'rating') p.sort((a,b) => b.rating - a.rating);
-  else if (s === 'discount') p.sort((a,b) => b.disc - a.disc);
+  if (s==='price-asc') p.sort((a,b)=>a.price-b.price);
+  else if (s==='price-desc') p.sort((a,b)=>b.price-a.price);
+  else if (s==='newest') p.reverse();
+  else if (s==='rating') p.sort((a,b)=>b.rating-a.rating);
+  else if (s==='discount') p.sort((a,b)=>b.disc-a.disc);
   return p;
 }
 
 function renderGrid() {
-  const grid    = document.getElementById('product-grid');
-  const noRes   = document.getElementById('shop-no-results');
-  const pagDiv  = document.getElementById('pagination');
+  const grid   = document.getElementById('product-grid');
+  const noRes  = document.getElementById('shop-no-results');
+  const pagDiv = document.getElementById('pagination');
 
-  // ── GROUPED ALL-PRODUCTS VIEW ─────────────────────────────
-  if (state.cat === 'all' && !state.search && !state.subcat) {
+  if (state.cat==='all' && !state.search && !state.subcat) {
     noRes.classList.add('hidden');
     pagDiv.classList.add('hidden');
     grid.className = '';
 
     const CAT_META = [
-      {key:'fashion',    label:'Fashion',           icon:'shirt',     color:'from-pink-500 to-rose-600',   href:'shop.html?cat=fashion'},
-      {key:'phones',     label:'Phones & Tablets',  icon:'smartphone',color:'from-blue-500 to-blue-700',   href:'shop.html?cat=phones'},
-      {key:'electronics',label:'Electronics',       icon:'cpu',       color:'from-violet-500 to-purple-700',href:'shop.html?cat=electronics'},
-      {key:'laptops',    label:'Laptops & Computing',icon:'laptop',   color:'from-slate-600 to-slate-800',  href:'shop.html?cat=laptops'},
-      {key:'beauty',     label:'Health & Beauty',   icon:'sparkles',  color:'from-fuchsia-500 to-pink-600', href:'shop.html?cat=beauty'},
-      {key:'home',       label:'Home & Living',     icon:'home',      color:'from-teal-500 to-emerald-700', href:'shop.html?cat=home'},
-      {key:'sports',     label:'Sports & Fitness',  icon:'dumbbell',  color:'from-orange-500 to-red-600',   href:'shop.html?cat=sports'},
-      {key:'gifts',      label:'Gifts & Artisan',   icon:'gift',      color:'from-amber-500 to-orange-600', href:'shop.html?cat=gifts'},
+      {key:'fashion',    label:'Fashion',            icon:'shirt',      color:'from-pink-500 to-rose-600',    href:'shop.html?cat=fashion'},
+      {key:'phones',     label:'Phones & Tablets',   icon:'smartphone', color:'from-blue-500 to-blue-700',    href:'shop.html?cat=phones'},
+      {key:'electronics',label:'Electronics',        icon:'cpu',        color:'from-violet-500 to-purple-700', href:'shop.html?cat=electronics'},
+      {key:'laptops',    label:'Laptops & Computing',icon:'laptop',     color:'from-slate-600 to-slate-800',  href:'shop.html?cat=laptops'},
+      {key:'beauty',     label:'Health & Beauty',    icon:'sparkles',   color:'from-fuchsia-500 to-pink-600', href:'shop.html?cat=beauty'},
+      {key:'home',       label:'Home & Living',      icon:'home',       color:'from-teal-500 to-emerald-700', href:'shop.html?cat=home'},
+      {key:'sports',     label:'Sports & Fitness',   icon:'dumbbell',   color:'from-orange-500 to-red-600',   href:'shop.html?cat=sports'},
+      {key:'gifts',      label:'Gifts & Artisan',    icon:'gift',       color:'from-amber-500 to-orange-600', href:'shop.html?cat=gifts'},
+      {key:'agriculture',label:'Agriculture',         icon:'wheat',      color:'from-lime-600 to-green-700',   href:'shop.html?cat=agriculture'},
+      {key:'automobiles',label:'Automobiles',         icon:'car',        color:'from-zinc-600 to-slate-700',   href:'shop.html?cat=automobiles'},
     ];
 
-    const starsHtml = (n) => Array.from({length:5},(_,i)=>`<svg width="9" height="9" viewBox="0 0 24 24" fill="${i<Math.floor(n)?'#facc15':'none'}" stroke="${i<Math.floor(n)?'#facc15':'#d1d5db'}" stroke-width="1"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>`).join('');
+    const stars = (n) => Array.from({length:5},(_,i)=>`<svg width="9" height="9" viewBox="0 0 24 24" fill="${i<Math.floor(n)?'#facc15':'none'}" stroke="${i<Math.floor(n)?'#facc15':'#d1d5db'}" stroke-width="1"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>`).join('');
 
     const cardHtml = (p) => `
       <div class="bg-white rounded-xl border border-neutral-100 overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex-shrink-0" style="width:160px">
         <a href="product.html?id=${p.id}" class="block relative" style="aspect-ratio:1;overflow:hidden;background:#f8fafc">
           <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80'">
-          ${p.disc ? `<div class="absolute top-2 left-2 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md">-${p.disc}%</div>` : ''}
+          ${p.disc?`<div class="absolute top-2 left-2 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md">-${p.disc}%</div>`:''}
         </a>
         <div class="p-2.5">
-          <div class="flex gap-0.5 mb-1">${starsHtml(p.rating)}<span class="text-[9px] text-neutral-400 ml-0.5">(${p.reviews})</span></div>
-          <a href="product.html?id=${p.id}" class="block text-[11px] font-medium text-neutral-800 leading-tight mb-1.5 hover:text-primary-600 transition-colors" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${p.name}</a>
+          <div class="flex gap-0.5 mb-1">${stars(p.rating)}<span class="text-[9px] text-neutral-400 ml-0.5">(${p.reviews})</span></div>
+          <a href="product.html?id=${p.id}" class="block text-xs font-medium text-neutral-800 leading-tight mb-1.5 hover:text-primary-600 transition-colors" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${p.name}</a>
           <div class="flex items-center justify-between gap-1">
             <span class="font-bold text-primary-600 text-xs">$${p.price}</span>
             <button onclick="addItem('${p.id}','${p.name}',${p.price},'${p.img}')" class="text-[10px] bg-neutral-900 hover:bg-primary-600 text-white px-2 py-1 rounded-lg font-semibold transition-colors">+Cart</button>
@@ -729,31 +633,23 @@ function renderGrid() {
       </div>`;
 
     document.getElementById('result-count').textContent = ALL_PRODUCTS.length;
-
     grid.innerHTML = CAT_META.map(cm => {
-      const items = ALL_PRODUCTS.filter(p => p.cat === cm.key).slice(0, 8);
+      const items = ALL_PRODUCTS.filter(p=>p.cat===cm.key).slice(0,8);
       if (!items.length) return '';
       return `
         <div class="mb-8">
-          <!-- Category header -->
           <div class="flex items-center justify-between mb-4">
             <div class="flex items-center gap-3">
-              <div class="w-9 h-9 bg-gradient-to-br ${cm.color} rounded-xl flex items-center justify-center flex-shrink-0">
-                <i data-lucide="${cm.icon}" class="w-4 h-4 text-white"></i>
-              </div>
+              <div class="w-9 h-9 bg-gradient-to-br ${cm.color} rounded-xl flex items-center justify-center flex-shrink-0"><i data-lucide="${cm.icon}" class="w-4 h-4 text-white"></i></div>
               <div>
                 <h2 class="font-heading font-bold text-neutral-900 text-base md:text-lg leading-tight">${cm.label}</h2>
                 <p class="text-xs text-neutral-400">${ALL_PRODUCTS.filter(p=>p.cat===cm.key).length} products</p>
               </div>
             </div>
-            <a href="${cm.href}" class="flex items-center gap-1 text-xs font-semibold text-primary-600 hover:text-primary-700 whitespace-nowrap">
-              View all <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-            </a>
+            <a href="${cm.href}" class="flex items-center gap-1 text-xs font-semibold text-primary-600 hover:text-primary-700 whitespace-nowrap">View all <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></a>
           </div>
-          <!-- Horizontal scroll row -->
           <div class="flex gap-3 overflow-x-auto pb-2" style="-ms-overflow-style:none;scrollbar-width:none">
-            ${items.map(p => cardHtml(p)).join('')}
-            <!-- See all card -->
+            ${items.map(p=>cardHtml(p)).join('')}
             <a href="${cm.href}" class="flex-shrink-0 flex flex-col items-center justify-center gap-2 bg-neutral-50 border-2 border-dashed border-neutral-200 rounded-xl hover:border-primary-300 hover:bg-primary-50 transition-all" style="width:120px;min-height:200px">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 8 16 12 12 16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
               <span class="text-xs font-semibold text-primary-600 text-center px-2">See all<br>${cm.label}</span>
@@ -762,21 +658,17 @@ function renderGrid() {
           <div class="mt-4 border-b border-neutral-100"></div>
         </div>`;
     }).join('');
-
-    // Re-init lucide icons in new HTML
-    setTimeout(() => lucide && lucide.createIcons(), 50);
+    setTimeout(()=>lucide&&lucide.createIcons(),50);
     return;
   }
 
-  // ── FILTERED VIEW (specific cat or search) ────────────────
   const filtered = getFiltered();
-  const start = (state.page - 1) * state.perPage;
-  const page = filtered.slice(start, start + state.perPage);
-
+  const start = (state.page-1)*state.perPage;
+  const page = filtered.slice(start, start+state.perPage);
   document.getElementById('result-count').textContent = filtered.length;
 
   if (!page.length) {
-    grid.innerHTML = '';
+    grid.innerHTML='';
     noRes.classList.remove('hidden');
     pagDiv.classList.add('hidden');
     return;
@@ -784,52 +676,57 @@ function renderGrid() {
   noRes.classList.add('hidden');
   pagDiv.classList.remove('hidden');
 
-  const starsHtml = (n) => Array.from({length:5},(_,i)=>`<svg width="10" height="10" viewBox="0 0 24 24" fill="${i<Math.floor(n)?'#facc15':'none'}" stroke="${i<Math.floor(n)?'#facc15':'#d1d5db'}" stroke-width="1"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>`).join('');
+  const stars = (n) => Array.from({length:5},(_,i)=>`<svg width="10" height="10" viewBox="0 0 24 24" fill="${i<Math.floor(n)?'#facc15':'none'}" stroke="${i<Math.floor(n)?'#facc15':'#d1d5db'}" stroke-width="1"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>`).join('');
 
-  if (state.view === 'grid') {
+  if (state.view==='grid') {
     grid.className = 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4';
-    grid.innerHTML = page.map((p, i) => `
+    grid.innerHTML = page.map((p,i) => `
       <div class="prod-card bg-white rounded-xl2 border border-neutral-100 overflow-hidden card-anim" style="animation-delay:${i*0.04}s">
-        <div class="relative aspect-square overflow-hidden bg-neutral-50">
+        <div class="relative overflow-hidden bg-neutral-50" style="aspect-ratio:1">
           <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80'">
-          ${p.disc ? `<div class="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md">-${p.disc}%</div>` : ''}
-          ${p.badge && !p.disc ? `<div class="absolute top-2 left-2 bg-white/90 text-neutral-800 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase">${p.badge}</div>` : ''}
+          ${p.disc?`<div class="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md">-${p.disc}%</div>`:''}
+          ${p.badge&&!p.disc?`<div class="absolute top-2 left-2 bg-white/90 text-neutral-800 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase">${p.badge}</div>`:''}
           <button onclick="toggleWishlist(this,'${p.name}')" class="wish-btn absolute top-2 right-2 p-1.5 bg-white/80 backdrop-blur-sm rounded-full text-neutral-400 hover:text-red-500 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
           </button>
           <div class="add-btn absolute inset-x-2 bottom-2">
             <button onclick="addItem('${p.id}','${p.name}',${p.price},'${p.img}')" class="w-full bg-neutral-900 hover:bg-primary-600 text-white py-2 rounded-lg text-xs font-semibold transition-colors">Add to Cart</button>
           </div>
         </div>
-        <div class="p-2 md:p-3">
-          <div class="flex items-center gap-0.5 mb-1">${starsHtml(p.rating)}<span class="text-[9px] md:text-[10px] text-neutral-400 ml-0.5">(${p.reviews})</span></div>
-          <a href="product.html?id=${p.id}" class="text-[11px] md:text-xs font-medium text-neutral-800 line-clamp-2 mb-1.5 hover:text-primary-600 transition-colors block">${p.name}</a>
+        <div class="p-2.5 md:p-3">
+          <div class="flex items-center gap-0.5 mb-1">${stars(p.rating)}<span class="text-[10px] text-neutral-400 ml-0.5">(${p.reviews})</span></div>
+          <a href="product.html?id=${p.id}" class="text-xs font-semibold text-neutral-800 line-clamp-2 mb-1.5 hover:text-primary-600 transition-colors block leading-snug">${p.name}</a>
           <div class="flex items-center gap-1.5">
-            <span class="font-bold text-primary-600 text-xs md:text-sm">$${p.price}</span>
-            ${p.orig > p.price ? `<span class="text-[9px] md:text-[10px] text-neutral-400 line-through">$${p.orig}</span>` : ''}
+            <span class="font-bold text-primary-600 text-sm">$${p.price}</span>
+            ${p.orig>p.price?`<span class="text-[10px] text-neutral-400 line-through">$${p.orig}</span>`:''}
           </div>
         </div>
       </div>`).join('');
   } else {
     grid.className = 'space-y-3';
     grid.innerHTML = page.map((p,i) => `
-      <div class="prod-card bg-white rounded-xl2 border border-neutral-100 overflow-hidden flex flex-col sm:flex-row gap-3 p-3 card-anim" style="animation-delay:${i*0.04}s">
-        <div class="w-full sm:w-24 h-24 sm:h-24 rounded-xl overflow-hidden bg-neutral-50 flex-shrink-0 relative">
-          <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover" loading="lazy">
-          ${p.disc ? `<div class="absolute top-1.5 left-1.5 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md">-${p.disc}%</div>` : ''}
-        </div>
-        <div class="flex-1 min-w-0 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center gap-0.5 mb-1">${starsHtml(p.rating)}<span class="text-xs text-neutral-400 ml-1">${p.rating} (${p.reviews})</span></div>
-            <a href="product.html?id=${p.id}" class="font-semibold text-neutral-900 hover:text-primary-600 transition-colors text-sm md:text-base line-clamp-2">${p.name}</a>
-            <p class="text-xs text-neutral-500 mt-0.5 capitalize">${p.cat}</p>
+      <div class="prod-card bg-white rounded-xl2 border border-neutral-100 overflow-hidden card-anim" style="animation-delay:${i*0.04}s">
+        <div class="flex gap-3 p-3">
+          <div class="w-24 h-24 rounded-xl overflow-hidden bg-neutral-50 flex-shrink-0 relative">
+            <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover" loading="lazy">
+            ${p.disc?`<div class="absolute top-1 left-1 bg-red-500 text-white text-[9px] font-bold px-1 py-0.5 rounded-md">-${p.disc}%</div>`:''}
           </div>
-          <div class="flex items-center justify-between mt-3 flex-wrap gap-2">
-            <div class="flex items-center gap-2"><span class="font-bold text-primary-600 text-base md:text-lg">$${p.price}</span>${p.orig > p.price ? `<span class="text-sm text-neutral-400 line-through">$${p.orig}</span>` : ''}</div>
-            <button onclick="addItem('${p.id}','${p.name}',${p.price},'${p.img}')" class="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-900 hover:bg-primary-600 text-white rounded-full text-xs font-semibold transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-              Add
-            </button>
+          <div class="flex-1 min-w-0 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center gap-0.5 mb-1">${stars(p.rating)}<span class="text-xs text-neutral-400 ml-1">(${p.reviews})</span></div>
+              <a href="product.html?id=${p.id}" class="font-semibold text-neutral-900 hover:text-primary-600 transition-colors text-sm line-clamp-2 leading-snug">${p.name}</a>
+              <p class="text-xs text-neutral-500 mt-0.5 capitalize">${p.cat}</p>
+            </div>
+            <div class="flex items-center justify-between mt-2 gap-2">
+              <div class="flex items-center gap-1.5">
+                <span class="font-bold text-primary-600 text-base">$${p.price}</span>
+                ${p.orig>p.price?`<span class="text-xs text-neutral-400 line-through">$${p.orig}</span>`:''}
+              </div>
+              <button onclick="addItem('${p.id}','${p.name}',${p.price},'${p.img}')" class="flex-shrink-0 flex items-center gap-1 px-3 py-1.5 bg-neutral-900 hover:bg-primary-600 text-white rounded-full text-xs font-semibold transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                Add
+              </button>
+            </div>
           </div>
         </div>
       </div>`).join('');
@@ -839,136 +736,223 @@ function renderGrid() {
   lucide && lucide.createIcons();
 }
 
-
 function renderPagination(total) {
-  const pages = Math.ceil(total / state.perPage);
-  const btns = document.getElementById('page-buttons');
-  const prev = document.getElementById('prev-btn');
-  const next = document.getElementById('next-btn');
-  prev.disabled = state.page === 1;
-  next.disabled = state.page === pages;
-  btns.innerHTML = Array.from({length: Math.min(pages,5)}, (_,i) => {
-    const n = i + 1;
-    return `<button onclick="goPage(${n})" class="w-8 h-8 md:w-9 md:h-9 rounded-full text-xs md:text-sm font-semibold transition-all ${state.page === n ? 'bg-neutral-900 text-white' : 'border border-neutral-200 hover:bg-neutral-50 text-neutral-700'}">${n}</button>`;
+  const pages = Math.ceil(total/state.perPage);
+  const btns  = document.getElementById('page-buttons');
+  const prev  = document.getElementById('prev-btn');
+  const next  = document.getElementById('next-btn');
+  prev.disabled = state.page===1;
+  next.disabled = state.page===pages;
+  btns.innerHTML = Array.from({length:Math.min(pages,5)},(_,i)=>{
+    const n=i+1;
+    return `<button onclick="goPage(${n})" class="w-9 h-9 rounded-full text-sm font-semibold transition-all ${state.page===n?'bg-neutral-900 text-white':'border border-neutral-200 hover:bg-neutral-50 text-neutral-700'}">${n}</button>`;
   }).join('');
 }
 
-function goPage(n) { state.page = n; renderGrid(); window.scrollTo({top:0,behavior:'smooth'}); }
-function changePage(d) { goPage(state.page + d); }
+function goPage(n) { state.page=n; renderGrid(); window.scrollTo({top:0,behavior:'smooth'}); }
+function changePage(d) { goPage(state.page+d); }
 
-// ── Controls ──────────────────────────────────────────────────
-function setCat(cat, btn) {
-  state.cat = cat; state.subcat = ''; state.page = 1;
-  document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
+function setCat(cat,btn) {
+  state.cat=cat; state.subcat=''; state.page=1;
+  document.querySelectorAll('.cat-pill').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  const labels = {all:'All Products',fashion:'Fashion',electronics:'Electronics',phones:'Phones & Tablets',home:'Home & Living',beauty:'Beauty',sports:'Sports',gifts:'Gifts & Accessories',laptops:'Laptops & Computers'};
-  document.getElementById('page-title').textContent = labels[cat] || cat;
-  document.getElementById('breadcrumb-label').textContent = labels[cat] || cat;
-  renderSubcatSidebar(cat, '');
+  const labels={all:'All Products',fashion:'Fashion',electronics:'Electronics',phones:'Phones & Tablets',home:'Home & Living',beauty:'Beauty',sports:'Sports',gifts:'Gifts & Accessories',laptops:'Laptops & Computers',agriculture:'Agriculture',automobiles:'Automobiles'};
+  document.getElementById('page-title').textContent = labels[cat]||cat;
+  document.getElementById('breadcrumb-label').textContent = labels[cat]||cat;
+  renderSubcatSidebar(cat,'');
   renderGrid();
 }
 
-function filterBySearch(v) { state.search = v; state.page = 1; renderGrid(); }
-function applySort(v) { state.sort = v; state.page = 1; renderGrid(); }
-function updatePrice(v) { state.maxPrice = parseInt(v); document.getElementById('price-label').textContent = '$' + parseInt(v).toLocaleString(); state.page = 1; renderGrid(); }
-function toggleDiscount(cb) { const v = parseInt(cb.value); if (cb.checked) { state.discounts.push(v); } else { state.discounts = state.discounts.filter(d => d !== v); } state.page = 1; renderGrid(); }
+function filterBySearch(v) { state.search=v; state.page=1; renderGrid(); }
+function applySort(v) { state.sort=v; state.page=1; renderGrid(); }
+function updatePrice(v) {
+  state.maxPrice=parseInt(v); state.page=1;
+  const fmt='$'+parseInt(v).toLocaleString();
+  ['price-label','price-label-mob'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=fmt;});
+  ['price-slider','price-slider-mob'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=v;});
+  renderGrid();
+}
+function toggleDiscount(cb) {
+  const v=parseInt(cb.value);
+  if (cb.checked) state.discounts.push(v);
+  else state.discounts=state.discounts.filter(d=>d!==v);
+  state.page=1; renderGrid();
+}
 function setView(v) {
-  state.view = v;
-  document.getElementById('grid-view-btn').classList.toggle('active', v === 'grid');
-  document.getElementById('list-view-btn').classList.toggle('active', v === 'list');
-  document.getElementById('grid-view-btn').classList.toggle('text-neutral-500', v !== 'grid');
-  document.getElementById('list-view-btn').classList.toggle('text-neutral-500', v !== 'list');
+  state.view=v;
+  document.getElementById('grid-view-btn').classList.toggle('active',v==='grid');
+  document.getElementById('list-view-btn').classList.toggle('active',v==='list');
+  document.getElementById('grid-view-btn').classList.toggle('text-neutral-500',v!=='grid');
+  document.getElementById('list-view-btn').classList.toggle('text-neutral-500',v!=='list');
   renderGrid();
 }
-
 function clearAllFilters() {
-  state = {...state, cat:'all', subcat:'', search:'', maxPrice:2000, minRating:0, discounts:[], page:1};
-  document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
+  state={...state,cat:'all',subcat:'',search:'',maxPrice:2000,minRating:0,discounts:[],page:1};
+  document.querySelectorAll('.cat-pill').forEach(b=>b.classList.remove('active'));
   document.querySelector('.cat-pill').classList.add('active');
-  renderSubcatSidebar('all', '');
-  document.getElementById('price-slider').value = 2000;
-  document.getElementById('price-label').textContent = '$2,000';
-  document.querySelectorAll('input[name="rating"]')[0].checked = true;
-  document.querySelectorAll('input[type="checkbox"][value]').forEach(c => c.checked = false);
-  if (document.getElementById('header-search')) document.getElementById('header-search').value = '';
+  renderSubcatSidebar('all','');
+  ['price-slider','price-slider-mob'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=2000;});
+  ['price-label','price-label-mob'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='$2,000';});
+  document.querySelectorAll('input[name="rating"],input[name="rating-mob"]').forEach((r,i)=>{if(i===0||r.value==='0')r.checked=true;});
+  document.querySelectorAll('input[type="checkbox"][value]').forEach(c=>c.checked=false);
+  const hs=document.getElementById('header-search');if(hs)hs.value='';
   renderGrid();
 }
 
-// ── Filter drawer ─────────────────────────────────────────────
-function openFilterDrawer() { document.getElementById('filter-drawer').classList.add('open'); document.getElementById('filter-overlay').classList.add('open'); document.body.style.overflow = 'hidden'; }
-function closeFilterDrawer() { document.getElementById('filter-drawer').classList.remove('open'); document.getElementById('filter-overlay').classList.remove('open'); document.body.style.overflow = ''; }
+function openFilterDrawer()  { document.getElementById('filter-drawer').classList.add('open'); document.getElementById('filter-overlay').classList.add('open'); document.body.style.overflow='hidden'; }
+function closeFilterDrawer() { document.getElementById('filter-drawer').classList.remove('open'); document.getElementById('filter-overlay').classList.remove('open'); document.body.style.overflow=''; }
 
-// ── URL param handling ────────────────────────────────────────
 const CAT_SUBCATS = {
-  fashion: [['mens',"Men's Fashion"],['womens',"Women's Fashion"],['shoes','Shoes & Sneakers'],['bags','Bags & Accessories'],['jewellery','Jewellery & Watches']],
-  phones:  [['smartphones','Smartphones'],['tablets','Tablets'],['accessories','Phone Accessories'],['smartwatches','Smart Watches']],
+  fashion:     [['mens',"Men's Fashion"],['womens',"Women's Fashion"],['shoes','Shoes & Sneakers'],['bags','Bags & Accessories'],['jewellery','Jewellery & Watches']],
+  phones:      [['smartphones','Smartphones'],['tablets','Tablets'],['accessories','Phone Accessories'],['smartwatches','Smart Watches']],
   electronics: [['audio','Audio & Headphones'],['peripherals','Computer Accessories'],['cameras','Cameras & Drones'],['gaming','Gaming'],['tv','TVs & Monitors']],
-  laptops: [['windows','Windows Laptops'],['mac','MacBooks'],['gaming-laptops','Gaming Laptops'],['chromebook','Chromebooks'],['2in1','2-in-1 Devices']],
-  beauty:  [['skincare','Skincare'],['haircare','Hair Care'],['fragrances','Fragrances'],['makeup','Make-up'],['mens-grooming',"Men's Grooming"]],
-  home:    [['decor','Furniture & Decor'],['kitchen','Kitchen & Dining'],['bedding','Bedding & Bath'],['candles','Candles & Fragrance'],['storage','Storage & Organisation']],
-  sports:  [['gym','Gym Equipment'],['sportswear','Sportswear'],['yoga','Yoga & Wellness'],['running','Running & Cycling'],['nutrition','Sports Nutrition']],
-  gifts:   [['gift-sets','Gift Sets'],['art','Art & Collectibles'],['books','Books & Stationery'],['crafts','African Crafts'],['food-gifts','Food & Gourmet']],
+  laptops:     [['windows','Windows Laptops'],['mac','MacBooks'],['gaming-laptops','Gaming Laptops'],['chromebook','Chromebooks'],['2in1','2-in-1 Devices']],
+  beauty:      [['skincare','Skincare'],['haircare','Hair Care'],['fragrances','Fragrances'],['makeup','Make-up'],['mens-grooming',"Men's Grooming"]],
+  home:        [['decor','Furniture & Decor'],['kitchen','Kitchen & Dining'],['bedding','Bedding & Bath'],['candles','Candles & Fragrance'],['storage','Storage & Organisation']],
+  sports:      [['gym','Gym Equipment'],['sportswear','Sportswear'],['yoga','Yoga & Wellness'],['running','Running & Cycling'],['nutrition','Sports Nutrition']],
+  gifts:       [['gift-sets','Gift Sets'],['art','Art & Collectibles'],['books','Books & Stationery'],['crafts','African Crafts'],['food-gifts','Food & Gourmet']],
+  agriculture: [['seeds','Seeds & Seedlings'],['fertilisers','Fertilisers & Soil'],['tools','Farm Tools & Equipment'],['irrigation','Irrigation Systems'],['pesticides','Pesticides & Herbicides'],['livestock','Livestock Supplies']],
+  automobiles: [['cars','Cars & SUVs'],['spare-parts','Spare Parts'],['tyres','Tyres & Rims'],['accessories','Car Accessories'],['oils','Engine Oils & Fluids'],['motorcycles','Motorcycles']],
 };
 
 function renderSubcatSidebar(cat, activeSub) {
-  var sidebar = document.getElementById('subcat-sidebar');
-  var list = document.getElementById('subcat-list');
-  var heading = document.getElementById('subcat-heading');
-  if (!sidebar || !list) return;
-  var subs = CAT_SUBCATS[cat];
-  if (!subs || cat === 'all') { sidebar.classList.add('hidden'); return; }
-  sidebar.classList.remove('hidden');
-  if (heading) heading.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
-  list.innerHTML = '<button onclick="setSubcat(\'\',this)" class="subcat-btn w-full text-left px-3 py-2 text-sm rounded-lg transition-colors ' + (!activeSub ? 'bg-primary-50 text-primary-600 font-semibold' : 'text-neutral-600 hover:bg-neutral-50') + '">All ' + (document.getElementById('page-title')?.textContent || cat) + '</button>' +
-    subs.map(function(s){ return '<button onclick="setSubcat(\''+s[0]+'\',this)" class="subcat-btn w-full text-left px-3 py-2 text-sm rounded-lg transition-colors ' + (activeSub === s[0] ? 'bg-primary-50 text-primary-600 font-semibold' : 'text-neutral-600 hover:bg-neutral-50') + '">' + s[1] + '</button>'; }).join('');
+  const subs = CAT_SUBCATS[cat];
+  const LABELS = {all:'All Products',fashion:'Fashion',electronics:'Electronics',phones:'Phones & Tablets',home:'Home & Living',beauty:'Beauty',sports:'Sports',gifts:'Gifts & Accessories',laptops:'Laptops & Computers',agriculture:'Agriculture',automobiles:'Automobiles'};
+  const catLabel = LABELS[cat] || cat;
+
+  // ── Desktop accordion dropdown ──────────────────────────────
+  const sidebar  = document.getElementById('subcat-sidebar');
+  const list     = document.getElementById('subcat-list');
+  const heading  = document.getElementById('subcat-heading');
+  const body     = document.getElementById('subcat-dropdown-body');
+
+  if (!subs || cat === 'all') {
+    if (sidebar) sidebar.classList.add('hidden');
+  } else {
+    if (sidebar) sidebar.classList.remove('hidden');
+    if (heading) heading.textContent = catLabel;
+    if (list) list.innerHTML =
+      `<button onclick="setSubcat('',this)" class="subcat-btn w-full text-left px-3 py-2 text-sm rounded-lg transition-colors flex items-center gap-2 ${!activeSub ? 'bg-primary-50 text-primary-600 font-semibold' : 'text-neutral-600 hover:bg-neutral-50'}">
+        <i data-lucide="layers" class="w-3.5 h-3.5 flex-shrink-0"></i>All ${catLabel}
+      </button>` +
+      subs.map(s =>
+        `<button onclick="setSubcat('${s[0]}',this)" class="subcat-btn w-full text-left px-3 py-2 text-sm rounded-lg transition-colors flex items-center gap-2 ${activeSub === s[0] ? 'bg-primary-50 text-primary-600 font-semibold' : 'text-neutral-600 hover:bg-neutral-50'}">
+          <i data-lucide="chevron-right" class="w-3 h-3 flex-shrink-0 text-neutral-300"></i>${s[1]}
+        </button>`
+      ).join('');
+    // Auto-open the dropdown when a category is set
+    if (body) openSubcatDropdown();
+    lucide && lucide.createIcons();
+  }
+
+  // ── Universal subcategory <select> dropdown (mobile + desktop below pills) ──
+  const mobDropdown = document.getElementById('mob-subcat-dropdown');
+  const mobSelect   = document.getElementById('mob-subcat-select');
+
+  if (!subs || cat === 'all') {
+    if (mobDropdown) mobDropdown.classList.add('hidden');
+  } else {
+    if (mobDropdown) mobDropdown.classList.remove('hidden');
+    if (mobSelect) {
+      mobSelect.innerHTML =
+        `<option value="">All ${catLabel}</option>` +
+        subs.map(s => `<option value="${s[0]}" ${activeSub === s[0] ? 'selected' : ''}>${s[1]}</option>`).join('');
+    }
+    lucide && lucide.createIcons();
+  }
+
+  // ── Mobile filter drawer subcats ────────────────────────────
+  const mobSec  = document.getElementById('mob-subcat-section');
+  const mobList = document.getElementById('mob-subcat-list');
+  const mobHead = document.getElementById('mob-subcat-heading');
+  if (mobSec && mobList && subs && cat !== 'all') {
+    mobSec.classList.remove('hidden');
+    if (mobHead) mobHead.textContent = catLabel;
+    mobList.innerHTML = subs.map(s =>
+      `<button onclick="setSubcat('${s[0]}',this);closeFilterDrawer()" class="w-full text-left px-3 py-2 text-sm rounded-lg text-neutral-600 hover:bg-neutral-50 hover:text-primary-600 transition-colors">${s[1]}</button>`
+    ).join('');
+  } else if (mobSec) { mobSec.classList.add('hidden'); }
+}
+
+function toggleSubcatDropdown() {
+  const body    = document.getElementById('subcat-dropdown-body');
+  const chevron = document.getElementById('subcat-chevron');
+  if (!body) return;
+  const isOpen = body.style.maxHeight !== '0px' && body.style.maxHeight !== '';
+  if (isOpen) {
+    body.style.maxHeight = '0';
+    if (chevron) chevron.style.transform = 'rotate(0deg)';
+  } else {
+    openSubcatDropdown();
+  }
+}
+
+function openSubcatDropdown() {
+  const body    = document.getElementById('subcat-dropdown-body');
+  const chevron = document.getElementById('subcat-chevron');
+  if (!body) return;
+  body.style.maxHeight = body.scrollHeight + 'px';
+  if (chevron) chevron.style.transform = 'rotate(180deg)';
 }
 
 function setSubcat(sub, btn) {
   state.subcat = sub;
-  state.page = 1;
-  document.querySelectorAll('.subcat-btn').forEach(function(b){ b.className = b.className.replace('bg-primary-50 text-primary-600 font-semibold','text-neutral-600 hover:bg-neutral-50'); });
-  if (btn) { btn.className = btn.className.replace('text-neutral-600 hover:bg-neutral-50','bg-primary-50 text-primary-600 font-semibold'); }
+  state.page   = 1;
+  document.querySelectorAll('.subcat-btn').forEach(b => b.className = b.className.replace('bg-primary-50 text-primary-600 font-semibold', 'text-neutral-600 hover:bg-neutral-50'));
+  if (btn) btn.className = btn.className.replace('text-neutral-600 hover:bg-neutral-50', 'bg-primary-50 text-primary-600 font-semibold');
+  const sel = document.getElementById('mob-subcat-select');
+  if (sel) sel.value = sub;
+  renderGrid();
+}
+
+function setSubcatFromSelect(val) {
+  state.subcat = val;
+  state.page   = 1;
+  // Sync the desktop list active state
+  document.querySelectorAll('.subcat-btn').forEach(b => {
+    const isAll    = b.textContent.trim().startsWith('All ') && val === '';
+    const isMatch  = b.getAttribute('onclick')?.includes(`'${val}'`) && val !== '';
+    if (isAll || isMatch) {
+      b.className = b.className.replace('text-neutral-600 hover:bg-neutral-50', 'bg-primary-50 text-primary-600 font-semibold');
+    } else {
+      b.className = b.className.replace('bg-primary-50 text-primary-600 font-semibold', 'text-neutral-600 hover:bg-neutral-50');
+    }
+  });
   renderGrid();
 }
 
 function readURLParams() {
-  const params = new URLSearchParams(window.location.search);
-  const LABELS = {all:'All Products',fashion:'Fashion',electronics:'Electronics',phones:'Phones & Tablets',home:'Home & Living',beauty:'Beauty',sports:'Sports',gifts:'Gifts & Accessories',laptops:'Laptops & Computers'};
-  const cat = params.get('cat');
-  if (cat && LABELS[cat]) {
-    state.cat = cat;
-    // activate pill
-    document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
-    const btn = document.querySelector('.cat-pill[onclick*="\'' + cat + '\'"]');
-    if (btn) btn.classList.add('active');
-    // update header
-    document.getElementById('page-title').textContent = LABELS[cat];
-    document.getElementById('breadcrumb-label').textContent = LABELS[cat];
-  } else {
-    document.getElementById('page-title').textContent = 'All Products';
-    document.getElementById('breadcrumb-label').textContent = 'All Products';
+  const params=new URLSearchParams(window.location.search);
+  const LABELS={all:'All Products',fashion:'Fashion',electronics:'Electronics',phones:'Phones & Tablets',home:'Home & Living',beauty:'Beauty',sports:'Sports',gifts:'Gifts & Accessories',laptops:'Laptops & Computers',agriculture:'Agriculture',automobiles:'Automobiles'};
+  const cat=params.get('cat');
+  if (cat&&LABELS[cat]) {
+    state.cat=cat;
+    document.querySelectorAll('.cat-pill').forEach(b=>b.classList.remove('active'));
+    const btn=document.querySelector(`.cat-pill[onclick*="'${cat}'"]`);
+    if(btn) btn.classList.add('active');
+    document.getElementById('page-title').textContent=LABELS[cat];
+    document.getElementById('breadcrumb-label').textContent=LABELS[cat];
   }
-  var sub = params.get('sub') || '';
-  if (sub) { state.subcat = sub; }
-  // render subcategory sidebar after cat is set
-  setTimeout(function(){ renderSubcatSidebar(state.cat, state.subcat); }, 0);
-  if (params.get('sale')) {
-    state.sort = 'discount';
-    const sel = document.getElementById('sort-select');
-    if (sel) sel.value = 'discount';
-    document.getElementById('page-title').textContent = 'Flash Sales';
-    document.getElementById('breadcrumb-label').textContent = 'Flash Sales';
+  const sub=params.get('sub')||'';
+  if(sub) state.subcat=sub;
+  setTimeout(()=>renderSubcatSidebar(state.cat,state.subcat),0);
+  if(params.get('sale')) {
+    state.sort='discount';
+    const sel=document.getElementById('sort-select');
+    if(sel) sel.value='discount';
+    document.getElementById('page-title').textContent='Flash Sales';
+    document.getElementById('breadcrumb-label').textContent='Flash Sales';
   }
-  if (params.get('q')) {
-    state.search = params.get('q');
-    const si = document.getElementById('header-search');
-    if (si) si.value = state.search;
+  if(params.get('q')) {
+    state.search=params.get('q');
+    const si=document.getElementById('header-search');
+    if(si) si.value=state.search;
   }
 }
 
-window.addEventListener('scroll', () => { document.getElementById('main-header')?.classList.toggle('scrolled', window.scrollY > 10); });
+window.addEventListener('scroll',()=>document.getElementById('main-header')?.classList.toggle('scrolled',window.scrollY>10));
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded',()=>{
   readURLParams();
   renderGrid();
   lucide.createIcons();
