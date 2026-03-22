@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Company Dashboard — AhiaGlobal</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-serif'],body:['Inter','sans-serif']},colors:{primary:{50:'#fff7ed',100:'#ffedd5',200:'#fed7aa',300:'#fdba74',400:'#fb923c',500:'#f97316',600:'#ea580c',700:'#c2410c',800:'#9a3412',900:'#7c2d12'},neutral:{50:'#f8fafc',100:'#f1f5f9',200:'#e2e8f0',300:'#cbd5e1',400:'#94a3b8',500:'#64748b',600:'#475569',700:'#334155',800:'#1e293b',900:'#0f172a'}},boxShadow:{card:'0 4px 14px -3px rgba(15,23,42,.09)',hover:'0 12px 30px -5px rgba(15,23,42,.16)',modal:'0 24px 60px -8px rgba(15,23,42,.28)'},borderRadius:{xl2:'0.875rem',xl3:'1.25rem'}}}}
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#f8fafc;color:#0f172a}
+
+/* Sidebar */
+#sidebar{width:240px;min-height:100vh;background:#0f172a;position:fixed;top:0;left:0;z-index:100;display:flex;flex-direction:column;transition:transform .3s cubic-bezier(.4,0,.2,1)}
+#sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:99}
+.main-wrap{margin-left:240px;min-height:100vh;display:flex;flex-direction:column}
+@media(max-width:1023px){
+  #sidebar{transform:translateX(-100%)}
+  #sidebar.open{transform:translateX(0)}
+  #sidebar-backdrop.open{display:block}
+  .main-wrap{margin-left:0}
+}
+.nav-item{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:.75rem;font-size:.875rem;font-weight:500;color:#94a3b8;cursor:pointer;transition:all .2s;border:none;background:none;width:100%;text-align:left}
+.nav-item:hover{background:rgba(255,255,255,.06);color:#e2e8f0}
+.nav-item.active{background:rgba(234,88,12,.15);color:#fb923c;font-weight:600}
+.nav-ic{width:1.125rem;height:1.125rem;flex-shrink:0;color:#64748b}
+.nav-item.active .nav-ic{color:#ea580c}
+
+/* Cards */
+.stat-card{background:#fff;border-radius:.875rem;border:1px solid #f1f5f9;padding:1.25rem;box-shadow:0 4px 14px -3px rgba(15,23,42,.09);transition:box-shadow .2s,transform .2s}
+.stat-card:hover{box-shadow:0 12px 30px -5px rgba(15,23,42,.16);transform:translateY(-2px)}
+
+/* Badges */
+.badge{display:inline-flex;align-items:center;gap:.25rem;padding:.2rem .65rem;border-radius:999px;font-size:.7rem;font-weight:600;white-space:nowrap}
+.badge-active{background:#dcfce7;color:#166534}
+.badge-inactive{background:#f1f5f9;color:#475569}
+.badge-delivered{background:#dcfce7;color:#15803d}
+.badge-transit{background:#dbeafe;color:#1d4ed8}
+.badge-processing{background:#ffedd5;color:#c2410c}
+.badge-assigned{background:#ede9fe;color:#6d28d9}
+.badge-pending{background:#fef9c3;color:#854d0e}
+.badge-confirmed{background:#dbeafe;color:#1e40af}
+
+/* Table */
+.tbl{width:100%;border-collapse:collapse;font-size:.875rem}
+.tbl thead th{background:#f8fafc;padding:.75rem 1rem;text-align:left;font-size:.7rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.tbl tbody td{padding:.875rem 1rem;border-top:1px solid #f1f5f9;vertical-align:middle}
+.tbl tbody tr:hover{background:#fafafa}
+
+/* Pages */
+.page{display:none}
+.page.active{display:block;animation:fadeUp .35s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* Modal */
+#rider-modal,#order-modal{opacity:0;pointer-events:none;transition:opacity .2s}
+#rider-modal.open,#order-modal.open{opacity:1;pointer-events:auto}
+.modal-box{transform:scale(.95) translateY(10px);transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+#rider-modal.open .modal-box,#order-modal.open .modal-box{transform:scale(1) translateY(0)}
+
+/* Toggle */
+.toggle-track{width:48px;height:26px;border-radius:999px;background:#e2e8f0;transition:background .25s;cursor:pointer;position:relative;flex-shrink:0}
+.toggle-track.on{background:#22c55e}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.18);transition:left .25s cubic-bezier(.34,1.56,.64,1)}
+.toggle-track.on .toggle-thumb{left:25px}
+
+/* Type switcher */
+.type-btn{padding:.5rem 1.25rem;border-radius:999px;font-size:.8125rem;font-weight:600;cursor:pointer;transition:all .2s;border:2px solid transparent}
+.type-btn.active-local{background:#dbeafe;color:#1e40af;border-color:#93c5fd}
+.type-btn.active-interstate{background:#ede9fe;color:#6d28d9;border-color:#c4b5fd}
+.type-btn:not(.active-local):not(.active-interstate){background:#f1f5f9;color:#64748b}
+
+/* Toasts */
+@keyframes toastIn{from{opacity:0;transform:translateX(110%)}to{opacity:1;transform:translateX(0)}}
+@keyframes toastOut{from{opacity:1}to{opacity:0;transform:translateX(110%)}}
+
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:999px}
+</style>
+</head>
+<body class="font-body">
+
+<div id="toast-stack" class="fixed top-4 right-4 z-[9999] flex flex-col gap-2 w-80 pointer-events-none"></div>
+
+<!-- ── ADD RIDER MODAL ── -->
+<div id="rider-modal" class="fixed inset-0 z-[500] flex items-center justify-center p-4" style="background:rgba(15,23,42,.55);backdrop-filter:blur(4px)">
+  <div class="modal-box bg-white rounded-xl3 shadow-modal w-full max-w-md">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
+      <h3 class="font-heading font-bold text-neutral-900" id="rider-modal-title">Add New Rider</h3>
+      <button onclick="closeRiderModal()" class="w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center transition-colors"><i data-lucide="x" class="w-4 h-4 text-neutral-600"></i></button>
+    </div>
+    <div class="p-6 space-y-4">
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="block text-xs font-medium text-neutral-600 mb-1">First Name</label><input id="rider-fname" type="text" placeholder="Emeka" class="w-full px-3 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50 outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100"></div>
+        <div><label class="block text-xs font-medium text-neutral-600 mb-1">Last Name</label><input id="rider-lname" type="text" placeholder="Okafor" class="w-full px-3 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50 outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100"></div>
+      </div>
+      <div><label class="block text-xs font-medium text-neutral-600 mb-1">Phone Number</label><input id="rider-phone" type="tel" placeholder="+234 800 000 0000" class="w-full px-3 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50 outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100" style="font-size:14px"></div>
+      <div><label class="block text-xs font-medium text-neutral-600 mb-1">Vehicle Type</label>
+        <select id="rider-vehicle" class="w-full px-3 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50 outline-none appearance-none" style="font-size:14px">
+          <option>Bicycle</option><option>Motorcycle</option><option>Car / Van</option>
+        </select>
+      </div>
+      <div><label class="block text-xs font-medium text-neutral-600 mb-1">Zone / Area</label><input id="rider-zone" type="text" placeholder="e.g. Ikeja, Lekki" class="w-full px-3 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50 outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100"></div>
+    </div>
+    <div class="px-6 pb-6 flex gap-3">
+      <button onclick="closeRiderModal()" class="flex-1 py-2.5 border border-neutral-200 rounded-full text-sm font-semibold text-neutral-700 hover:bg-neutral-50 transition-colors">Cancel</button>
+      <button onclick="saveRider()" class="flex-1 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-full text-sm font-bold transition-colors">Add Rider</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── ASSIGN / UPDATE ORDER MODAL ── -->
+<div id="order-modal" class="fixed inset-0 z-[500] flex items-center justify-center p-4" style="background:rgba(15,23,42,.55);backdrop-filter:blur(4px)">
+  <div class="modal-box bg-white rounded-xl3 shadow-modal w-full max-w-sm">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
+      <h3 class="font-heading font-bold text-neutral-900" id="order-modal-title">Assign Rider</h3>
+      <button onclick="closeOrderModal()" class="w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center"><i data-lucide="x" class="w-4 h-4 text-neutral-600"></i></button>
+    </div>
+    <div class="p-6 space-y-3" id="order-modal-body">
+    </div>
+    <div class="px-6 pb-6 flex gap-3">
+      <button onclick="closeOrderModal()" class="flex-1 py-2.5 border border-neutral-200 rounded-full text-sm font-semibold text-neutral-700 hover:bg-neutral-50">Cancel</button>
+      <button onclick="confirmOrderAction()" class="flex-1 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-full text-sm font-bold transition-colors" id="order-modal-ok">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- SIDEBAR BACKDROP -->
+<div id="sidebar-backdrop" onclick="closeSidebar()"></div>
+
+<!-- ═══ SIDEBAR ════════════════════════════════════════════ -->
+<aside id="sidebar">
+  <div class="px-4 py-5 border-b border-white/5">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 bg-primary-600 rounded-xl flex items-center justify-center font-heading font-bold text-white text-sm flex-shrink-0">LE</div>
+      <div class="min-w-0">
+        <p class="font-heading font-bold text-white text-sm leading-tight truncate" id="company-name-sidebar">Lagos Express Co.</p>
+        <div class="flex items-center gap-1.5 mt-0.5">
+          <span id="company-type-badge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400">LOCAL</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <nav class="flex-1 overflow-y-auto p-3 space-y-0.5">
+    <p class="text-[10px] font-bold text-neutral-600 uppercase tracking-widest px-3 mb-2 mt-3">Operations</p>
+    <button onclick="showPage('overview')" class="nav-item active" id="nav-overview"><i data-lucide="layout-dashboard" class="nav-ic"></i>Overview</button>
+    <button onclick="showPage('orders')" class="nav-item" id="nav-orders"><i data-lucide="package" class="nav-ic"></i>Orders<span class="ml-auto bg-primary-600/20 text-primary-400 text-[10px] font-bold px-1.5 py-0.5 rounded-full" id="orders-badge">18</span></button>
+    <button onclick="showPage('riders')" class="nav-item" id="nav-riders" id="nav-riders"><i data-lucide="bike" class="nav-ic"></i>Riders<span class="ml-auto bg-neutral-700 text-neutral-400 text-[10px] font-bold px-1.5 py-0.5 rounded-full" id="riders-badge">12</span></button>
+    <button onclick="showPage('earnings')" class="nav-item" id="nav-earnings"><i data-lucide="banknote" class="nav-ic"></i>Earnings</button>
+    <p class="text-[10px] font-bold text-neutral-600 uppercase tracking-widest px-3 mb-2 mt-4">Account</p>
+    <button onclick="showPage('settings')" class="nav-item" id="nav-settings"><i data-lucide="settings" class="nav-ic"></i>Settings</button>
+  </nav>
+  <div class="p-3 border-t border-white/5">
+    <div class="flex items-center gap-3 px-3 py-2">
+      <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">CM</div>
+      <div class="min-w-0 flex-1"><p class="text-xs font-semibold text-white truncate">Company Manager</p><p class="text-[10px] text-neutral-500 truncate">manager@lagosexpress.ng</p></div>
+      <button class="text-neutral-500 hover:text-neutral-300 flex-shrink-0"><i data-lucide="log-out" class="w-4 h-4"></i></button>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ════════════════════════════════════════════════ -->
+<div class="main-wrap">
+  <header class="sticky top-0 z-50 bg-white border-b border-neutral-100 px-4 lg:px-6 py-3.5 flex items-center gap-4">
+    <button onclick="openSidebar()" class="lg:hidden p-2 rounded-lg hover:bg-neutral-100 transition-colors">
+      <i data-lucide="menu" class="w-5 h-5 text-neutral-600"></i>
+    </button>
+    <div class="flex-1 min-w-0">
+      <h1 class="font-heading font-bold text-neutral-900 text-base" id="page-title">Overview</h1>
+      <p class="text-xs text-neutral-400" id="page-bc">Company Dashboard / Overview</p>
+    </div>
+    <!-- Company type switcher -->
+    <div class="hidden sm:flex items-center gap-1.5 bg-neutral-100 rounded-full p-1">
+      <button onclick="switchType('local',this)" class="type-btn active-local" id="type-local">🏙 Local</button>
+      <button onclick="switchType('interstate',this)" class="type-btn" id="type-interstate">🛣 Interstate</button>
+    </div>
+    <button class="relative p-2 rounded-full hover:bg-neutral-100 transition-colors flex-shrink-0">
+      <i data-lucide="bell" class="w-5 h-5 text-neutral-600"></i>
+      <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-primary-600 rounded-full"></span>
+    </button>
+  </header>
+
+  <main class="flex-1 p-4 lg:p-6 space-y-6">
+
+    <!-- ─── OVERVIEW ─────────────────────────── -->
+    <div id="page-overview" class="page active">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h2 class="font-heading text-xl font-bold text-neutral-900">Good morning, Manager 👋</h2>
+          <p class="text-sm text-neutral-400 mt-0.5" id="ov-subtitle">Lagos Express Co. — Local Delivery</p>
+        </div>
+      </div>
+      <!-- Stats -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
+        <div class="stat-card"><div class="flex items-center justify-between mb-3"><p class="text-xs font-semibold text-neutral-500">Orders Today</p><div class="w-9 h-9 bg-primary-50 rounded-xl flex items-center justify-center"><i data-lucide="package" class="w-4 h-4 text-primary-600"></i></div></div><p class="font-heading text-2xl font-bold text-neutral-900">312</p><p class="text-xs text-green-600 mt-1 flex items-center gap-1"><i data-lucide="trending-up" class="w-3 h-3"></i>+12% today</p></div>
+        <div class="stat-card" id="stat-riders-card"><div class="flex items-center justify-between mb-3"><p class="text-xs font-semibold text-neutral-500">Active Riders</p><div class="w-9 h-9 bg-green-50 rounded-xl flex items-center justify-center"><i data-lucide="bike" class="w-4 h-4 text-green-600"></i></div></div><p class="font-heading text-2xl font-bold text-neutral-900">9 / 12</p><p class="text-xs text-neutral-400 mt-1">Online / Total</p></div>
+        <div class="stat-card"><div class="flex items-center justify-between mb-3"><p class="text-xs font-semibold text-neutral-500">Revenue Today</p><div class="w-9 h-9 bg-amber-50 rounded-xl flex items-center justify-center"><i data-lucide="banknote" class="w-4 h-4 text-amber-600"></i></div></div><p class="font-heading text-2xl font-bold text-neutral-900">₦284,500</p><p class="text-xs text-green-600 mt-1">+8% vs yesterday</p></div>
+        <div class="stat-card"><div class="flex items-center justify-between mb-3"><p class="text-xs font-semibold text-neutral-500">Delivery Rate</p><div class="w-9 h-9 bg-blue-50 rounded-xl flex items-center justify-center"><i data-lucide="check-circle" class="w-4 h-4 text-blue-600"></i></div></div><p class="font-heading text-2xl font-bold text-neutral-900">96.4%</p><p class="text-xs text-neutral-400 mt-1">Success rate</p></div>
+      </div>
+      <!-- Recent orders preview -->
+      <div class="bg-white rounded-xl2 border border-neutral-100 shadow-card">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-neutral-100">
+          <h3 class="font-heading font-bold text-sm text-neutral-900">Recent Orders</h3>
+          <button onclick="showPage('orders')" class="text-xs text-primary-600 font-semibold hover:underline">View all</button>
+        </div>
+        <div class="divide-y divide-neutral-50" id="ov-orders-preview">
+          <!-- filled by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── ORDERS ────────────────────────────── -->
+    <div id="page-orders" class="page">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h2 class="font-heading text-xl font-bold text-neutral-900">Order Management</h2>
+          <p class="text-sm text-neutral-400 mt-0.5" id="orders-subtitle">Manage and track all deliveries</p>
+        </div>
+      </div>
+      <!-- Interstate notice -->
+      <div id="interstate-notice" class="hidden mb-4 bg-purple-50 border border-purple-200 rounded-xl2 p-4 flex items-start gap-3">
+        <i data-lucide="info" class="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5"></i>
+        <div>
+          <p class="text-sm font-semibold text-purple-900">Interstate Operations Mode</p>
+          <p class="text-sm text-purple-700 mt-0.5">Orders are managed directly — use the Status dropdown to update delivery progress for each shipment.</p>
+        </div>
+      </div>
+      <div class="bg-white rounded-xl2 border border-neutral-100 shadow-card overflow-hidden">
+        <div class="px-4 py-3 border-b border-neutral-100 flex items-center gap-3 flex-wrap">
+          <div class="flex items-center gap-2 bg-neutral-100 rounded-full px-3 py-1.5 text-xs flex-1 min-w-[160px]">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-neutral-400"></i>
+            <input type="text" placeholder="Search orders…" class="bg-transparent outline-none text-neutral-700 placeholder-neutral-400 text-xs w-full">
+          </div>
+          <select class="text-xs border border-neutral-200 rounded-full px-3 py-1.5 text-neutral-600 outline-none appearance-none" style="font-size:12px">
+            <option>All Status</option><option>Processing</option><option>Assigned</option><option>In Transit</option><option>Delivered</option>
+          </select>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Route</th>
+                <th>Delivery Type</th>
+                <th>Status</th>
+                <th id="orders-action-header">Action</th>
+              </tr>
+            </thead>
+            <tbody id="orders-tbody"></tbody>
+          </table>
+        </div>
+        <div class="px-5 py-3 border-t border-neutral-100 flex items-center justify-between">
+          <p class="text-xs text-neutral-400">Showing 6 of 312 orders</p>
+          <div class="flex gap-1">
+            <button class="w-7 h-7 rounded-lg border border-neutral-200 flex items-center justify-center hover:bg-neutral-50"><i data-lucide="chevron-left" class="w-3.5 h-3.5 text-neutral-600"></i></button>
+            <button class="w-7 h-7 rounded-lg bg-primary-600 text-white text-xs font-bold flex items-center justify-center">1</button>
+            <button class="w-7 h-7 rounded-lg border border-neutral-200 text-xs text-neutral-600 flex items-center justify-center hover:bg-neutral-50">2</button>
+            <button class="w-7 h-7 rounded-lg border border-neutral-200 flex items-center justify-center hover:bg-neutral-50"><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-neutral-600"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── RIDERS ────────────────────────────── -->
+    <div id="page-riders" class="page">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h2 class="font-heading text-xl font-bold text-neutral-900">Rider Management</h2>
+          <p class="text-sm text-neutral-400 mt-0.5">Manage your fleet of delivery riders</p>
+        </div>
+        <button onclick="openRiderModal()" id="add-rider-btn" class="flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2.5 rounded-full text-sm font-semibold transition-colors">
+          <i data-lucide="plus" class="w-4 h-4"></i>Add Rider
+        </button>
+      </div>
+
+      <!-- Interstate: hide riders, show message -->
+      <div id="riders-interstate-msg" class="hidden">
+        <div class="bg-purple-50 border border-purple-200 rounded-xl2 p-8 text-center">
+          <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="truck" class="w-7 h-7 text-purple-600"></i></div>
+          <h3 class="font-heading font-bold text-purple-900 text-lg mb-2">Rider Management Not Applicable</h3>
+          <p class="text-sm text-purple-700 max-w-md mx-auto">Rider management is not applicable for interstate operations. Interstate deliveries are handled directly by your logistics team without individual rider assignments.</p>
+        </div>
+      </div>
+
+      <!-- Local: show riders table -->
+      <div id="riders-table-wrap">
+        <!-- Stats row -->
+        <div class="grid grid-cols-3 gap-4 mb-5">
+          <div class="stat-card text-center"><p class="font-heading text-2xl font-bold text-neutral-900" id="riders-total-count">12</p><p class="text-xs text-neutral-500 mt-1">Total Riders</p></div>
+          <div class="stat-card text-center"><p class="font-heading text-2xl font-bold text-green-600" id="riders-online-count">9</p><p class="text-xs text-neutral-500 mt-1">Online Now</p></div>
+          <div class="stat-card text-center"><p class="font-heading text-2xl font-bold text-amber-600" id="riders-busy-count">7</p><p class="text-xs text-neutral-500 mt-1">On Delivery</p></div>
+        </div>
+        <div class="bg-white rounded-xl2 border border-neutral-100 shadow-card overflow-hidden">
+          <div class="px-4 py-3 border-b border-neutral-100">
+            <div class="flex items-center gap-2 bg-neutral-100 rounded-full px-3 py-1.5 text-xs w-full max-w-xs">
+              <i data-lucide="search" class="w-3.5 h-3.5 text-neutral-400"></i>
+              <input type="text" placeholder="Search riders…" oninput="filterRiders(this.value)" class="bg-transparent outline-none text-neutral-700 placeholder-neutral-400 text-xs w-full">
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="tbl">
+              <thead><tr><th>Rider</th><th>Vehicle</th><th>Zone</th><th>Orders Today</th><th>Rating</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="riders-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── EARNINGS ──────────────────────────── -->
+    <div id="page-earnings" class="page">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h2 class="font-heading text-xl font-bold text-neutral-900">Earnings & Reports</h2>
+          <p class="text-sm text-neutral-400 mt-0.5">Track your revenue and download statements</p>
+        </div>
+        <button onclick="showToast('success','Report Ready','Earnings report downloaded successfully.')" class="flex items-center gap-2 border border-neutral-200 text-neutral-700 hover:bg-neutral-50 px-4 py-2.5 rounded-full text-sm font-semibold transition-colors">
+          <i data-lucide="download" class="w-4 h-4"></i>Download Report
+        </button>
+      </div>
+      <!-- Summary cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="stat-card"><p class="text-xs font-semibold text-neutral-500 mb-2">Today</p><p class="font-heading text-2xl font-bold text-neutral-900">₦284,500</p><p class="text-xs text-green-600 mt-1">+8%</p></div>
+        <div class="stat-card"><p class="text-xs font-semibold text-neutral-500 mb-2">This Week</p><p class="font-heading text-2xl font-bold text-neutral-900">₦1.84M</p><p class="text-xs text-green-600 mt-1">+14%</p></div>
+        <div class="stat-card"><p class="text-xs font-semibold text-neutral-500 mb-2">This Month</p><p class="font-heading text-2xl font-bold text-neutral-900">₦7.6M</p><p class="text-xs text-green-600 mt-1">+22%</p></div>
+        <div class="stat-card"><p class="text-xs font-semibold text-neutral-500 mb-2">Pending Payout</p><p class="font-heading text-2xl font-bold text-primary-600">₦940,000</p><p class="text-xs text-neutral-400 mt-1">Releases Friday</p></div>
+      </div>
+      <!-- Chart -->
+      <div class="bg-white rounded-xl2 border border-neutral-100 shadow-card p-5 mb-5">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-heading font-bold text-sm text-neutral-900">Daily Earnings — This Week</h3>
+          <select class="text-xs border border-neutral-200 rounded-lg px-2 py-1 text-neutral-600 outline-none" style="font-size:12px"><option>This Week</option><option>Last Month</option></select>
+        </div>
+        <div class="flex items-end gap-2 h-36">
+          <div class="flex flex-col items-center gap-1 flex-1"><div class="w-full bg-primary-100 rounded-t-md" style="height:60%"></div><p class="text-[10px] text-neutral-400">Mon</p></div>
+          <div class="flex flex-col items-center gap-1 flex-1"><div class="w-full bg-primary-100 rounded-t-md" style="height:78%"></div><p class="text-[10px] text-neutral-400">Tue</p></div>
+          <div class="flex flex-col items-center gap-1 flex-1"><div class="w-full bg-primary-100 rounded-t-md" style="height:68%"></div><p class="text-[10px] text-neutral-400">Wed</p></div>
+          <div class="flex flex-col items-center gap-1 flex-1"><div class="w-full bg-primary-100 rounded-t-md" style="height:92%"></div><p class="text-[10px] text-neutral-400">Thu</p></div>
+          <div class="flex flex-col items-center gap-1 flex-1"><div class="w-full bg-primary-600 rounded-t-md" style="height:100%"></div><p class="text-[10px] text-primary-600 font-bold">Fri</p></div>
+          <div class="flex flex-col items-center gap-1 flex-1"><div class="w-full bg-primary-100 rounded-t-md" style="height:88%"></div><p class="text-[10px] text-neutral-400">Sat</p></div>
+          <div class="flex flex-col items-center gap-1 flex-1"><div class="w-full bg-primary-100 rounded-t-md" style="height:71%"></div><p class="text-[10px] text-neutral-400">Sun</p></div>
+        </div>
+      </div>
+      <!-- Earnings breakdown table -->
+      <div class="bg-white rounded-xl2 border border-neutral-100 shadow-card overflow-hidden">
+        <div class="px-5 py-4 border-b border-neutral-100"><h3 class="font-heading font-bold text-sm text-neutral-900">Earnings Breakdown</h3></div>
+        <div class="overflow-x-auto">
+          <table class="tbl">
+            <thead><tr><th>Date</th><th>Orders</th><th>Gross Revenue</th><th>Platform Fee</th><th>Net Earnings</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td class="text-xs text-neutral-600">Today</td><td>312</td><td class="font-semibold">₦312,000</td><td class="text-red-600 text-xs">-₦27,500</td><td class="font-bold text-green-700">₦284,500</td><td><span class="badge badge-pending">Pending</span></td></tr>
+              <tr><td class="text-xs text-neutral-600">Yesterday</td><td>288</td><td class="font-semibold">₦288,000</td><td class="text-red-600 text-xs">-₦24,800</td><td class="font-bold text-green-700">₦263,200</td><td><span class="badge badge-pending">Pending</span></td></tr>
+              <tr><td class="text-xs text-neutral-600">Last Friday</td><td>341</td><td class="font-semibold">₦341,000</td><td class="text-red-600 text-xs">-₦29,200</td><td class="font-bold text-green-700">₦311,800</td><td><span class="badge badge-active">Paid</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── SETTINGS ──────────────────────────── -->
+    <div id="page-settings" class="page">
+      <h2 class="font-heading text-xl font-bold text-neutral-900 mb-5">Company Settings</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="bg-white rounded-xl2 border border-neutral-100 shadow-card p-5">
+          <h3 class="font-heading font-bold text-sm text-neutral-900 mb-4">Company Profile</h3>
+          <div class="space-y-3">
+            <div><label class="block text-xs font-medium text-neutral-600 mb-1">Company Name</label><input type="text" value="Lagos Express Co." class="w-full px-3 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50 outline-none focus:border-primary-500"></div>
+            <div><label class="block text-xs font-medium text-neutral-600 mb-1">Contact Email</label><input type="email" value="ops@lagosexpress.ng" class="w-full px-3 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50 outline-none focus:border-primary-500"></div>
+            <div><label class="block text-xs font-medium text-neutral-600 mb-1">Phone</label><input type="tel" value="+234 801 234 5678" class="w-full px-3 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50 outline-none focus:border-primary-500" style="font-size:14px"></div>
+            <button onclick="showToast('success','Profile Updated','Company profile saved successfully.')" class="w-full mt-1 bg-primary-600 hover:bg-primary-700 text-white py-2.5 rounded-full text-sm font-semibold transition-colors">Save Profile</button>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl2 border border-neutral-100 shadow-card p-5">
+          <h3 class="font-heading font-bold text-sm text-neutral-900 mb-4">Notification Preferences</h3>
+          <div class="space-y-4">
+            <div class="flex items-center justify-between"><div><p class="text-sm font-medium text-neutral-800">New Order Alerts</p><p class="text-xs text-neutral-400">Get notified for every new order</p></div><div class="toggle-track on" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div></div>
+            <div class="flex items-center justify-between"><div><p class="text-sm font-medium text-neutral-800">Rider Status Updates</p><p class="text-xs text-neutral-400">When riders go online/offline</p></div><div class="toggle-track on" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div></div>
+            <div class="flex items-center justify-between"><div><p class="text-sm font-medium text-neutral-800">Weekly Earnings Summary</p><p class="text-xs text-neutral-400">Receive weekly email report</p></div><div class="toggle-track" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+/* ── Company type state ── */
+let companyType = 'local'; // 'local' | 'interstate'
+
+/* ── Riders data ── */
+let RIDERS = [
+  {id:1,name:'Emeka Okafor',vehicle:'Motorcycle',zone:'Ikeja',orders:24,rating:4.9,status:'online',busy:true},
+  {id:2,name:'Aisha Ibrahim',vehicle:'Bicycle',zone:'Lekki',orders:18,rating:4.7,status:'online',busy:true},
+  {id:3,name:'Chidi Obiora',vehicle:'Motorcycle',zone:'VI',orders:31,rating:4.8,status:'online',busy:false},
+  {id:4,name:'Bola Oluwaseun',vehicle:'Motorcycle',zone:'Surulere',orders:12,rating:4.6,status:'offline',busy:false},
+  {id:5,name:'Funmi Adeyemi',vehicle:'Bicycle',zone:'Yaba',orders:20,rating:4.5,status:'online',busy:true},
+  {id:6,name:'Kola Badmus',vehicle:'Car/Van',zone:'Mainland',orders:8,rating:4.7,status:'offline',busy:false},
+  {id:7,name:'Ngozi Eze',vehicle:'Motorcycle',zone:'Ajah',orders:16,rating:4.9,status:'online',busy:false},
+  {id:8,name:'Tunde Sanni',vehicle:'Motorcycle',zone:'Ikotun',orders:22,rating:4.6,status:'online',busy:true},
+  {id:9,name:'Yemi Obi',vehicle:'Bicycle',zone:'Gbagada',orders:14,rating:4.4,status:'online',busy:false},
+];
+
+/* ── Orders data ── */
+const ORDERS = [
+  {id:'ORD-00481',customer:'Tunde Adeyemi',route:'Ikeja → Lekki',type:'Local',status:'transit',rider:'Emeka O.'},
+  {id:'ORD-00480',customer:'Amaka Obi',route:'Surulere → VI',type:'Local',status:'assigned',rider:'Chidi O.'},
+  {id:'ORD-00479',customer:'Femi Balogun',route:'Yaba → Gbagada',type:'Local',status:'processing',rider:null},
+  {id:'ORD-00478',customer:'Chioma Nwosu',route:'Maryland → Festac',type:'Local',status:'delivered',rider:'Funmi A.'},
+  {id:'ORD-00477',customer:'Biodun Aina',route:'Ikeja → Ikorodu',type:'Local',status:'processing',rider:null},
+  {id:'ORD-00476',customer:'Shade Akande',route:'Lagos → Benin City',type:'Interstate',status:'processing',rider:null},
+];
+
+/* ── Render riders ── */
+function renderRiders(list){
+  list = list||RIDERS;
+  document.getElementById('riders-tbody').innerHTML = list.map(r=>`
+    <tr>
+      <td><div class="flex items-center gap-2.5"><div class="w-7 h-7 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-xs font-bold">${r.name.split(' ').map(n=>n[0]).join('')}</div><div><p class="text-sm font-semibold text-neutral-800">${r.name}</p></div></div></td>
+      <td class="text-xs text-neutral-600">${r.vehicle}</td>
+      <td class="text-xs text-neutral-600">${r.zone}</td>
+      <td class="font-semibold text-sm text-neutral-800">${r.orders}</td>
+      <td class="text-xs font-semibold text-amber-600">⭐ ${r.rating}</td>
+      <td><span class="badge ${r.status==='online'?(r.busy?'badge-assigned':'badge-active'):'badge-inactive'}">${r.status==='online'?(r.busy?'On Delivery':'Online'):'Offline'}</span></td>
+      <td>
+        <div class="flex items-center gap-1.5">
+          <button onclick="editRider(${r.id})" class="px-2.5 py-1 border border-neutral-200 rounded-full text-xs font-semibold text-neutral-600 hover:bg-neutral-50 transition-colors">Edit</button>
+          <button onclick="deactivateRider(${r.id})" class="px-2.5 py-1 border border-red-100 rounded-full text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors">${r.status==='offline'?'Activate':'Deactivate'}</button>
+        </div>
+      </td>
+    </tr>`).join('');
+  document.getElementById('riders-total-count').textContent = RIDERS.length;
+  document.getElementById('riders-online-count').textContent = RIDERS.filter(r=>r.status==='online').length;
+  document.getElementById('riders-busy-count').textContent = RIDERS.filter(r=>r.busy).length;
+}
+
+function filterRiders(q){
+  const filtered = RIDERS.filter(r=>r.name.toLowerCase().includes(q.toLowerCase())||r.zone.toLowerCase().includes(q.toLowerCase()));
+  renderRiders(filtered);
+}
+
+/* ── Render orders ── */
+function renderOrders(){
+  const isInter = companyType==='interstate';
+  document.getElementById('interstate-notice').classList.toggle('hidden', !isInter);
+  document.getElementById('orders-action-header').textContent = isInter ? 'Update Status' : 'Action';
+  document.getElementById('orders-tbody').innerHTML = ORDERS.map(o=>`
+    <tr>
+      <td class="font-mono text-xs font-semibold text-neutral-700">${o.id}</td>
+      <td class="text-sm font-medium text-neutral-800">${o.customer}</td>
+      <td class="text-xs text-neutral-500">${o.route}</td>
+      <td><span class="badge ${o.type==='Local'?'text-blue-700 bg-blue-50':'text-purple-700 bg-purple-50'}">${o.type}</span></td>
+      <td><span class="badge ${o.status==='transit'?'badge-transit':o.status==='assigned'?'badge-assigned':o.status==='delivered'?'badge-delivered':'badge-processing'}">${o.status==='transit'?'In Transit':o.status.charAt(0).toUpperCase()+o.status.slice(1)}</span></td>
+      <td>
+        ${isInter
+          ? `<select onchange="updateOrderStatus('${o.id}',this.value)" class="text-xs border border-neutral-200 rounded-lg px-2 py-1 text-neutral-600 outline-none appearance-none" style="font-size:12px">
+               <option value="">Update Status</option>
+               <option value="confirmed">Confirmed</option>
+               <option value="transit">In Transit</option>
+               <option value="delivered">Delivered</option>
+             </select>`
+          : o.status==='processing'
+            ? `<button onclick="openAssignModal('${o.id}')" class="px-3 py-1 bg-primary-600 hover:bg-primary-700 text-white rounded-full text-xs font-bold transition-colors">Assign Rider</button>`
+            : `<span class="text-xs text-neutral-400">${o.rider||'—'}</span>`
+        }
+      </td>
+    </tr>`).join('');
+  // Overview preview
+  document.getElementById('ov-orders-preview').innerHTML = ORDERS.slice(0,4).map(o=>`
+    <div class="px-5 py-3.5 flex items-center gap-3">
+      <div class="w-8 h-8 rounded-xl ${o.status==='delivered'?'bg-green-50':'bg-primary-50'} flex items-center justify-center flex-shrink-0"><i data-lucide="package" class="w-4 h-4 ${o.status==='delivered'?'text-green-600':'text-primary-600'}"></i></div>
+      <div class="flex-1 min-w-0"><p class="text-sm font-semibold text-neutral-800 truncate">${o.id} · ${o.customer}</p><p class="text-xs text-neutral-400">${o.route}</p></div>
+      <span class="badge ${o.status==='transit'?'badge-transit':o.status==='assigned'?'badge-assigned':o.status==='delivered'?'badge-delivered':'badge-processing'}">${o.status==='transit'?'In Transit':o.status.charAt(0).toUpperCase()+o.status.slice(1)}</span>
+    </div>`).join('');
+  lucide.createIcons();
+}
+
+function updateOrderStatus(orderId, status){
+  if(!status) return;
+  const o = ORDERS.find(x=>x.id===orderId);
+  if(o){o.status=status;}
+  showToast('success','Status Updated',`${orderId} marked as ${status}.`);
+  renderOrders();
+}
+
+/* ── Assign rider modal ── */
+let currentOrderId = null;
+function openAssignModal(orderId){
+  currentOrderId = orderId;
+  document.getElementById('order-modal-title').textContent = `Assign Rider — ${orderId}`;
+  const availableRiders = RIDERS.filter(r=>r.status==='online'&&!r.busy);
+  document.getElementById('order-modal-body').innerHTML = `
+    <p class="text-sm text-neutral-500 mb-2">Select an available rider:</p>
+    <select id="assign-rider-select" class="w-full px-3 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50 outline-none" style="font-size:14px">
+      <option value="">— Select rider —</option>
+      ${availableRiders.map(r=>`<option value="${r.id}">${r.name} · ${r.zone} · ${r.vehicle}</option>`).join('')}
+    </select>
+    ${availableRiders.length===0?'<p class="text-xs text-amber-600 mt-2">No available riders at the moment.</p>':''}`;
+  document.getElementById('order-modal').classList.add('open');
+}
+
+function confirmOrderAction(){
+  const sel = document.getElementById('assign-rider-select');
+  if(!sel) return;
+  const riderId = parseInt(sel.value);
+  if(!riderId){ showToast('error','Select a rider','Please select an available rider.'); return; }
+  const rider = RIDERS.find(r=>r.id===riderId);
+  const order = ORDERS.find(o=>o.id===currentOrderId);
+  if(rider&&order){
+    rider.busy=true; order.status='assigned'; order.rider=rider.name.split(' ')[0]+' '+rider.name.split(' ')[1][0]+'.';
+    showToast('success','Rider Assigned',`${rider.name} assigned to ${currentOrderId}.`);
+  }
+  closeOrderModal(); renderOrders(); renderRiders();
+}
+function closeOrderModal(){ document.getElementById('order-modal').classList.remove('open'); }
+
+/* ── Rider CRUD ── */
+let editingRiderId = null;
+function openRiderModal(){ editingRiderId=null; document.getElementById('rider-modal-title').textContent='Add New Rider'; ['rider-fname','rider-lname','rider-phone','rider-zone'].forEach(id=>document.getElementById(id).value=''); document.getElementById('rider-modal').classList.add('open'); }
+function editRider(id){ editingRiderId=id; const r=RIDERS.find(x=>x.id===id); if(!r)return; document.getElementById('rider-modal-title').textContent='Edit Rider'; document.getElementById('rider-fname').value=r.name.split(' ')[0]; document.getElementById('rider-lname').value=r.name.split(' ')[1]; document.getElementById('rider-zone').value=r.zone; document.getElementById('rider-modal').classList.add('open'); }
+function closeRiderModal(){ document.getElementById('rider-modal').classList.remove('open'); }
+function saveRider(){
+  const fname=document.getElementById('rider-fname').value.trim();
+  const lname=document.getElementById('rider-lname').value.trim();
+  const zone=document.getElementById('rider-zone').value.trim();
+  if(!fname||!lname){ showToast('error','Required','Please enter the rider\'s full name.'); return; }
+  if(editingRiderId){
+    const r=RIDERS.find(x=>x.id===editingRiderId);
+    if(r){r.name=fname+' '+lname; r.zone=zone||r.zone;}
+    showToast('success','Rider Updated',`${fname} ${lname}'s profile updated.`);
+  } else {
+    RIDERS.push({id:Date.now(),name:fname+' '+lname,vehicle:document.getElementById('rider-vehicle').value,zone:zone||'—',orders:0,rating:0,status:'offline',busy:false});
+    showToast('success','Rider Added',`${fname} ${lname} added to your fleet.`);
+  }
+  closeRiderModal(); renderRiders();
+}
+function deactivateRider(id){
+  const r=RIDERS.find(x=>x.id===id);
+  if(!r)return;
+  r.status=r.status==='offline'?'online':'offline';
+  showToast('info','Rider Updated',`${r.name} is now ${r.status}.`);
+  renderRiders();
+}
+
+/* ── Switch company type ── */
+function switchType(type, btn){
+  companyType=type;
+  const isLocal=type==='local';
+  // Type btns
+  document.getElementById('type-local').className='type-btn'+(isLocal?' active-local':'');
+  document.getElementById('type-interstate').className='type-btn'+(!isLocal?' active-interstate':'');
+  // Sidebar badge
+  const badge=document.getElementById('company-type-badge');
+  if(badge){badge.textContent=isLocal?'LOCAL':'INTERSTATE';badge.className=`text-[10px] font-bold px-2 py-0.5 rounded-full ${isLocal?'bg-blue-500/20 text-blue-400':'bg-purple-500/20 text-purple-400'}`;}
+  // Riders section
+  document.getElementById('riders-interstate-msg').classList.toggle('hidden',isLocal);
+  document.getElementById('riders-table-wrap').classList.toggle('hidden',!isLocal);
+  document.getElementById('add-rider-btn').classList.toggle('hidden',!isLocal);
+  // Overview subtitle
+  document.getElementById('ov-subtitle').textContent = `Lagos Express Co. — ${isLocal?'Local Delivery':'Interstate Logistics'}`;
+  // Re-render orders with new context
+  renderOrders();
+  showToast('info','Mode Switched',`Switched to ${isLocal?'Local':'Interstate'} operations view.`);
+}
+
+/* ── Navigation ── */
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const nav=document.getElementById('nav-'+id);
+  if(nav) nav.classList.add('active');
+  const titles={overview:'Overview',orders:'Orders',riders:'Riders',earnings:'Earnings',settings:'Settings'};
+  document.getElementById('page-title').textContent=titles[id]||id;
+  document.getElementById('page-bc').textContent='Company / '+titles[id];
+  closeSidebar();
+}
+function openSidebar(){ document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebar-backdrop').classList.add('open'); }
+function closeSidebar(){ document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebar-backdrop').classList.remove('open'); }
+
+/* ── Toast ── */
+function showToast(type,title,msg){
+  const colors={success:'bg-green-50 border-green-200 text-green-700',error:'bg-red-50 border-red-200 text-red-700',info:'bg-blue-50 border-blue-200 text-blue-700',warn:'bg-amber-50 border-amber-200 text-amber-700'};
+  const icons={success:'check-circle',error:'x-circle',info:'info',warn:'alert-triangle'};
+  const t=document.createElement('div');
+  t.className=`pointer-events-auto flex items-start gap-3 p-3.5 rounded-xl border shadow-hover w-full ${colors[type]||colors.info}`;
+  t.style.animation='toastIn .3s ease both';
+  t.innerHTML=`<i data-lucide="${icons[type]||'info'}" class="w-4 h-4 flex-shrink-0 mt-0.5"></i><div class="flex-1"><p class="font-semibold text-xs">${title}</p>${msg?`<p class="text-xs opacity-80 mt-0.5">${msg}</p>`:''}</div><button onclick="this.parentElement.remove()" class="opacity-60 hover:opacity-100 flex-shrink-0"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>`;
+  document.getElementById('toast-stack').appendChild(t);
+  lucide.createIcons();
+  setTimeout(()=>{t.style.animation='toastOut .3s ease forwards';setTimeout(()=>t.remove(),300)},3500);
+}
+
+document.addEventListener('DOMContentLoaded',()=>{ lucide.createIcons(); renderRiders(); renderOrders(); });
+</script>
+</body>
+</html>

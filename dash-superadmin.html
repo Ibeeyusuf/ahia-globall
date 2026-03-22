@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Super Admin — AhiaGlobal</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-serif'],body:['Inter','sans-serif']},colors:{primary:{50:'#fff7ed',100:'#ffedd5',200:'#fed7aa',300:'#fdba74',400:'#fb923c',500:'#f97316',600:'#ea580c',700:'#c2410c',800:'#9a3412',900:'#7c2d12'},neutral:{50:'#f8fafc',100:'#f1f5f9',200:'#e2e8f0',300:'#cbd5e1',400:'#94a3b8',500:'#64748b',600:'#475569',700:'#334155',800:'#1e293b',900:'#0f172a'}},boxShadow:{card:'0 4px 14px -3px rgba(15,23,42,.09)',hover:'0 12px 30px -5px rgba(15,23,42,.16)',modal:'0 24px 60px -8px rgba(15,23,42,.28)'},borderRadius:{xl2:'0.875rem',xl3:'1.25rem'}}}}
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#f8fafc;color:#0f172a;overflow-x:hidden}
+
+/* Sidebar */
+#sidebar{width:240px;min-height:100vh;background:#0f172a;position:fixed;top:0;left:0;z-index:100;display:flex;flex-direction:column;transition:transform .3s cubic-bezier(.4,0,.2,1)}
+#sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:99}
+.main-wrap{margin-left:240px;min-height:100vh;display:flex;flex-direction:column}
+@media(max-width:1023px){
+  #sidebar{transform:translateX(-100%)}
+  #sidebar.open{transform:translateX(0)}
+  #sidebar-backdrop.open{display:block}
+  .main-wrap{margin-left:0}
+}
+
+/* Nav items */
+.nav-item{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:.75rem;font-size:.875rem;font-weight:500;color:#94a3b8;cursor:pointer;transition:all .2s;border:none;background:none;width:100%;text-align:left;white-space:nowrap}
+.nav-item:hover{background:rgba(255,255,255,.06);color:#e2e8f0}
+.nav-item.active{background:rgba(234,88,12,.15);color:#fb923c;font-weight:600}
+.nav-item.active .nav-ic{color:#ea580c}
+.nav-ic{width:1.125rem;height:1.125rem;flex-shrink:0;color:#64748b}
+
+/* Stat cards */
+.stat-card{background:#fff;border-radius:.875rem;border:1px solid #f1f5f9;padding:1.25rem;box-shadow:0 4px 14px -3px rgba(15,23,42,.09);transition:box-shadow .2s,transform .2s}
+.stat-card:hover{box-shadow:0 12px 30px -5px rgba(15,23,42,.16);transform:translateY(-2px)}
+
+/* Status badges */
+.badge{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .65rem;border-radius:999px;font-size:.7rem;font-weight:600;white-space:nowrap}
+.badge-active{background:#dcfce7;color:#166534}
+.badge-suspended{background:#fee2e2;color:#991b1b}
+.badge-pending{background:#fef9c3;color:#854d0e}
+.badge-local{background:#dbeafe;color:#1e40af}
+.badge-interstate{background:#ede9fe;color:#6d28d9}
+.badge-delivered{background:#dcfce7;color:#15803d}
+.badge-transit{background:#dbeafe;color:#1d4ed8}
+.badge-processing{background:#ffedd5;color:#c2410c}
+
+/* Table */
+.tbl{width:100%;border-collapse:collapse;font-size:.875rem}
+.tbl thead th{background:#f8fafc;padding:.75rem 1rem;text-align:left;font-size:.7rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.tbl tbody td{padding:.875rem 1rem;border-top:1px solid #f1f5f9;vertical-align:middle}
+.tbl tbody tr:hover{background:#fafafa}
+
+/* Tabs */
+.tab-btn{padding:.625rem 1rem;font-size:.875rem;font-weight:500;color:#64748b;border-bottom:2px solid transparent;transition:all .2s;cursor:pointer;white-space:nowrap;background:none;border-left:none;border-right:none;border-top:none}
+.tab-btn:hover{color:#ea580c}
+.tab-btn.active{color:#ea580c;border-bottom-color:#ea580c;font-weight:600}
+
+/* Page sections */
+.page{display:none}
+.page.active{display:block;animation:fadeUp .35s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* Modal */
+#confirm-modal{opacity:0;pointer-events:none;transition:opacity .2s}
+#confirm-modal.open{opacity:1;pointer-events:auto}
+#confirm-box{transform:scale(.95);transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+#confirm-modal.open #confirm-box{transform:scale(1)}
+
+/* Toasts */
+@keyframes toastIn{from{opacity:0;transform:translateX(110%)}to{opacity:1;transform:translateX(0)}}
+@keyframes toastOut{from{opacity:1}to{opacity:0;transform:translateX(110%)}}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:999px}
+</style>
+</head>
+<body class="font-body">
+
+<!-- TOAST STACK -->
+<div id="toast-stack" class="fixed top-4 right-4 z-[9999] flex flex-col gap-2 w-80 pointer-events-none"></div>
+
+<!-- CONFIRM MODAL -->
+<div id="confirm-modal" class="fixed inset-0 z-[500] flex items-center justify-center p-4" style="background:rgba(15,23,42,.55);backdrop-filter:blur(4px)">
+  <div id="confirm-box" class="bg-white rounded-xl3 shadow-modal w-full max-w-sm p-6">
+    <div id="confirm-icon" class="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4"></div>
+    <h3 class="font-heading text-lg font-bold text-neutral-900 text-center mb-2" id="confirm-title">Confirm Action</h3>
+    <p class="text-sm text-neutral-500 text-center mb-6" id="confirm-msg">Are you sure?</p>
+    <div class="flex gap-3">
+      <button onclick="closeConfirm()" class="flex-1 py-2.5 border border-neutral-200 rounded-full text-sm font-semibold text-neutral-700 hover:bg-neutral-50 transition-colors">Cancel</button>
+      <button id="confirm-ok" class="flex-1 py-2.5 rounded-full text-sm font-bold text-white transition-colors">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- SIDEBAR BACKDROP -->
+<div id="sidebar-backdrop" onclick="closeSidebar()"></div>
+
+<!-- ═══ SIDEBAR ════════════════════════════════════════════ -->
+<aside id="sidebar">
+  <!-- Logo -->
+  <div class="px-4 py-5 border-b border-white/5 flex items-center gap-3 flex-shrink-0">
+    <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center text-white font-heading font-bold text-base flex-shrink-0">A</div>
+    <div class="min-w-0">
+      <p class="font-heading font-bold text-white text-sm leading-tight">AhiaGlobal</p>
+      <p class="text-[10px] text-neutral-500 leading-tight">Super Admin</p>
+    </div>
+  </div>
+
+  <!-- Nav -->
+  <nav class="flex-1 overflow-y-auto p-3 space-y-0.5">
+    <p class="text-[10px] font-bold text-neutral-600 uppercase tracking-widest px-3 mb-2 mt-3">Overview</p>
+    <button onclick="showPage('dashboard')" class="nav-item active" id="nav-dashboard">
+      <i data-lucide="layout-dashboard" class="nav-ic"></i>Dashboard
+    </button>
+    <button onclick="showPage('companies')" class="nav-item" id="nav-companies">
+      <i data-lucide="building-2" class="nav-ic"></i>Companies
+      <span class="ml-auto bg-primary-600/20 text-primary-400 text-[10px] font-bold px-1.5 py-0.5 rounded-full">12</span>
+    </button>
+    <button onclick="showPage('deliveries')" class="nav-item" id="nav-deliveries">
+      <i data-lucide="package" class="nav-ic"></i>Deliveries
+    </button>
+    <button onclick="showPage('riders-list')" class="nav-item" id="nav-riders-list">
+      <i data-lucide="bike" class="nav-ic"></i>All Riders
+    </button>
+    <p class="text-[10px] font-bold text-neutral-600 uppercase tracking-widest px-3 mb-2 mt-4">System</p>
+    <button onclick="showPage('analytics')" class="nav-item" id="nav-analytics">
+      <i data-lucide="bar-chart-2" class="nav-ic"></i>Analytics
+    </button>
+    <button onclick="showPage('settings')" class="nav-item" id="nav-settings">
+      <i data-lucide="settings" class="nav-ic"></i>Settings
+    </button>
+  </nav>
+
+  <!-- Admin profile -->
+  <div class="p-3 border-t border-white/5 flex-shrink-0">
+    <div class="flex items-center gap-3 px-3 py-2">
+      <div class="w-8 h-8 rounded-full bg-primary-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">SA</div>
+      <div class="min-w-0 flex-1">
+        <p class="text-xs font-semibold text-white truncate">Super Admin</p>
+        <p class="text-[10px] text-neutral-500 truncate">admin@ahiaglobal.com</p>
+      </div>
+      <button class="text-neutral-500 hover:text-neutral-300 transition-colors flex-shrink-0">
+        <i data-lucide="log-out" class="w-4 h-4"></i>
+      </button>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ════════════════════════════════════════════════ -->
+<div class="main-wrap">
+
+  <!-- Top bar -->
+  <header class="sticky top-0 z-50 bg-white border-b border-neutral-100 px-4 lg:px-6 py-3.5 flex items-center gap-4">
+    <button onclick="openSidebar()" class="lg:hidden p-2 rounded-lg hover:bg-neutral-100 transition-colors">
+      <i data-lucide="menu" class="w-5 h-5 text-neutral-600"></i>
+    </button>
+    <div class="flex-1 min-w-0">
+      <h1 class="font-heading font-bold text-neutral-900 text-base leading-tight" id="page-title">Dashboard</h1>
+      <p class="text-xs text-neutral-400" id="page-breadcrumb">AhiaGlobal / Overview</p>
+    </div>
+    <div class="flex items-center gap-2 flex-shrink-0">
+      <!-- Search -->
+      <div class="hidden sm:flex items-center gap-2 bg-neutral-100 rounded-full px-3 py-2 text-sm text-neutral-500">
+        <i data-lucide="search" class="w-3.5 h-3.5"></i>
+        <input type="text" placeholder="Search…" class="bg-transparent outline-none w-32 text-neutral-700 placeholder-neutral-400 text-xs">
+      </div>
+      <!-- Notifications -->
+      <button class="relative p-2 rounded-full hover:bg-neutral-100 transition-colors">
+        <i data-lucide="bell" class="w-5 h-5 text-neutral-600"></i>
+        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-primary-600 rounded-full"></span>
+      </button>
+      <!-- Avatar -->
+      <div class="w-8 h-8 rounded-full bg-primary-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">SA</div>
+    </div>
+  </header>
+
+  <!-- Page content -->
+  <main class="flex-1 p-4 lg:p-6 space-y-6">
+
+    <!-- ─── DASHBOARD ─────────────────────────────────── -->
+    <div id="page-dashboard" class="page active">
+
+      <!-- Welcome -->
+      <div class="flex items-center justify-between mb-2">
+        <div>
+          <h2 class="font-heading text-xl font-bold text-neutral-900">Good morning, Admin 👋</h2>
+          <p class="text-sm text-neutral-500 mt-0.5">Here's what's happening across the platform today.</p>
+        </div>
+        <div class="hidden sm:flex items-center gap-2 text-xs text-neutral-500 bg-white border border-neutral-200 rounded-full px-3 py-1.5">
+          <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+          <span id="today-date"></span>
+        </div>
+      </div>
+
+      <!-- Stat cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="stat-card">
+          <div class="flex items-center justify-between mb-3">
+            <p class="text-xs font-semibold text-neutral-500">Deliveries Today</p>
+            <div class="w-9 h-9 bg-primary-50 rounded-xl flex items-center justify-center"><i data-lucide="package" class="w-4 h-4 text-primary-600"></i></div>
+          </div>
+          <p class="font-heading text-2xl font-bold text-neutral-900">1,248</p>
+          <p class="text-xs text-green-600 mt-1 flex items-center gap-1"><i data-lucide="trending-up" class="w-3 h-3"></i>+14% from yesterday</p>
+        </div>
+        <div class="stat-card">
+          <div class="flex items-center justify-between mb-3">
+            <p class="text-xs font-semibold text-neutral-500">Total Revenue</p>
+            <div class="w-9 h-9 bg-green-50 rounded-xl flex items-center justify-center"><i data-lucide="banknote" class="w-4 h-4 text-green-600"></i></div>
+          </div>
+          <p class="font-heading text-2xl font-bold text-neutral-900">₦4.7M</p>
+          <p class="text-xs text-green-600 mt-1 flex items-center gap-1"><i data-lucide="trending-up" class="w-3 h-3"></i>+8.3% this week</p>
+        </div>
+        <div class="stat-card">
+          <div class="flex items-center justify-between mb-3">
+            <p class="text-xs font-semibold text-neutral-500">Active Companies</p>
+            <div class="w-9 h-9 bg-blue-50 rounded-xl flex items-center justify-center"><i data-lucide="building-2" class="w-4 h-4 text-blue-600"></i></div>
+          </div>
+          <p class="font-heading text-2xl font-bold text-neutral-900">12</p>
+          <p class="text-xs text-neutral-400 mt-1">2 pending approval</p>
+        </div>
+        <div class="stat-card">
+          <div class="flex items-center justify-between mb-3">
+            <p class="text-xs font-semibold text-neutral-500">Total Riders</p>
+            <div class="w-9 h-9 bg-purple-50 rounded-xl flex items-center justify-center"><i data-lucide="bike" class="w-4 h-4 text-purple-600"></i></div>
+          </div>
+          <p class="font-heading text-2xl font-bold text-neutral-900">347</p>
+          <p class="text-xs text-green-600 mt-1 flex items-center gap-1"><i data-lucide="circle" class="w-2 h-2 fill-green-500 stroke-green-500"></i>218 online now</p>
+        </div>
+      </div>
+
+      <!-- Two columns -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+        <!-- Recent deliveries -->
+        <div class="bg-white rounded-xl2 border border-neutral-100 shadow-card">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-neutral-100">
+            <h3 class="font-heading font-bold text-sm text-neutral-900">Recent Deliveries</h3>
+            <button onclick="showPage('deliveries')" class="text-xs text-primary-600 font-semibold hover:underline">View all</button>
+          </div>
+          <div class="divide-y divide-neutral-50">
+            <div class="px-5 py-3.5 flex items-center gap-3">
+              <div class="w-9 h-9 bg-primary-50 rounded-xl flex items-center justify-center flex-shrink-0"><i data-lucide="package" class="w-4 h-4 text-primary-600"></i></div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-neutral-800 truncate">ORD-00481 · Lagos Express Co.</p>
+                <p class="text-xs text-neutral-400">Ikeja → Lekki · <span class="text-neutral-600">Emeka Rider</span></p>
+              </div>
+              <span class="badge badge-transit">In Transit</span>
+            </div>
+            <div class="px-5 py-3.5 flex items-center gap-3">
+              <div class="w-9 h-9 bg-green-50 rounded-xl flex items-center justify-center flex-shrink-0"><i data-lucide="package-check" class="w-4 h-4 text-green-600"></i></div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-neutral-800 truncate">ORD-00480 · SwiftMove Nigeria</p>
+                <p class="text-xs text-neutral-400">Abuja → Gwagwalada · <span class="text-neutral-600">Aisha Rider</span></p>
+              </div>
+              <span class="badge badge-delivered">Delivered</span>
+            </div>
+            <div class="px-5 py-3.5 flex items-center gap-3">
+              <div class="w-9 h-9 bg-amber-50 rounded-xl flex items-center justify-center flex-shrink-0"><i data-lucide="package" class="w-4 h-4 text-amber-600"></i></div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-neutral-800 truncate">ORD-00479 · NationLink Interstate</p>
+                <p class="text-xs text-neutral-400">Lagos → Enugu · Interstate</p>
+              </div>
+              <span class="badge badge-processing">Processing</span>
+            </div>
+            <div class="px-5 py-3.5 flex items-center gap-3">
+              <div class="w-9 h-9 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0"><i data-lucide="package" class="w-4 h-4 text-blue-600"></i></div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-neutral-800 truncate">ORD-00478 · Lagos Express Co.</p>
+                <p class="text-xs text-neutral-400">Surulere → VI · <span class="text-neutral-600">Chidi Rider</span></p>
+              </div>
+              <span class="badge badge-transit">In Transit</span>
+            </div>
+            <div class="px-5 py-3.5 flex items-center gap-3">
+              <div class="w-9 h-9 bg-green-50 rounded-xl flex items-center justify-center flex-shrink-0"><i data-lucide="package-check" class="w-4 h-4 text-green-600"></i></div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-neutral-800 truncate">ORD-00477 · QuickDash PH</p>
+                <p class="text-xs text-neutral-400">GRA → Old GRA · <span class="text-neutral-600">Bola Rider</span></p>
+              </div>
+              <span class="badge badge-delivered">Delivered</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Companies needing attention -->
+        <div class="bg-white rounded-xl2 border border-neutral-100 shadow-card">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-neutral-100">
+            <h3 class="font-heading font-bold text-sm text-neutral-900">Pending Approvals</h3>
+            <button onclick="showPage('companies')" class="text-xs text-primary-600 font-semibold hover:underline">Manage all</button>
+          </div>
+          <div class="divide-y divide-neutral-50">
+            <div class="px-5 py-4 flex items-center gap-4">
+              <div class="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center font-bold text-neutral-700 text-sm flex-shrink-0">ZR</div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-neutral-900">ZippyRide Abuja</p>
+                <p class="text-xs text-neutral-400">Local · Applied 2 days ago</p>
+              </div>
+              <div class="flex items-center gap-2 flex-shrink-0">
+                <button onclick="companyAction('ZippyRide Abuja','approve')" class="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-full text-xs font-bold transition-colors">Approve</button>
+                <button onclick="companyAction('ZippyRide Abuja','suspend')" class="px-3 py-1.5 border border-neutral-200 text-neutral-600 rounded-full text-xs font-bold hover:bg-neutral-50 transition-colors">Reject</button>
+              </div>
+            </div>
+            <div class="px-5 py-4 flex items-center gap-4">
+              <div class="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center font-bold text-purple-700 text-sm flex-shrink-0">NL</div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-neutral-900">NordLine Logistics</p>
+                <p class="text-xs text-neutral-400">Interstate · Applied 1 day ago</p>
+              </div>
+              <div class="flex items-center gap-2 flex-shrink-0">
+                <button onclick="companyAction('NordLine Logistics','approve')" class="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-full text-xs font-bold transition-colors">Approve</button>
+                <button onclick="companyAction('NordLine Logistics','suspend')" class="px-3 py-1.5 border border-neutral-200 text-neutral-600 rounded-full text-xs font-bold hover:bg-neutral-50 transition-colors">Reject</button>
+              </div>
+            </div>
+          </div>
+          <!-- Quick stats -->
+          <div class="px-5 py-4 border-t border-neutral-50 grid grid-cols-3 gap-3">
+            <div class="text-center"><p class="font-heading text-lg font-bold text-neutral-900">8</p><p class="text-[10px] text-neutral-500">Local</p></div>
+            <div class="text-center border-x border-neutral-100"><p class="font-heading text-lg font-bold text-neutral-900">4</p><p class="text-[10px] text-neutral-500">Interstate</p></div>
+            <div class="text-center"><p class="font-heading text-lg font-bold text-amber-600">2</p><p class="text-[10px] text-neutral-500">Pending</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── COMPANIES ─────────────────────────────────── -->
+    <div id="page-companies" class="page">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h2 class="font-heading text-xl font-bold text-neutral-900">Companies</h2>
+          <p class="text-sm text-neutral-400 mt-0.5">Manage all onboarded logistics companies</p>
+        </div>
+        <button onclick="showToast('info','Coming soon','Company onboarding form will be available shortly.')" class="flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2.5 rounded-full text-sm font-semibold transition-colors">
+          <i data-lucide="plus" class="w-4 h-4"></i>Add Company
+        </button>
+      </div>
+
+      <!-- Filter tabs -->
+      <div class="flex gap-1 bg-neutral-100 rounded-xl p-1 w-fit mb-5">
+        <button onclick="filterCompanies('all',this)" class="px-4 py-1.5 rounded-lg text-xs font-semibold bg-white text-neutral-800 shadow-sm transition-all company-filter-btn">All (12)</button>
+        <button onclick="filterCompanies('active',this)" class="px-4 py-1.5 rounded-lg text-xs font-medium text-neutral-500 hover:text-neutral-700 transition-all company-filter-btn">Active</button>
+        <button onclick="filterCompanies('pending',this)" class="px-4 py-1.5 rounded-lg text-xs font-medium text-neutral-500 hover:text-neutral-700 transition-all company-filter-btn">Pending (2)</button>
+        <button onclick="filterCompanies('suspended',this)" class="px-4 py-1.5 rounded-lg text-xs font-medium text-neutral-500 hover:text-neutral-700 transition-all company-filter-btn">Suspended</button>
+      </div>
+
+      <div class="bg-white rounded-xl2 border border-neutral-100 shadow-card overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Company Name</th>
+                <th>Type</th>
+                <th>City</th>
+                <th>Riders</th>
+                <th>Orders (Today)</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="companies-tbody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── DELIVERIES ────────────────────────────────── -->
+    <div id="page-deliveries" class="page">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h2 class="font-heading text-xl font-bold text-neutral-900">All Deliveries</h2>
+          <p class="text-sm text-neutral-400 mt-0.5">Platform-wide order feed</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2 bg-white border border-neutral-200 rounded-full px-3 py-2 text-sm">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-neutral-400"></i>
+            <input type="text" placeholder="Search orders…" class="outline-none text-xs text-neutral-700 placeholder-neutral-400 w-28">
+          </div>
+          <select class="bg-white border border-neutral-200 rounded-full px-3 py-2 text-xs font-medium text-neutral-600 outline-none appearance-none cursor-pointer" style="font-size:12px">
+            <option>All Status</option>
+            <option>In Transit</option>
+            <option>Delivered</option>
+            <option>Processing</option>
+          </select>
+        </div>
+      </div>
+      <div class="bg-white rounded-xl2 border border-neutral-100 shadow-card overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Company</th>
+                <th>Customer</th>
+                <th>Route</th>
+                <th>Type</th>
+                <th>Rider</th>
+                <th>Status</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="font-mono text-xs font-semibold text-neutral-700">ORD-00481</td><td class="text-xs text-neutral-600">Lagos Express Co.</td><td>Tunde Adeyemi</td><td class="text-xs text-neutral-500">Ikeja → Lekki</td><td><span class="badge badge-local">Local</span></td><td class="text-xs text-neutral-600">Emeka R.</td><td><span class="badge badge-transit">In Transit</span></td><td class="text-xs text-neutral-400">2 min ago</td></tr>
+              <tr><td class="font-mono text-xs font-semibold text-neutral-700">ORD-00480</td><td class="text-xs text-neutral-600">SwiftMove Nigeria</td><td>Amaka Obi</td><td class="text-xs text-neutral-500">Abuja → Gwagwalada</td><td><span class="badge badge-local">Local</span></td><td class="text-xs text-neutral-600">Aisha R.</td><td><span class="badge badge-delivered">Delivered</span></td><td class="text-xs text-neutral-400">18 min ago</td></tr>
+              <tr><td class="font-mono text-xs font-semibold text-neutral-700">ORD-00479</td><td class="text-xs text-neutral-600">NationLink Inter.</td><td>Chinyere Eze</td><td class="text-xs text-neutral-500">Lagos → Enugu</td><td><span class="badge badge-interstate">Interstate</span></td><td class="text-xs text-neutral-400">N/A</td><td><span class="badge badge-processing">Processing</span></td><td class="text-xs text-neutral-400">35 min ago</td></tr>
+              <tr><td class="font-mono text-xs font-semibold text-neutral-700">ORD-00478</td><td class="text-xs text-neutral-600">Lagos Express Co.</td><td>Biodun Aina</td><td class="text-xs text-neutral-500">Surulere → VI</td><td><span class="badge badge-local">Local</span></td><td class="text-xs text-neutral-600">Chidi R.</td><td><span class="badge badge-transit">In Transit</span></td><td class="text-xs text-neutral-400">42 min ago</td></tr>
+              <tr><td class="font-mono text-xs font-semibold text-neutral-700">ORD-00477</td><td class="text-xs text-neutral-600">QuickDash PH</td><td>Blessing Moses</td><td class="text-xs text-neutral-500">GRA → Old GRA</td><td><span class="badge badge-local">Local</span></td><td class="text-xs text-neutral-600">Bola R.</td><td><span class="badge badge-delivered">Delivered</span></td><td class="text-xs text-neutral-400">1 hr ago</td></tr>
+              <tr><td class="font-mono text-xs font-semibold text-neutral-700">ORD-00476</td><td class="text-xs text-neutral-600">CrossState Ltd.</td><td>Femi Ogunwale</td><td class="text-xs text-neutral-500">Ibadan → Lagos</td><td><span class="badge badge-interstate">Interstate</span></td><td class="text-xs text-neutral-400">N/A</td><td><span class="badge badge-delivered">Delivered</span></td><td class="text-xs text-neutral-400">2 hr ago</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="px-5 py-3 border-t border-neutral-100 flex items-center justify-between">
+          <p class="text-xs text-neutral-400">Showing 6 of 1,248 orders today</p>
+          <div class="flex gap-1">
+            <button class="w-7 h-7 rounded-lg border border-neutral-200 flex items-center justify-center hover:bg-neutral-50"><i data-lucide="chevron-left" class="w-3.5 h-3.5 text-neutral-600"></i></button>
+            <button class="w-7 h-7 rounded-lg bg-primary-600 text-white flex items-center justify-center text-xs font-bold">1</button>
+            <button class="w-7 h-7 rounded-lg border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 text-xs text-neutral-600">2</button>
+            <button class="w-7 h-7 rounded-lg border border-neutral-200 flex items-center justify-center hover:bg-neutral-50"><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-neutral-600"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── RIDERS LIST ───────────────────────────────── -->
+    <div id="page-riders-list" class="page">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h2 class="font-heading text-xl font-bold text-neutral-900">All Riders</h2>
+          <p class="text-sm text-neutral-400 mt-0.5">Platform-wide rider roster</p>
+        </div>
+      </div>
+      <div class="bg-white rounded-xl2 border border-neutral-100 shadow-card overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="tbl">
+            <thead><tr><th>Rider</th><th>Company</th><th>Vehicle</th><th>City</th><th>Orders Today</th><th>Rating</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td><div class="flex items-center gap-2.5"><div class="w-7 h-7 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-xs font-bold">EO</div><span class="text-sm font-medium text-neutral-800">Emeka Okafor</span></div></td><td class="text-xs text-neutral-500">Lagos Express Co.</td><td class="text-xs text-neutral-600">Motorcycle</td><td class="text-xs text-neutral-600">Lagos</td><td class="font-semibold text-sm">24</td><td class="text-xs font-semibold text-amber-600">⭐ 4.9</td><td><span class="badge badge-active">Online</span></td></tr>
+              <tr><td><div class="flex items-center gap-2.5"><div class="w-7 h-7 rounded-full bg-green-100 flex items-center justify-center text-green-700 text-xs font-bold">AI</div><span class="text-sm font-medium text-neutral-800">Aisha Ibrahim</span></div></td><td class="text-xs text-neutral-500">SwiftMove Nigeria</td><td class="text-xs text-neutral-600">Bicycle</td><td class="text-xs text-neutral-600">Abuja</td><td class="font-semibold text-sm">18</td><td class="text-xs font-semibold text-amber-600">⭐ 4.7</td><td><span class="badge badge-active">Online</span></td></tr>
+              <tr><td><div class="flex items-center gap-2.5"><div class="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-xs font-bold">CO</div><span class="text-sm font-medium text-neutral-800">Chidi Obiora</span></div></td><td class="text-xs text-neutral-500">Lagos Express Co.</td><td class="text-xs text-neutral-600">Motorcycle</td><td class="text-xs text-neutral-600">Lagos</td><td class="font-semibold text-sm">31</td><td class="text-xs font-semibold text-amber-600">⭐ 4.8</td><td><span class="badge badge-active">Online</span></td></tr>
+              <tr><td><div class="flex items-center gap-2.5"><div class="w-7 h-7 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-600 text-xs font-bold">BO</div><span class="text-sm font-medium text-neutral-800">Bola Oluwaseun</span></div></td><td class="text-xs text-neutral-500">QuickDash PH</td><td class="text-xs text-neutral-600">Motorcycle</td><td class="text-xs text-neutral-600">Port Harcourt</td><td class="font-semibold text-sm">12</td><td class="text-xs font-semibold text-amber-600">⭐ 4.6</td><td><span class="badge badge-suspended">Offline</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── ANALYTICS ────────────────────────────────── -->
+    <div id="page-analytics" class="page">
+      <h2 class="font-heading text-xl font-bold text-neutral-900 mb-5">Analytics</h2>
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="stat-card"><p class="text-xs font-semibold text-neutral-500 mb-2">Orders This Month</p><p class="font-heading text-2xl font-bold text-neutral-900">28,491</p><p class="text-xs text-green-600 mt-1">+22% vs last month</p></div>
+        <div class="stat-card"><p class="text-xs font-semibold text-neutral-500 mb-2">Revenue This Month</p><p class="font-heading text-2xl font-bold text-neutral-900">₦87.4M</p><p class="text-xs text-green-600 mt-1">+18% vs last month</p></div>
+        <div class="stat-card"><p class="text-xs font-semibold text-neutral-500 mb-2">Avg Delivery Time</p><p class="font-heading text-2xl font-bold text-neutral-900">34m</p><p class="text-xs text-green-600 mt-1">-6min improvement</p></div>
+        <div class="stat-card"><p class="text-xs font-semibold text-neutral-500 mb-2">Customer Rating</p><p class="font-heading text-2xl font-bold text-neutral-900">4.7 ⭐</p><p class="text-xs text-neutral-400 mt-1">Based on 14,200 ratings</p></div>
+      </div>
+      <!-- Chart placeholder -->
+      <div class="bg-white rounded-xl2 border border-neutral-100 shadow-card p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-heading font-bold text-sm text-neutral-900">Order Volume — Last 7 Days</h3>
+          <select class="text-xs border border-neutral-200 rounded-lg px-2 py-1 text-neutral-600 outline-none" style="font-size:12px"><option>This Week</option><option>Last Month</option></select>
+        </div>
+        <!-- Visual bar chart -->
+        <div class="flex items-end gap-2 h-40">
+          <div class="flex flex-col items-center gap-1 flex-1"><div class="w-full bg-primary-100 rounded-t-md hover:bg-primary-200 transition-colors" style="height:55%"></div><p class="text-[10px] text-neutral-400">Mon</p></div>
+          <div class="flex flex-col items-center gap-1 flex-1"><div class="w-full bg-primary-100 rounded-t-md hover:bg-primary-200 transition-colors" style="height:72%"></div><p class="text-[10px] text-neutral-400">Tue</p></div>
+          <div class="flex flex-col items-center gap-1 flex-1"><div class="w-full bg-primary-100 rounded-t-md hover:bg-primary-200 transition-colors" style="height:65%"></div><p class="text-[10px] text-neutral-400">Wed</p></div>
+          <div class="flex flex-col items-center gap-1 flex-1"><div class="w-full bg-primary-100 rounded-t-md hover:bg-primary-200 transition-colors" style="height:88%"></div><p class="text-[10px] text-neutral-400">Thu</p></div>
+          <div class="flex flex-col items-center gap-1 flex-1"><div class="w-full bg-primary-600 rounded-t-md" style="height:100%"></div><p class="text-[10px] text-primary-600 font-bold">Fri</p></div>
+          <div class="flex flex-col items-center gap-1 flex-1"><div class="w-full bg-primary-100 rounded-t-md hover:bg-primary-200 transition-colors" style="height:91%"></div><p class="text-[10px] text-neutral-400">Sat</p></div>
+          <div class="flex flex-col items-center gap-1 flex-1"><div class="w-full bg-primary-100 rounded-t-md hover:bg-primary-200 transition-colors" style="height:68%"></div><p class="text-[10px] text-neutral-400">Sun</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── SETTINGS ──────────────────────────────────── -->
+    <div id="page-settings" class="page">
+      <h2 class="font-heading text-xl font-bold text-neutral-900 mb-5">System Settings</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="bg-white rounded-xl2 border border-neutral-100 shadow-card p-5">
+          <h3 class="font-heading font-bold text-sm text-neutral-900 mb-4 flex items-center gap-2"><i data-lucide="shield" class="w-4 h-4 text-primary-600"></i>Platform Controls</h3>
+          <div class="space-y-4">
+            <div class="flex items-center justify-between"><div><p class="text-sm font-medium text-neutral-800">New Company Registrations</p><p class="text-xs text-neutral-400">Allow new companies to apply</p></div><div class="toggle-track on" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div></div>
+            <div class="flex items-center justify-between"><div><p class="text-sm font-medium text-neutral-800">Instant Delivery (Local)</p><p class="text-xs text-neutral-400">Enable local delivery orders</p></div><div class="toggle-track on" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div></div>
+            <div class="flex items-center justify-between"><div><p class="text-sm font-medium text-neutral-800">Nationwide Delivery</p><p class="text-xs text-neutral-400">Enable interstate orders</p></div><div class="toggle-track on" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div></div>
+            <div class="flex items-center justify-between"><div><p class="text-sm font-medium text-neutral-800">Maintenance Mode</p><p class="text-xs text-neutral-400">Take platform offline for updates</p></div><div class="toggle-track" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div></div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl2 border border-neutral-100 shadow-card p-5">
+          <h3 class="font-heading font-bold text-sm text-neutral-900 mb-4 flex items-center gap-2"><i data-lucide="percent" class="w-4 h-4 text-primary-600"></i>Commission Rates</h3>
+          <div class="space-y-3">
+            <div class="field"><label class="block text-xs font-medium text-neutral-600 mb-1">Local Delivery Commission (%)</label><input type="number" value="8" class="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm bg-neutral-50 outline-none focus:border-primary-500"></div>
+            <div class="field"><label class="block text-xs font-medium text-neutral-600 mb-1">Interstate Delivery Commission (%)</label><input type="number" value="5" class="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm bg-neutral-50 outline-none focus:border-primary-500"></div>
+            <div class="field"><label class="block text-xs font-medium text-neutral-600 mb-1">Rider Payout Rate (% of delivery fee)</label><input type="number" value="75" class="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm bg-neutral-50 outline-none focus:border-primary-500"></div>
+            <button onclick="showToast('success','Settings saved','Commission rates have been updated.')" class="w-full mt-2 bg-primary-600 hover:bg-primary-700 text-white py-2.5 rounded-full text-sm font-semibold transition-colors">Save Changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Toggle CSS for settings toggles -->
+<style>
+.toggle-track{width:48px;height:26px;border-radius:999px;background:#e2e8f0;transition:background .25s;cursor:pointer;position:relative;flex-shrink:0}
+.toggle-track.on{background:#22c55e}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.18);transition:left .25s cubic-bezier(.34,1.56,.64,1)}
+.toggle-track.on .toggle-thumb{left:25px}
+</style>
+
+<script>
+/* ── Companies data ── */
+const COMPANIES = [
+  {name:'Lagos Express Co.',type:'Local',city:'Lagos',riders:45,orders:312,status:'active'},
+  {name:'SwiftMove Nigeria',type:'Local',city:'Abuja',riders:28,orders:186,status:'active'},
+  {name:'NationLink Interstate',type:'Interstate',city:'Lagos',riders:0,orders:94,status:'active'},
+  {name:'QuickDash PH',type:'Local',city:'Port Harcourt',riders:19,orders:127,status:'active'},
+  {name:'CrossState Ltd.',type:'Interstate',city:'Ibadan',riders:0,orders:61,status:'active'},
+  {name:'RapidRun Kano',type:'Local',city:'Kano',riders:11,orders:78,status:'active'},
+  {name:'SpeedyLink Enugu',type:'Local',city:'Enugu',riders:8,orders:45,status:'active'},
+  {name:'PanAfrica Logistics',type:'Interstate',city:'Lagos',riders:0,orders:38,status:'suspended'},
+  {name:'City Couriers Ibadan',type:'Local',city:'Ibadan',riders:14,orders:89,status:'active'},
+  {name:'MetroDash Benin',type:'Local',city:'Benin City',riders:9,orders:52,status:'active'},
+  {name:'ZippyRide Abuja',type:'Local',city:'Abuja',riders:0,orders:0,status:'pending'},
+  {name:'NordLine Logistics',type:'Interstate',city:'Lagos',riders:0,orders:0,status:'pending'},
+];
+
+let companiesFilter = 'all';
+
+function renderCompanies(){
+  let rows = COMPANIES.filter(c=>{
+    if(companiesFilter==='all') return true;
+    return c.status===companiesFilter;
+  });
+  document.getElementById('companies-tbody').innerHTML = rows.map(c=>`
+    <tr>
+      <td>
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-neutral-100 flex items-center justify-center text-xs font-bold text-neutral-600 flex-shrink-0">${c.name.split(' ').map(w=>w[0]).join('').slice(0,2)}</div>
+          <span class="text-sm font-semibold text-neutral-800">${c.name}</span>
+        </div>
+      </td>
+      <td><span class="badge ${c.type==='Local'?'badge-local':'badge-interstate'}">${c.type}</span></td>
+      <td class="text-xs text-neutral-600">${c.city}</td>
+      <td class="text-sm font-medium text-neutral-700">${c.type==='Local'?c.riders:'<span class="text-neutral-400">N/A</span>'}</td>
+      <td class="text-sm font-semibold text-neutral-800">${c.orders}</td>
+      <td><span class="badge ${c.status==='active'?'badge-active':c.status==='pending'?'badge-pending':'badge-suspended'}">${c.status.charAt(0).toUpperCase()+c.status.slice(1)}</span></td>
+      <td>
+        <div class="flex items-center gap-1.5">
+          ${c.status==='pending'?`<button onclick="companyAction('${c.name}','approve')" class="px-2.5 py-1 bg-green-600 hover:bg-green-700 text-white rounded-full text-xs font-bold transition-colors">Approve</button>`:''}
+          ${c.status==='active'?`<button onclick="companyAction('${c.name}','suspend')" class="px-2.5 py-1 border border-neutral-200 text-neutral-600 rounded-full text-xs font-semibold hover:bg-neutral-50 transition-colors">Suspend</button>`:''}
+          ${c.status==='suspended'?`<button onclick="companyAction('${c.name}','approve')" class="px-2.5 py-1 bg-green-600 hover:bg-green-700 text-white rounded-full text-xs font-bold transition-colors">Reinstate</button>`:''}
+          <button onclick="showToast('info','View Company','Full company profile coming soon.')" class="px-2.5 py-1 border border-neutral-200 text-neutral-600 rounded-full text-xs font-semibold hover:bg-neutral-50 transition-colors">View</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function filterCompanies(filter, btn){
+  companiesFilter = filter;
+  document.querySelectorAll('.company-filter-btn').forEach(b=>{
+    b.className='px-4 py-1.5 rounded-lg text-xs font-medium text-neutral-500 hover:text-neutral-700 transition-all company-filter-btn';
+  });
+  btn.className='px-4 py-1.5 rounded-lg text-xs font-semibold bg-white text-neutral-800 shadow-sm transition-all company-filter-btn';
+  renderCompanies();
+}
+
+function companyAction(name, action){
+  const idx = COMPANIES.findIndex(c=>c.name===name);
+  if(idx<0) return;
+  if(action==='approve'){
+    COMPANIES[idx].status='active';
+    showToast('success','Company Approved',`${name} is now active on the platform.`);
+  } else {
+    COMPANIES[idx].status='suspended';
+    showToast('warn','Company Suspended',`${name} has been suspended.`);
+  }
+  renderCompanies();
+}
+
+/* ── Page navigation ── */
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const nav = document.getElementById('nav-'+id);
+  if(nav) nav.classList.add('active');
+  const titles = {dashboard:'Dashboard',companies:'Companies',deliveries:'All Deliveries','riders-list':'All Riders',analytics:'Analytics',settings:'Settings'};
+  document.getElementById('page-title').textContent = titles[id]||id;
+  document.getElementById('page-breadcrumb').textContent = 'AhiaGlobal / '+titles[id];
+  closeSidebar();
+}
+
+/* ── Sidebar ── */
+function openSidebar(){ document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebar-backdrop').classList.add('open'); }
+function closeSidebar(){ document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebar-backdrop').classList.remove('open'); }
+
+/* ── Confirm modal ── */
+function openConfirm(title,msg,okLabel,okColor,onOk){
+  document.getElementById('confirm-title').textContent=title;
+  document.getElementById('confirm-msg').textContent=msg;
+  const ok=document.getElementById('confirm-ok');
+  ok.textContent=okLabel;
+  ok.style.background=okColor;
+  ok.onclick=()=>{onOk();closeConfirm();};
+  document.getElementById('confirm-modal').classList.add('open');
+}
+function closeConfirm(){ document.getElementById('confirm-modal').classList.remove('open'); }
+
+/* ── Toast ── */
+function showToast(type,title,msg){
+  const colors={success:'bg-green-50 border-green-200 text-green-700',error:'bg-red-50 border-red-200 text-red-700',info:'bg-blue-50 border-blue-200 text-blue-700',warn:'bg-amber-50 border-amber-200 text-amber-700'};
+  const icons={success:'check-circle',error:'x-circle',info:'info',warn:'alert-triangle'};
+  const t=document.createElement('div');
+  t.className=`pointer-events-auto flex items-start gap-3 p-3.5 rounded-xl border shadow-hover w-full ${colors[type]||colors.info}`;
+  t.style.animation='toastIn .3s ease both';
+  t.innerHTML=`<i data-lucide="${icons[type]||'info'}" class="w-4 h-4 flex-shrink-0 mt-0.5"></i><div class="flex-1"><p class="font-semibold text-xs">${title}</p>${msg?`<p class="text-xs opacity-80 mt-0.5">${msg}</p>`:''}</div><button onclick="this.parentElement.remove()" class="opacity-60 hover:opacity-100 transition-opacity flex-shrink-0"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>`;
+  document.getElementById('toast-stack').appendChild(t);
+  lucide.createIcons();
+  setTimeout(()=>{t.style.animation='toastOut .3s ease forwards';setTimeout(()=>t.remove(),300)},3500);
+}
+
+/* ── Init ── */
+document.addEventListener('DOMContentLoaded',()=>{
+  lucide.createIcons();
+  renderCompanies();
+  document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-NG',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rider Dashboard — AhiaGlobal</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+tailwind.config={theme:{extend:{fontFamily:{heading:['Plus Jakarta Sans','sans-serif'],body:['Inter','sans-serif']},colors:{primary:{50:'#fff7ed',100:'#ffedd5',200:'#fed7aa',300:'#fdba74',400:'#fb923c',500:'#f97316',600:'#ea580c',700:'#c2410c',800:'#9a3412',900:'#7c2d12'},neutral:{50:'#f8fafc',100:'#f1f5f9',200:'#e2e8f0',300:'#cbd5e1',400:'#94a3b8',500:'#64748b',600:'#475569',700:'#334155',800:'#1e293b',900:'#0f172a'}},boxShadow:{card:'0 4px 14px -3px rgba(15,23,42,.09)',hover:'0 12px 30px -5px rgba(15,23,42,.16)',modal:'0 24px 60px -8px rgba(15,23,42,.28)'},borderRadius:{xl2:'0.875rem',xl3:'1.25rem'}}}}
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#f8fafc;color:#0f172a}
+
+/* Sidebar */
+#sidebar{width:240px;min-height:100vh;background:#0f172a;position:fixed;top:0;left:0;z-index:100;display:flex;flex-direction:column;transition:transform .3s cubic-bezier(.4,0,.2,1)}
+#sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:99}
+.main-wrap{margin-left:240px;min-height:100vh;display:flex;flex-direction:column}
+@media(max-width:1023px){
+  #sidebar{transform:translateX(-100%)}
+  #sidebar.open{transform:translateX(0)}
+  #sidebar-backdrop.open{display:block}
+  .main-wrap{margin-left:0;padding-bottom:72px}
+}
+
+/* Nav */
+.nav-item{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:.75rem;font-size:.875rem;font-weight:500;color:#94a3b8;cursor:pointer;transition:all .2s;border:none;background:none;width:100%;text-align:left}
+.nav-item:hover{background:rgba(255,255,255,.06);color:#e2e8f0}
+.nav-item.active{background:rgba(234,88,12,.15);color:#fb923c;font-weight:600}
+.nav-ic{width:1.125rem;height:1.125rem;flex-shrink:0;color:#64748b}
+.nav-item.active .nav-ic{color:#ea580c}
+
+/* Status badges */
+.badge{display:inline-flex;align-items:center;padding:.2rem .65rem;border-radius:999px;font-size:.7rem;font-weight:600;white-space:nowrap}
+.badge-online{background:#dcfce7;color:#166534}
+.badge-offline{background:#f1f5f9;color:#475569}
+.badge-delivered{background:#dcfce7;color:#15803d}
+.badge-transit{background:#dbeafe;color:#1d4ed8}
+.badge-picked{background:#fef9c3;color:#854d0e}
+.badge-assigned{background:#ede9fe;color:#6d28d9}
+.badge-pending{background:#ffedd5;color:#c2410c}
+.badge-rejected{background:#fee2e2;color:#b91c1c}
+
+/* Online/offline toggle */
+.online-toggle{width:64px;height:34px;border-radius:999px;position:relative;cursor:pointer;transition:background .3s;flex-shrink:0}
+.online-toggle.online{background:linear-gradient(135deg,#22c55e,#16a34a)}
+.online-toggle.offline{background:#e2e8f0}
+.online-toggle-thumb{position:absolute;top:4px;left:4px;width:26px;height:26px;background:#fff;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,.2);transition:left .3s cubic-bezier(.34,1.56,.64,1);display:flex;align-items:center;justify-content:center}
+.online-toggle.online .online-toggle-thumb{left:34px}
+@keyframes pulseGreen{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.5)}50%{box-shadow:0 0 0 8px rgba(34,197,94,0)}}
+.status-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.status-dot.online{background:#22c55e;animation:pulseGreen 2s ease infinite}
+.status-dot.offline{background:#94a3b8}
+
+/* Order cards */
+.order-card{background:#fff;border-radius:.875rem;border:2px solid #f1f5f9;box-shadow:0 4px 14px -3px rgba(15,23,42,.09);transition:border-color .2s,box-shadow .2s}
+.order-card:hover{border-color:#fdba74;box-shadow:0 12px 30px -5px rgba(15,23,42,.13)}
+.order-card.active-order{border-color:#ea580c;background:linear-gradient(135deg,#fff7ed,#fff)}
+
+/* Map placeholder */
+.map-placeholder{background:linear-gradient(135deg,#e0f2fe,#f0fdf4);border-radius:.75rem;overflow:hidden;position:relative}
+@keyframes mapPulse{0%,100%{opacity:.5}50%{opacity:1}}
+.map-dot{animation:mapPulse 2s ease-in-out infinite}
+.map-road{stroke-dasharray:8 4;animation:roadDash 3s linear infinite}
+@keyframes roadDash{to{stroke-dashoffset:-100}}
+
+/* Action buttons */
+.action-btn{display:flex;align-items:center;justify-content:center;gap:.5rem;padding:.75rem 1.25rem;border-radius:999px;font-size:.8125rem;font-weight:700;cursor:pointer;transition:all .2s;border:none;white-space:nowrap}
+.btn-accept{background:#22c55e;color:#fff}
+.btn-accept:hover{background:#16a34a;transform:scale(1.02)}
+.btn-reject{background:#fff;color:#ef4444;border:2px solid #fca5a5}
+.btn-reject:hover{background:#fee2e2}
+.btn-picked{background:#f59e0b;color:#fff}
+.btn-picked:hover{background:#d97706}
+.btn-transit{background:#3b82f6;color:#fff}
+.btn-transit:hover{background:#2563eb}
+.btn-delivered{background:#22c55e;color:#fff}
+.btn-delivered:hover{background:#16a34a}
+
+/* Page transitions */
+.page{display:none}
+.page.active{display:block;animation:fadeUp .35s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* Bottom mobile nav */
+#mob-nav{display:none}
+@media(max-width:1023px){ #mob-nav{display:flex} }
+
+/* Toast */
+@keyframes toastIn{from{opacity:0;transform:translateX(110%)}to{opacity:1;transform:translateX(0)}}
+@keyframes toastOut{from{opacity:1}to{opacity:0;transform:translateX(110%)}}
+
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:999px}
+</style>
+</head>
+<body class="font-body">
+
+<div id="toast-stack" class="fixed top-4 right-4 z-[9999] flex flex-col gap-2 w-80 pointer-events-none"></div>
+
+<!-- SIDEBAR BACKDROP -->
+<div id="sidebar-backdrop" onclick="closeSidebar()"></div>
+
+<!-- ═══ SIDEBAR ════════════════════════════════════════════ -->
+<aside id="sidebar">
+  <!-- Rider info -->
+  <div class="px-4 py-5 border-b border-white/5">
+    <div class="flex items-center gap-3">
+      <div class="relative flex-shrink-0">
+        <div class="w-11 h-11 rounded-full bg-primary-600 flex items-center justify-center font-heading font-bold text-white text-lg">EO</div>
+        <div class="status-dot online absolute -bottom-0.5 -right-0.5 border-2 border-neutral-900" id="sidebar-dot"></div>
+      </div>
+      <div class="min-w-0 flex-1">
+        <p class="font-heading font-bold text-white text-sm leading-tight">Emeka Okafor</p>
+        <p class="text-[10px] text-neutral-500">Lagos Express Co.</p>
+        <p class="text-[10px] font-semibold mt-0.5" id="sidebar-status-label" style="color:#22c55e">● Online</p>
+      </div>
+    </div>
+  </div>
+
+  <nav class="flex-1 overflow-y-auto p-3 space-y-0.5">
+    <p class="text-[10px] font-bold text-neutral-600 uppercase tracking-widest px-3 mb-2 mt-3">Rider</p>
+    <button onclick="showPage('dashboard')" class="nav-item active" id="nav-dashboard"><i data-lucide="layout-dashboard" class="nav-ic"></i>Dashboard</button>
+    <button onclick="showPage('orders')" class="nav-item" id="nav-orders">
+      <i data-lucide="package" class="nav-ic"></i>My Orders
+      <span class="ml-auto bg-primary-600/20 text-primary-400 text-[10px] font-bold px-1.5 py-0.5 rounded-full" id="orders-badge-sidebar">3</span>
+    </button>
+    <button onclick="showPage('earnings')" class="nav-item" id="nav-earnings"><i data-lucide="banknote" class="nav-ic"></i>Earnings</button>
+    <p class="text-[10px] font-bold text-neutral-600 uppercase tracking-widest px-3 mb-2 mt-4">Account</p>
+    <button onclick="showPage('profile')" class="nav-item" id="nav-profile"><i data-lucide="user" class="nav-ic"></i>My Profile</button>
+  </nav>
+
+  <div class="p-3 border-t border-white/5">
+    <div class="flex items-center gap-3 px-3 py-2">
+      <div class="w-8 h-8 rounded-full bg-primary-600 flex items-center justify-center text-white text-xs font-bold">EO</div>
+      <div class="min-w-0 flex-1"><p class="text-xs font-semibold text-white">Emeka Okafor</p><p class="text-[10px] text-neutral-500">Motorcycle · Lagos</p></div>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ════════════════════════════════════════════════ -->
+<div class="main-wrap">
+
+  <!-- Top bar -->
+  <header class="sticky top-0 z-50 bg-white border-b border-neutral-100 px-4 lg:px-6 py-3.5 flex items-center gap-4">
+    <button onclick="openSidebar()" class="lg:hidden p-2 rounded-lg hover:bg-neutral-100 transition-colors">
+      <i data-lucide="menu" class="w-5 h-5 text-neutral-600"></i>
+    </button>
+    <div class="flex-1 min-w-0">
+      <h1 class="font-heading font-bold text-neutral-900 text-base" id="page-title">Dashboard</h1>
+      <p class="text-xs text-neutral-400" id="page-bc">Rider / Dashboard</p>
+    </div>
+    <!-- Online/Offline toggle — prominent in header -->
+    <div class="flex items-center gap-2.5 flex-shrink-0">
+      <span class="text-xs font-semibold text-neutral-600 hidden sm:block" id="toggle-label">Online</span>
+      <div class="online-toggle online" id="main-toggle" onclick="toggleOnlineStatus()" title="Toggle online/offline">
+        <div class="online-toggle-thumb">
+          <i data-lucide="wifi" class="w-3.5 h-3.5 text-green-500" id="toggle-icon"></i>
+        </div>
+      </div>
+    </div>
+    <button onclick="showPage('orders')" class="relative p-2 rounded-full hover:bg-neutral-100 transition-colors flex-shrink-0">
+      <i data-lucide="bell" class="w-5 h-5 text-neutral-600"></i>
+      <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-primary-600 rounded-full" id="notif-dot"></span>
+    </button>
+  </header>
+
+  <!-- OFFLINE BANNER -->
+  <div id="offline-banner" class="hidden bg-neutral-800 text-white text-sm font-semibold text-center py-2.5 flex items-center justify-center gap-2">
+    <i data-lucide="wifi-off" class="w-4 h-4 text-neutral-400"></i>
+    You are <span class="text-neutral-300 font-bold">Offline</span> — New orders will not be assigned to you
+  </div>
+
+  <main class="flex-1 p-4 lg:p-6 space-y-5">
+
+    <!-- ─── DASHBOARD ─────────────────────────────── -->
+    <div id="page-dashboard" class="page active">
+
+      <!-- Status bar -->
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h2 class="font-heading text-xl font-bold text-neutral-900">Good morning, Emeka 👋</h2>
+          <p class="text-sm text-neutral-400 mt-0.5" id="status-text">You're online and ready for orders</p>
+        </div>
+        <span class="badge badge-online" id="status-badge">● Online</span>
+      </div>
+
+      <!-- Today's earnings card (prominent) -->
+      <div class="bg-gradient-to-br from-neutral-900 to-neutral-800 rounded-xl3 p-5 text-white mb-5 relative overflow-hidden">
+        <div class="absolute right-0 top-0 w-32 h-32 rounded-full bg-primary-600/10 -translate-y-1/2 translate-x-1/4"></div>
+        <div class="absolute right-8 bottom-0 w-20 h-20 rounded-full bg-primary-600/5 translate-y-1/2"></div>
+        <div class="relative z-10">
+          <div class="flex items-center justify-between mb-4">
+            <p class="text-sm font-medium text-neutral-400">Today's Earnings</p>
+            <div class="w-9 h-9 bg-primary-600/20 rounded-xl flex items-center justify-center"><i data-lucide="banknote" class="w-4 h-4 text-primary-400"></i></div>
+          </div>
+          <p class="font-heading text-4xl font-bold text-white mb-1" id="today-earnings">₦12,500</p>
+          <p class="text-xs text-neutral-500 mb-5">From <strong class="text-neutral-300" id="completed-count">24</strong> completed deliveries today</p>
+          <div class="grid grid-cols-3 gap-3 pt-4 border-t border-white/10">
+            <div><p class="font-heading text-lg font-bold text-primary-400" id="stat-completed">24</p><p class="text-[10px] text-neutral-500 mt-0.5">Completed</p></div>
+            <div class="border-x border-white/10"><p class="font-heading text-lg font-bold text-amber-400 pl-3" id="stat-pending">3</p><p class="text-[10px] text-neutral-500 mt-0.5 pl-3">Pending</p></div>
+            <div><p class="font-heading text-lg font-bold text-red-400 pl-3" id="stat-rejected">1</p><p class="text-[10px] text-neutral-500 mt-0.5 pl-3">Rejected</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active order card -->
+      <div id="active-order-section">
+        <h3 class="font-heading font-bold text-neutral-900 text-sm mb-3 flex items-center gap-2">
+          <span class="w-2 h-2 bg-primary-600 rounded-full animate-pulse"></span>
+          Active Order
+        </h3>
+        <div class="order-card active-order p-5 mb-5" id="active-order-card">
+          <div class="flex items-start justify-between mb-4">
+            <div>
+              <p class="font-heading font-bold text-neutral-900" id="ao-id">ORD-00481</p>
+              <p class="text-xs text-neutral-400 mt-0.5" id="ao-customer">Tunde Adeyemi · +234 812 345 6789</p>
+            </div>
+            <span class="badge badge-transit" id="ao-status">In Transit</span>
+          </div>
+          <!-- Map placeholder -->
+          <div class="map-placeholder h-36 mb-4 flex items-center justify-center">
+            <svg viewBox="0 0 340 144" class="w-full h-full absolute inset-0" style="position:absolute">
+              <rect width="340" height="144" fill="#e0f2fe"/>
+              <!-- Roads -->
+              <path d="M0 72 Q85 40 170 72 T340 72" stroke="#93c5fd" stroke-width="6" fill="none" class="map-road"/>
+              <path d="M170 0 L170 144" stroke="#bfdbfe" stroke-width="4" fill="none" class="map-road" style="animation-delay:.5s"/>
+              <path d="M0 100 Q120 80 200 100 T340 95" stroke="#bfdbfe" stroke-width="3" fill="none" class="map-road" style="animation-delay:1s"/>
+            </svg>
+            <div class="relative z-10 flex flex-col items-center gap-2">
+              <!-- Pickup point -->
+              <div class="flex items-center gap-2 bg-white/90 rounded-full px-3 py-1.5 shadow-sm map-dot">
+                <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span class="text-xs font-semibold text-neutral-700" id="ao-pickup">Ikeja Bus Stop</span>
+              </div>
+              <div class="w-0.5 h-5 bg-neutral-300 rounded-full"></div>
+              <div class="flex items-center gap-2 bg-white/90 rounded-full px-3 py-1.5 shadow-sm map-dot" style="animation-delay:.5s">
+                <div class="w-2 h-2 bg-primary-600 rounded-full"></div>
+                <span class="text-xs font-semibold text-neutral-700" id="ao-dropoff">Lekki Phase 1</span>
+              </div>
+            </div>
+          </div>
+          <!-- Route info -->
+          <div class="grid grid-cols-3 gap-3 mb-4">
+            <div class="bg-neutral-50 rounded-xl p-3 text-center"><p class="text-[10px] text-neutral-500 mb-1">Distance</p><p class="text-sm font-bold text-neutral-800" id="ao-distance">18 km</p></div>
+            <div class="bg-neutral-50 rounded-xl p-3 text-center"><p class="text-[10px] text-neutral-500 mb-1">Est. Time</p><p class="text-sm font-bold text-neutral-800" id="ao-time">25 min</p></div>
+            <div class="bg-neutral-50 rounded-xl p-3 text-center"><p class="text-[10px] text-neutral-500 mb-1">Earning</p><p class="text-sm font-bold text-primary-600" id="ao-earn">₦650</p></div>
+          </div>
+          <!-- Action buttons -->
+          <div id="ao-actions" class="flex gap-3">
+            <!-- Filled by JS based on order status -->
+          </div>
+        </div>
+      </div>
+
+      <!-- No active order state -->
+      <div id="no-active-order" class="hidden order-card p-8 text-center mb-5">
+        <div class="w-14 h-14 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-3"><i data-lucide="package-search" class="w-7 h-7 text-neutral-400"></i></div>
+        <h3 class="font-heading font-semibold text-neutral-700 mb-1">No Active Order</h3>
+        <p class="text-sm text-neutral-400">You'll be notified when a new order is assigned to you.</p>
+      </div>
+
+      <!-- Pending orders queue -->
+      <div id="pending-orders-section">
+        <h3 class="font-heading font-bold text-neutral-900 text-sm mb-3">Incoming Orders</h3>
+        <div class="space-y-3" id="pending-orders-list"></div>
+      </div>
+
+    </div>
+
+    <!-- ─── MY ORDERS ─────────────────────────────── -->
+    <div id="page-orders" class="page">
+      <h2 class="font-heading text-xl font-bold text-neutral-900 mb-5">My Orders</h2>
+      <!-- Tabs -->
+      <div class="flex gap-1 bg-neutral-100 rounded-xl p-1 w-fit mb-5">
+        <button onclick="filterMyOrders('all',this)" class="px-4 py-1.5 rounded-lg text-xs font-semibold bg-white text-neutral-800 shadow-sm orders-tab">All</button>
+        <button onclick="filterMyOrders('active',this)" class="px-4 py-1.5 rounded-lg text-xs font-medium text-neutral-500 orders-tab">Active</button>
+        <button onclick="filterMyOrders('delivered',this)" class="px-4 py-1.5 rounded-lg text-xs font-medium text-neutral-500 orders-tab">Delivered</button>
+        <button onclick="filterMyOrders('rejected',this)" class="px-4 py-1.5 rounded-lg text-xs font-medium text-neutral-500 orders-tab">Rejected</button>
+      </div>
+      <div class="space-y-3" id="my-orders-list"></div>
+    </div>
+
+    <!-- ─── EARNINGS ──────────────────────────────── -->
+    <div id="page-earnings" class="page">
+      <h2 class="font-heading text-xl font-bold text-neutral-900 mb-5">My Earnings</h2>
+      <!-- Summary -->
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <div class="bg-gradient-to-br from-neutral-900 to-neutral-800 rounded-xl2 p-5 text-white">
+          <p class="text-xs text-neutral-400 mb-2">This Week</p>
+          <p class="font-heading text-3xl font-bold">₦74,250</p>
+          <p class="text-xs text-green-400 mt-1">+18% vs last week</p>
+        </div>
+        <div class="bg-gradient-to-br from-primary-600 to-primary-700 rounded-xl2 p-5 text-white">
+          <p class="text-xs text-primary-200 mb-2">This Month</p>
+          <p class="font-heading text-3xl font-bold">₦286,500</p>
+          <p class="text-xs text-primary-200 mt-1">On track for top 10</p>
+        </div>
+      </div>
+      <!-- Stats -->
+      <div class="grid grid-cols-3 gap-3 mb-5">
+        <div class="bg-white rounded-xl2 border border-neutral-100 shadow-card p-4 text-center"><p class="font-heading text-xl font-bold text-neutral-900">412</p><p class="text-[10px] text-neutral-500 mt-1">Deliveries</p></div>
+        <div class="bg-white rounded-xl2 border border-neutral-100 shadow-card p-4 text-center"><p class="font-heading text-xl font-bold text-amber-600">⭐ 4.9</p><p class="text-[10px] text-neutral-500 mt-1">Avg Rating</p></div>
+        <div class="bg-white rounded-xl2 border border-neutral-100 shadow-card p-4 text-center"><p class="font-heading text-xl font-bold text-green-600">98%</p><p class="text-[10px] text-neutral-500 mt-1">Success Rate</p></div>
+      </div>
+      <!-- Chart -->
+      <div class="bg-white rounded-xl2 border border-neutral-100 shadow-card p-5 mb-5">
+        <h3 class="font-heading font-bold text-sm text-neutral-900 mb-4">Daily Earnings — This Week</h3>
+        <div class="flex items-end gap-2 h-28">
+          <div class="flex flex-col items-center gap-1 flex-1"><div class="w-full bg-primary-100 rounded-t-md" style="height:60%"><div class="w-full h-full bg-primary-200 rounded-t-md hover:bg-primary-300 transition-colors cursor-pointer" title="₦9,800"></div></div><p class="text-[10px] text-neutral-400">Mon</p></div>
+          <div class="flex flex-col items-center gap-1 flex-1"><div class="w-full bg-primary-100 rounded-t-md" style="height:78%"><div class="w-full h-full bg-primary-200 rounded-t-md hover:bg-primary-300 transition-colors cursor-pointer" title="₦12,700"></div></div><p class="text-[10px] text-neutral-400">Tue</p></div>
+          <div class="flex flex-col items-center gap-1 flex-1"><div class="w-full bg-primary-100 rounded-t-md" style="height:55%"><div class="w-full h-full bg-primary-200 rounded-t-md hover:bg-primary-300 transition-colors cursor-pointer" title="₦8,950"></div></div><p class="text-[10px] text-neutral-400">Wed</p></div>
+          <div class="flex flex-col items-center gap-1 flex-1"><div class="w-full bg-primary-100 rounded-t-md" style="height:90%"><div class="w-full h-full bg-primary-200 rounded-t-md hover:bg-primary-300 transition-colors cursor-pointer" title="₦14,600"></div></div><p class="text-[10px] text-neutral-400">Thu</p></div>
+          <div class="flex flex-col items-center gap-1 flex-1"><div class="w-full bg-primary-600 rounded-t-md" style="height:100%"></div><p class="text-[10px] text-primary-600 font-bold">Fri</p></div>
+          <div class="flex flex-col items-center gap-1 flex-1 opacity-30"><div class="w-full bg-neutral-200 rounded-t-md" style="height:40%"></div><p class="text-[10px] text-neutral-400">Sat</p></div>
+          <div class="flex flex-col items-center gap-1 flex-1 opacity-30"><div class="w-full bg-neutral-200 rounded-t-md" style="height:40%"></div><p class="text-[10px] text-neutral-400">Sun</p></div>
+        </div>
+      </div>
+      <!-- Payout info -->
+      <div class="bg-green-50 border border-green-200 rounded-xl2 p-4 flex items-center gap-4">
+        <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0"><i data-lucide="calendar-check" class="w-5 h-5 text-green-600"></i></div>
+        <div class="flex-1">
+          <p class="text-sm font-bold text-green-900">Next Payout: Friday, 28 March</p>
+          <p class="text-xs text-green-700 mt-0.5">₦74,250 will be transferred to your GTBank account ending ****4521</p>
+        </div>
+        <i data-lucide="chevron-right" class="w-4 h-4 text-green-600 flex-shrink-0"></i>
+      </div>
+    </div>
+
+    <!-- ─── PROFILE ───────────────────────────────── -->
+    <div id="page-profile" class="page">
+      <h2 class="font-heading text-xl font-bold text-neutral-900 mb-5">My Profile</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="bg-white rounded-xl2 border border-neutral-100 shadow-card p-5">
+          <div class="flex items-center gap-4 mb-5 pb-5 border-b border-neutral-100">
+            <div class="w-16 h-16 rounded-full bg-primary-600 flex items-center justify-center text-white font-heading font-bold text-2xl">EO</div>
+            <div>
+              <h3 class="font-heading font-bold text-neutral-900 text-lg">Emeka Okafor</h3>
+              <p class="text-sm text-neutral-500">Motorcycle Rider · Lagos Express Co.</p>
+              <div class="flex items-center gap-2 mt-1.5"><span class="badge badge-online">● Active</span><span class="text-xs text-amber-600 font-semibold">⭐ 4.9 rating</span></div>
+            </div>
+          </div>
+          <div class="space-y-3">
+            <div><label class="block text-xs font-medium text-neutral-600 mb-1">Full Name</label><input type="text" value="Emeka Okafor" class="w-full px-3 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50 outline-none focus:border-primary-500"></div>
+            <div><label class="block text-xs font-medium text-neutral-600 mb-1">Phone Number</label><input type="tel" value="+234 812 345 6789" class="w-full px-3 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50 outline-none focus:border-primary-500" style="font-size:14px"></div>
+            <div><label class="block text-xs font-medium text-neutral-600 mb-1">Vehicle</label><input type="text" value="Honda CB125 Motorcycle" class="w-full px-3 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50 outline-none focus:border-primary-500"></div>
+            <button onclick="showToast('success','Profile Saved','Your profile has been updated.')" class="w-full bg-primary-600 hover:bg-primary-700 text-white py-2.5 rounded-full text-sm font-semibold transition-colors">Save Changes</button>
+          </div>
+        </div>
+        <div class="space-y-4">
+          <div class="bg-white rounded-xl2 border border-neutral-100 shadow-card p-5">
+            <h3 class="font-heading font-bold text-sm text-neutral-900 mb-3">Bank Account</h3>
+            <div class="space-y-3">
+              <div><label class="block text-xs font-medium text-neutral-600 mb-1">Bank Name</label><input type="text" value="GTBank" class="w-full px-3 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50 outline-none focus:border-primary-500"></div>
+              <div><label class="block text-xs font-medium text-neutral-600 mb-1">Account Number</label><input type="text" value="****4521" class="w-full px-3 py-2.5 border border-neutral-200 rounded-lg text-sm bg-neutral-50 outline-none focus:border-primary-500"></div>
+              <button onclick="showToast('success','Bank Updated','Payout account updated.')" class="w-full bg-neutral-900 hover:bg-neutral-800 text-white py-2.5 rounded-full text-sm font-semibold transition-colors">Update Payout Account</button>
+            </div>
+          </div>
+          <div class="bg-primary-50 border border-primary-100 rounded-xl2 p-4">
+            <h3 class="font-heading font-bold text-sm text-primary-900 mb-2 flex items-center gap-2"><i data-lucide="star" class="w-4 h-4 text-primary-600"></i>Performance Summary</h3>
+            <div class="space-y-2 text-sm">
+              <div class="flex justify-between"><span class="text-primary-700">Total Deliveries</span><span class="font-bold text-primary-900">412</span></div>
+              <div class="flex justify-between"><span class="text-primary-700">Completion Rate</span><span class="font-bold text-primary-900">98%</span></div>
+              <div class="flex justify-between"><span class="text-primary-700">Average Rating</span><span class="font-bold text-primary-900">⭐ 4.9</span></div>
+              <div class="flex justify-between"><span class="text-primary-700">Member Since</span><span class="font-bold text-primary-900">Jan 2024</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MOBILE BOTTOM NAV -->
+<nav id="mob-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-100 z-50 grid grid-cols-4 py-2" style="box-shadow:0 -4px 20px -4px rgba(15,23,42,.1)">
+  <button onclick="showPage('dashboard')" class="mob-nav-btn flex flex-col items-center gap-1 py-1 active" id="mob-nav-dashboard">
+    <i data-lucide="layout-dashboard" class="w-5 h-5"></i><span class="text-[10px] font-semibold">Home</span>
+  </button>
+  <button onclick="showPage('orders')" class="mob-nav-btn flex flex-col items-center gap-1 py-1" id="mob-nav-orders">
+    <i data-lucide="package" class="w-5 h-5"></i><span class="text-[10px] font-semibold">Orders</span>
+  </button>
+  <button onclick="showPage('earnings')" class="mob-nav-btn flex flex-col items-center gap-1 py-1" id="mob-nav-earnings">
+    <i data-lucide="banknote" class="w-5 h-5"></i><span class="text-[10px] font-semibold">Earnings</span>
+  </button>
+  <button onclick="showPage('profile')" class="mob-nav-btn flex flex-col items-center gap-1 py-1" id="mob-nav-profile">
+    <i data-lucide="user" class="w-5 h-5"></i><span class="text-[10px] font-semibold">Profile</span>
+  </button>
+</nav>
+
+<style>
+.mob-nav-btn{color:#94a3b8;transition:color .2s}
+.mob-nav-btn.active{color:#ea580c}
+.mob-nav-btn.active i{color:#ea580c}
+</style>
+
+<script>
+/* ── State ── */
+let isOnline = true;
+
+/* ── Orders data ── */
+const ALL_ORDERS = [
+  {id:'ORD-00481',customer:'Tunde Adeyemi',phone:'+234 812 345 6789',pickup:'Ikeja Bus Stop',dropoff:'Lekki Phase 1',distance:'18 km',time:'25 min',earn:'₦650',status:'transit'},
+  {id:'ORD-00480',customer:'Amaka Obi',phone:'+234 803 456 7890',pickup:'Surulere Market',dropoff:'Victoria Island',distance:'12 km',time:'18 min',earn:'₦500',status:'assigned'},
+  {id:'ORD-00479',customer:'Femi Balogun',phone:'+234 701 234 5678',pickup:'Yaba Tech',dropoff:'Gbagada',distance:'8 km',time:'12 min',earn:'₦400',status:'pending'},
+  {id:'ORD-00478',customer:'Chioma Nwosu',phone:'+234 906 789 0123',pickup:'Maryland Mall',dropoff:'Festac Town',distance:'15 km',time:'22 min',earn:'₦580',status:'delivered'},
+  {id:'ORD-00477',customer:'Biodun Aina',phone:'+234 814 567 8901',pickup:'Ojota Park',dropoff:'Ikorodu',distance:'22 km',time:'35 min',earn:'₦750',status:'delivered'},
+  {id:'ORD-00476',customer:'Shade Akande',phone:'+234 802 345 6789',pickup:'Ikeja GRA',dropoff:'Lekki',distance:'20 km',time:'28 min',earn:'₦680',status:'rejected'},
+];
+
+/* ── Render pending orders (incoming queue) ── */
+function renderPendingOrders(){
+  const pending = ALL_ORDERS.filter(o=>o.status==='pending');
+  const el = document.getElementById('pending-orders-list');
+  if(!pending.length){
+    el.innerHTML='<div class="bg-white rounded-xl2 border border-neutral-100 p-5 text-center text-sm text-neutral-400">No incoming orders right now</div>';
+    return;
+  }
+  el.innerHTML = pending.map(o=>`
+    <div class="order-card p-4">
+      <div class="flex items-start justify-between mb-3">
+        <div>
+          <p class="font-heading font-bold text-sm text-neutral-900">${o.id}</p>
+          <p class="text-xs text-neutral-500 mt-0.5">${o.customer}</p>
+        </div>
+        <span class="badge badge-pending">New Order</span>
+      </div>
+      <div class="flex items-center gap-2 mb-3 text-xs text-neutral-600">
+        <div class="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>${o.pickup}
+        <i data-lucide="arrow-right" class="w-3 h-3 text-neutral-400 flex-shrink-0"></i>
+        <div class="w-2 h-2 bg-primary-600 rounded-full flex-shrink-0"></div>${o.dropoff}
+      </div>
+      <div class="flex items-center gap-3 mb-4">
+        <div class="flex items-center gap-1 text-xs text-neutral-500"><i data-lucide="map-pin" class="w-3 h-3"></i>${o.distance}</div>
+        <div class="flex items-center gap-1 text-xs text-neutral-500"><i data-lucide="clock" class="w-3 h-3"></i>${o.time}</div>
+        <div class="flex items-center gap-1 text-xs font-bold text-primary-600"><i data-lucide="banknote" class="w-3 h-3"></i>${o.earn}</div>
+      </div>
+      <div class="flex gap-2.5">
+        <button onclick="acceptOrder('${o.id}')" class="action-btn btn-accept flex-1">
+          <i data-lucide="check" class="w-4 h-4"></i>Accept
+        </button>
+        <button onclick="rejectOrder('${o.id}')" class="action-btn btn-reject flex-1">
+          <i data-lucide="x" class="w-4 h-4"></i>Reject
+        </button>
+      </div>
+    </div>`).join('');
+  document.getElementById('orders-badge-sidebar').textContent = pending.length;
+  document.getElementById('notif-dot').style.display = pending.length?'block':'none';
+  lucide.createIcons();
+}
+
+/* ── Render active order ── */
+function renderActiveOrder(){
+  const active = ALL_ORDERS.find(o=>['transit','assigned'].includes(o.status));
+  if(!active){
+    document.getElementById('active-order-section').style.display='none';
+    document.getElementById('no-active-order').classList.remove('hidden');
+    return;
+  }
+  document.getElementById('active-order-section').style.display='block';
+  document.getElementById('no-active-order').classList.add('hidden');
+  document.getElementById('ao-id').textContent = active.id;
+  document.getElementById('ao-customer').textContent = active.customer+' · '+active.phone;
+  document.getElementById('ao-pickup').textContent = active.pickup;
+  document.getElementById('ao-dropoff').textContent = active.dropoff;
+  document.getElementById('ao-distance').textContent = active.distance;
+  document.getElementById('ao-time').textContent = active.time;
+  document.getElementById('ao-earn').textContent = active.earn;
+  document.getElementById('ao-status').textContent = active.status==='transit'?'In Transit':'Assigned';
+  document.getElementById('ao-status').className = 'badge '+(active.status==='transit'?'badge-transit':'badge-assigned');
+
+  const actDiv = document.getElementById('ao-actions');
+  if(active.status==='assigned'){
+    actDiv.innerHTML=`<button onclick="updateOrderStatus('${active.id}','picked')" class="action-btn btn-picked flex-1"><i data-lucide="package" class="w-4 h-4"></i>Picked Up</button>`;
+  } else if(active.status==='transit'){
+    actDiv.innerHTML=`<button onclick="updateOrderStatus('${active.id}','delivered')" class="action-btn btn-delivered flex-1"><i data-lucide="check-circle" class="w-4 h-4"></i>Mark Delivered</button>`;
+  } else if(active.status==='picked'){
+    actDiv.innerHTML=`<button onclick="updateOrderStatus('${active.id}','transit')" class="action-btn btn-transit flex-1"><i data-lucide="truck" class="w-4 h-4"></i>In Transit</button>`;
+  }
+  lucide.createIcons();
+}
+
+/* ── My orders list ── */
+let ordersFilter = 'all';
+function renderMyOrders(){
+  let list = ALL_ORDERS.filter(o=>o.status!=='pending');
+  if(ordersFilter==='active') list=list.filter(o=>['assigned','picked','transit'].includes(o.status));
+  else if(ordersFilter==='delivered') list=list.filter(o=>o.status==='delivered');
+  else if(ordersFilter==='rejected') list=list.filter(o=>o.status==='rejected');
+  document.getElementById('my-orders-list').innerHTML = list.length?list.map(o=>`
+    <div class="order-card p-4">
+      <div class="flex items-center justify-between mb-2">
+        <p class="font-heading font-bold text-sm text-neutral-900">${o.id}</p>
+        <span class="badge ${o.status==='delivered'?'badge-delivered':o.status==='rejected'?'badge-rejected':o.status==='transit'?'badge-transit':'badge-assigned'}">${o.status==='transit'?'In Transit':o.status.charAt(0).toUpperCase()+o.status.slice(1)}</span>
+      </div>
+      <p class="text-xs text-neutral-500 mb-2">${o.customer}</p>
+      <div class="flex items-center gap-2 text-xs text-neutral-500">
+        <span>${o.pickup}</span>
+        <i data-lucide="arrow-right" class="w-3 h-3 text-neutral-300 flex-shrink-0"></i>
+        <span>${o.dropoff}</span>
+        <span class="ml-auto font-bold text-primary-600">${o.earn}</span>
+      </div>
+    </div>`).join('')
+    :'<div class="bg-white rounded-xl2 border border-neutral-100 p-8 text-center text-sm text-neutral-400">No orders in this category</div>';
+  lucide.createIcons();
+}
+
+function filterMyOrders(filter, btn){
+  ordersFilter=filter;
+  document.querySelectorAll('.orders-tab').forEach(b=>{b.className='px-4 py-1.5 rounded-lg text-xs font-medium text-neutral-500 orders-tab';});
+  btn.className='px-4 py-1.5 rounded-lg text-xs font-semibold bg-white text-neutral-800 shadow-sm orders-tab';
+  renderMyOrders();
+}
+
+/* ── Order actions ── */
+function acceptOrder(id){
+  const o=ALL_ORDERS.find(x=>x.id===id);
+  if(!o)return;
+  // If another order already active, reject
+  const hasActive = ALL_ORDERS.find(x=>['assigned','transit','picked'].includes(x.status));
+  if(hasActive){ showToast('warn','Already on an order','Complete your current delivery first.'); return; }
+  o.status='assigned';
+  showToast('success','Order Accepted',`${id} is now your active delivery.`);
+  renderActiveOrder(); renderPendingOrders(); renderMyOrders();
+}
+
+function rejectOrder(id){
+  const o=ALL_ORDERS.find(x=>x.id===id);
+  if(o){ o.status='rejected'; showToast('info','Order Rejected',`${id} has been returned to the queue.`); }
+  renderActiveOrder(); renderPendingOrders(); renderMyOrders();
+}
+
+function updateOrderStatus(id, status){
+  const o=ALL_ORDERS.find(x=>x.id===id);
+  if(!o)return;
+  o.status=status;
+  const labels={picked:'Picked Up — heading to dropoff',transit:'Marked In Transit',delivered:'Delivery Confirmed!'};
+  const types={picked:'info',transit:'info',delivered:'success'};
+  if(status==='delivered'){
+    const earn = parseInt(o.earn.replace(/[^0-9]/g,''));
+    const cur = parseInt(document.getElementById('today-earnings').textContent.replace(/[^0-9]/g,''));
+    document.getElementById('today-earnings').textContent='₦'+(cur+earn).toLocaleString();
+    const cnt = parseInt(document.getElementById('stat-completed').textContent)+1;
+    document.getElementById('stat-completed').textContent=cnt;
+    document.getElementById('completed-count').textContent=cnt;
+  }
+  showToast(types[status]||'info','Status Updated',labels[status]||status);
+  renderActiveOrder(); renderPendingOrders(); renderMyOrders();
+}
+
+/* ── Online / offline toggle ── */
+function toggleOnlineStatus(){
+  isOnline=!isOnline;
+  const toggle=document.getElementById('main-toggle');
+  const label=document.getElementById('toggle-label');
+  const statusBadge=document.getElementById('status-badge');
+  const statusText=document.getElementById('status-text');
+  const banner=document.getElementById('offline-banner');
+  const sidebarDot=document.getElementById('sidebar-dot');
+  const sidebarLabel=document.getElementById('sidebar-status-label');
+  const icon=document.getElementById('toggle-icon');
+
+  if(isOnline){
+    toggle.classList.add('online');
+    if(label) label.textContent='Online';
+    statusBadge.textContent='● Online';
+    statusBadge.className='badge badge-online';
+    statusText.textContent="You're online and ready for orders";
+    banner.classList.add('hidden');
+    sidebarDot.className='status-dot online absolute -bottom-0.5 -right-0.5 border-2 border-neutral-900';
+    sidebarLabel.style.color='#22c55e';
+    sidebarLabel.textContent='● Online';
+    icon.setAttribute('data-lucide','wifi');
+    icon.className='w-3.5 h-3.5 text-green-500';
+    showToast('success','You\'re Online','New orders will now be assigned to you.');
+  } else {
+    toggle.classList.remove('online');
+    if(label) label.textContent='Offline';
+    statusBadge.textContent='● Offline';
+    statusBadge.className='badge badge-offline';
+    statusText.textContent="You're offline — no new orders will be assigned";
+    banner.classList.remove('hidden');
+    sidebarDot.className='status-dot offline absolute -bottom-0.5 -right-0.5 border-2 border-neutral-900';
+    sidebarLabel.style.color='#94a3b8';
+    sidebarLabel.textContent='● Offline';
+    icon.setAttribute('data-lucide','wifi-off');
+    icon.className='w-3.5 h-3.5 text-neutral-400';
+    showToast('info','You\'re Offline','No new orders will be assigned while offline.');
+  }
+  lucide.createIcons();
+}
+
+/* ── Navigation ── */
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const nav=document.getElementById('nav-'+id);
+  if(nav) nav.classList.add('active');
+  document.querySelectorAll('.mob-nav-btn').forEach(b=>b.classList.remove('active'));
+  const mob=document.getElementById('mob-nav-'+id);
+  if(mob) mob.classList.add('active');
+  const titles={dashboard:'Dashboard',orders:'My Orders',earnings:'Earnings',profile:'My Profile'};
+  document.getElementById('page-title').textContent=titles[id]||id;
+  document.getElementById('page-bc').textContent='Rider / '+(titles[id]||id);
+  closeSidebar();
+  if(id==='orders') renderMyOrders();
+}
+
+function openSidebar(){ document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebar-backdrop').classList.add('open'); }
+function closeSidebar(){ document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebar-backdrop').classList.remove('open'); }
+
+/* ── Toast ── */
+function showToast(type,title,msg){
+  const colors={success:'bg-green-50 border-green-200 text-green-700',error:'bg-red-50 border-red-200 text-red-700',info:'bg-blue-50 border-blue-200 text-blue-700',warn:'bg-amber-50 border-amber-200 text-amber-700'};
+  const icons={success:'check-circle',error:'x-circle',info:'info',warn:'alert-triangle'};
+  const t=document.createElement('div');
+  t.className=`pointer-events-auto flex items-start gap-3 p-3.5 rounded-xl border shadow-hover w-full ${colors[type]||colors.info}`;
+  t.style.animation='toastIn .3s ease both';
+  t.innerHTML=`<i data-lucide="${icons[type]||'info'}" class="w-4 h-4 flex-shrink-0 mt-0.5"></i><div class="flex-1"><p class="font-semibold text-xs">${title}</p>${msg?`<p class="text-xs opacity-80 mt-0.5">${msg}</p>`:''}</div><button onclick="this.parentElement.remove()" class="opacity-60 hover:opacity-100 flex-shrink-0"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>`;
+  document.getElementById('toast-stack').appendChild(t);
+  lucide.createIcons();
+  setTimeout(()=>{t.style.animation='toastOut .3s ease forwards';setTimeout(()=>t.remove(),300)},3500);
+}
+
+document.addEventListener('DOMContentLoaded',()=>{ lucide.createIcons(); renderActiveOrder(); renderPendingOrders(); });
+</script>
+</body>
+</html>
